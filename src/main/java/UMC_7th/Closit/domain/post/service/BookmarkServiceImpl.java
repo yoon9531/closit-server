@@ -13,12 +13,12 @@ import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -51,19 +51,25 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public List<BookmarkResponseDTO.CreateBookmarkResultDTO> getUserBookmarks(String clositId) {
-        User user = userRepository.findByClositId(clositId)
+    public Slice<Bookmark> getUserBookmarks(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        return bookmarkRepository.findByUser(user).stream()
-                .map(BookmarkConverter::toBookmarkStatusDTO)
-                .collect(Collectors.toList());
+        Slice<Bookmark> bookmarkList = bookmarkRepository.findByUser(user, pageable);
+
+        return bookmarkList;
     }
 
     @Override
-    public void removeBookmark(Long bookmarkId) {
-        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+    public void removeBookmark(Long postId) {
+        User user = securityUtil.getCurrentUser();
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        Bookmark bookmark = bookmarkRepository.findByUserAndPost(user, post)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND));
+
         bookmarkRepository.delete(bookmark);
     }
 }
