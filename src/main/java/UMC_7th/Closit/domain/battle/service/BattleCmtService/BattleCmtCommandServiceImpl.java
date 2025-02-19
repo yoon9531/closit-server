@@ -39,7 +39,7 @@ public class BattleCmtCommandServiceImpl implements BattleCmtCommandService {
     @Override
     @Transactional
     public void deleteBattleComment(Long userId, Long battleId, Long battleCommentId) { // 배틀 댓글 삭제
-        Battle battle = battleRepository.findById(userId)
+        battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
         BattleComment battleComment = battleCommentRepository.findById(battleCommentId)
