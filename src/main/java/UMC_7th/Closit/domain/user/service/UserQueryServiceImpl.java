@@ -67,7 +67,7 @@ public class UserQueryServiceImpl implements UserQueryService {
         long followerCount = followRepository.countByReceiver(user);
         long followingCount = followRepository.countBySender(user);
 
-        return UserConverter.toUserInfoDTO(user, followerCount, followingCount);
+        return UserConverter.toUpdateUserInfoDTO(user, followerCount, followingCount);
     }
 
     @Override
