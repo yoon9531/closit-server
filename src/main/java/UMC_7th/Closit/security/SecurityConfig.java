@@ -50,7 +50,9 @@ public class SecurityConfig {
                         .requestMatchers("/","/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/register",
                                          "/api/auth/login",
-                                         "/api/auth/refresh").permitAll()
+                                         "/api/auth/refresh",
+                                         "/api/auth/users/isunique/**",
+                                         "/api/auth/mail").permitAll()
                         .anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
