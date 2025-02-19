@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.highlight.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +40,9 @@ public class HighlightResponseDTO {
     public static class HighlightDetailDTO {
         private Long highlightId;
         private String clositId;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime updatedAt;
         private PostInfoDTO post;
     }
@@ -51,6 +54,7 @@ public class HighlightResponseDTO {
     public static class PostInfoDTO {
         private Long id;
         private String backImage;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
 }
