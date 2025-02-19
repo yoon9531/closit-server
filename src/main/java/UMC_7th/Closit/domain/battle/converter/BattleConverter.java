@@ -62,9 +62,11 @@ public class BattleConverter {
                 .title(battle.getTitle())
                 .firstClositId(battle.getPost1().getUser().getClositId())
                 .firstPostId(battle.getPost1().getId())
+                .firstProfileImage(battle.getPost1().getUser().getProfileImage())
                 .firstVotingRate(battle.getFirstVotingRate())
                 .secondClositId(battle.getPost2().getUser().getClositId())
                 .secondPostId(battle.getPost2().getId())
+                .secondProfileImage(battle.getPost2().getUser().getProfileImage())
                 .secondVotingRate(battle.getSecondVotingRate())
                 .build();
     }

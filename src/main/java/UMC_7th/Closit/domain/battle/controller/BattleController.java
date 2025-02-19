@@ -86,7 +86,7 @@ public class BattleController {
     @GetMapping()
     @Operation(summary = "배틀 게시글 목록 조회",
             description = """
-            ## 배틀 게시글 목록 조회 - 투표 하지 않은 배틀 게시글은 null로 보임
+            ## 배틀 게시글 목록 조회 - 투표 하지 않은 배틀 게시글은 0으로 보임
             ### Parameters
             page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
             """)
