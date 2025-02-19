@@ -132,7 +132,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     @Override
     public void followNotification(Follow follow) { // 팔로우 알림
         User receiver = follow.getReceiver(); // 팔로워 알림 받는 사용자
-        String content = follow.getReceiver().getName() + "님이 회원님을 팔로우하기 시작했습니다.";
+        String content = follow.getSender().getName() + "님이 회원님을 팔로우하기 시작했습니다.";
 
         NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, content, NotificationType.FOLLOW);
 

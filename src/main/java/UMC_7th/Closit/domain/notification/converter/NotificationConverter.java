@@ -43,7 +43,7 @@ public class NotificationConverter {
                 .notificationId(notification.getId())
                 .clositId(notification.getUser().getClositId())
                 .userName(notification.getUser().getName())
-                .imageUrl(notification.getUser().getProfileImage())
+                .imageUrl(notification.getSender().getProfileImage())
                 .content(notification.getContent())
                 .type(notification.getType())
                 .isRead(notification.isRead())
