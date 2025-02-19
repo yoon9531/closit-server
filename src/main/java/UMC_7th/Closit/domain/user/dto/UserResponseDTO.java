@@ -25,6 +25,7 @@ public class UserResponseDTO {
         private String clositId;
         private String name;
         private String email;
+        @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate birth;
         private String profileImage;
     }
@@ -99,6 +100,7 @@ public class UserResponseDTO {
         private String clositId;        // 사용자 닉네임
         private String name;            // 사용자 이름
         private String email;           // 이메일
+        @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate birth;        // 생년월일
         private String profileImage;    // 프로필 이미지
     }
