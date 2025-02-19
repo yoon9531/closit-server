@@ -1,9 +1,7 @@
 package UMC_7th.Closit.security;
 
-import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
 import UMC_7th.Closit.security.jwt.JwtAccessDeniedHandler;
 import UMC_7th.Closit.security.jwt.JwtAuthenticationEntryPoint;
-import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/","/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/register",
                                          "/api/auth/login",
-                                         "/api/auth/refresh").permitAll()
+                                         "/api/auth/refresh",
+                                         "/api/auth/users/isunique/**").permitAll()
                         .anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
