@@ -90,7 +90,7 @@ public class JwtTokenProvider {
 
             Jwts.parserBuilder()
                     .setSigningKey(key)
-                    .setAllowedClockSkewSeconds(60) // ✅ Clock Skew 적용 (2분 오차 허용)
+                    // .setAllowedClockSkewSeconds(60) // ✅ Clock Skew 적용 (1분 오차 허용)
                     .build()
                     .parseClaimsJws(token);
 
