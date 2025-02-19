@@ -31,7 +31,6 @@ import java.util.UUID;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final SecurityUtil securityUtil;
@@ -137,13 +136,13 @@ public class UserCommandServiceImpl implements UserCommandService {
             isChanged = true;
         }
 
-        if (updateUserDTO.getClositId() != null) {
-            if (!isClositIdUnique(updateUserDTO.getClositId())) {
-                throw new UserHandler(ErrorStatus.CLOSIT_ID_ALREADY_EXISTS);
-            }
-            currentUser.setClositId(updateUserDTO.getClositId());
-            isChanged = true;
-        }
+//        if (updateUserDTO.getClositId() != null) {
+//            if (!isClositIdUnique(updateUserDTO.getClositId())) {
+//                throw new UserHandler(ErrorStatus.CLOSIT_ID_ALREADY_EXISTS);
+//            }
+//            currentUser.setClositId(updateUserDTO.getClositId());
+//            isChanged = true;
+//        }
 
         if (!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), currentUser.getPassword())) {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
