@@ -15,7 +15,7 @@ public interface UserQueryService {
 
     Slice<User> getFollowingList(String clositId, Pageable pageable);
 
-    UserResponseDTO.UserInfoDTO getUserInfo(String clositId);
+    UserResponseDTO.UpdateUserInfoDTO getUserInfo(String clositId);
 
     boolean isMissionDone();
 

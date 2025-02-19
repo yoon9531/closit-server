@@ -25,9 +25,22 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.UserInfoDTO toUserInfoDTO(User user, long followerCount, long followingCount) {
+    public static UserResponseDTO.UserInfoDTO toUserInfoDTO(User user) {
 
         return UserResponseDTO.UserInfoDTO.builder()
+//                .id(user.getId())
+                .role(user.getRole())
+                .clositId(user.getClositId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .birth(user.getBirth())
+                .profileImage(user.getProfileImage())
+                .build();
+    }
+
+    public static UserResponseDTO.UpdateUserInfoDTO toUpdateUserInfoDTO(User user, long followerCount, long followingCount) {
+
+        return UserResponseDTO.UpdateUserInfoDTO.builder()
 //                .id(user.getId())
                 .role(user.getRole())
                 .clositId(user.getClositId())

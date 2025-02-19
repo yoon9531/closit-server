@@ -58,11 +58,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         User updatedUser = user.updateRole(newRole);
-
-        long followerCount = followRepository.countByReceiver(user);
-        long followingCount = followRepository.countBySender(user);
-
-        return UserConverter.toUserInfoDTO(updatedUser, followerCount, followingCount);
+        return UserConverter.toUserInfoDTO(updatedUser);
     }
 
     @Override

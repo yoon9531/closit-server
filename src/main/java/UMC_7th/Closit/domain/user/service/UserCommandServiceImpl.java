@@ -92,7 +92,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserResponseDTO.UserInfoDTO registerProfileImage(MultipartFile file) {
+    public User registerProfileImage (MultipartFile file) {
 
         // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
@@ -102,22 +102,21 @@ public class UserCommandServiceImpl implements UserCommandService {
             log.info("file is null or empty");
             amazonS3Manager.deleteFile(currentUser.getProfileImage());
             currentUser.updateProfileImage(null);
-        } else {
-            // 기존 프로필 이미지 삭제
-            if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().equals(defaultProfileImage)) {
-                amazonS3Manager.deleteFile(currentUser.getProfileImage());
-            }
-
-            // 새로운 프로필 이미지 등록
-            String uuid = UUID.randomUUID().toString();
-            String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
-            currentUser.updateProfileImage(storedLocation);
+            return currentUser;
         }
 
-        long followerCount = followRepository.countByReceiver(currentUser);
-        long followingCount = followRepository.countBySender(currentUser);
+        // 기존 프로필 이미지 삭제
+        if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().equals(defaultProfileImage)) {
+            amazonS3Manager.deleteFile(currentUser.getProfileImage());
+        }
 
-        return UserConverter.toUserInfoDTO(currentUser, followerCount, followingCount);
+        // 새로운 프로필 이미지 등록
+        String uuid = UUID.randomUUID().toString();
+        String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
+
+        currentUser.updateProfileImage(storedLocation);
+
+        return currentUser;
     }
 
 
@@ -128,7 +127,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserResponseDTO.UserInfoDTO updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
+    public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
+
         User currentUser = securityUtil.getCurrentUser();
         Boolean isChanged = false;
 
@@ -163,9 +163,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.NO_CHANGE_DETECTED);
         }
 
-        long followerCount = followRepository.countByReceiver(currentUser);
-        long followingCount = followRepository.countBySender(currentUser);
-
-        return UserConverter.toUserInfoDTO(currentUser, followerCount, followingCount);
+        return currentUser;
     }
 }

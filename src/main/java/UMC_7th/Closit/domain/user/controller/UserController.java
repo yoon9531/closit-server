@@ -40,19 +40,24 @@ public class UserController {
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
     @PatchMapping("/")
     public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
-        return ApiResponse.onSuccess(userCommandService.updateUserInfo(updateUserDTO));
+
+        User userInfo = userCommandService.updateUserInfo(updateUserDTO);
+
+        return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 
     @Operation(summary = "사용자 프로필 이미지 등록", description = "특정 사용자의 프로필 이미지를 등록합니다.")
-    @PostMapping(value = "/{closit_id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(
+            value = "/{closit_id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
     public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestPart(value = "user_image", required = false) MultipartFile profileImage) {
-        return ApiResponse.onSuccess(userCommandService.registerProfileImage(profileImage));
+        User userInfo = userCommandService.registerProfileImage(profileImage);
+        return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
-
 
     @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
     @GetMapping("/{closit_id}")
-    public ApiResponse<UserResponseDTO.UserInfoDTO> getUserInfo(@PathVariable String closit_id) {
+    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo(@PathVariable String closit_id) {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
     }
 

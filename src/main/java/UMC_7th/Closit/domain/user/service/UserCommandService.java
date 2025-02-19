@@ -12,9 +12,9 @@ public interface UserCommandService {
     RegisterResponseDTO registerUser (UserRequestDTO.CreateUserDTO userRequestDto);
     void deleteUser();
 
-    UserResponseDTO.UserInfoDTO registerProfileImage (MultipartFile file);
+    User registerProfileImage (MultipartFile file);
 
     boolean isClositIdUnique(String clositId);
 
-    UserResponseDTO.UserInfoDTO updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO);
+    User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO);
 }

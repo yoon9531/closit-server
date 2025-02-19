@@ -94,7 +94,7 @@ public class UserResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserInfoDTO {
+    public static class UpdateUserInfoDTO {
 //        private Long id;                // User ID
         private Role role;              // USer role
         private String clositId;        // 사용자 닉네임
@@ -107,6 +107,20 @@ public class UserResponseDTO {
         private long following;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UserInfoDTO {
+//        private Long id;
+        private Role role;
+        private String clositId;
+        private String name;
+        private String email;
+        private LocalDate birth;
+        private String profileImage;
     }
 
     @Builder

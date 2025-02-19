@@ -60,7 +60,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
-    public UserResponseDTO.UserInfoDTO getUserInfo(String clositId) {
+    public UserResponseDTO.UpdateUserInfoDTO getUserInfo(String clositId) {
         User user = userRepository.findByClositId(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
