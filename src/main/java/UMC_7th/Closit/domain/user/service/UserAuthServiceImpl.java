@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserAuthServiceImpl implements UserAuthService {
 
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;

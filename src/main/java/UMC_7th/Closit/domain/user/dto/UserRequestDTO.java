@@ -41,8 +41,8 @@ public class UserRequestDTO {
         @Size(min = 2, max = 20, message = "이름은 2~20자 사이여야 합니다.")
         private String name;
 
-        @Size(min = 2, max = 20, message = "clositId는 2~20자 사이여야 합니다.")
-        private String clositId;
+//        @Size(min = 2, max = 20, message = "clositId는 2~20자 사이여야 합니다.")
+//        private String clositId;
 
         @NotBlank(message = "현재 비밀번호는 필수 입력 값입니다.")
         private String currentPassword;
