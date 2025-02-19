@@ -1,9 +1,7 @@
 package UMC_7th.Closit.security;
 
-import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
 import UMC_7th.Closit.security.jwt.JwtAccessDeniedHandler;
 import UMC_7th.Closit.security.jwt.JwtAuthenticationEntryPoint;
-import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
