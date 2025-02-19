@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.highlight.repository.HighlightRepository;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
+import UMC_7th.Closit.domain.user.converter.UserConverter;
+import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -58,9 +60,14 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
-    public User getUserInfo(String clositId) {
-        return userRepository.findByClositId(clositId)
+    public UserResponseDTO.UserInfoDTO getUserInfo(String clositId) {
+        User user = userRepository.findByClositId(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        long followerCount = followRepository.countByReceiver(user);
+        long followingCount = followRepository.countBySender(user);
+
+        return UserConverter.toUserInfoDTO(user, followerCount, followingCount);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.user.converter;
 
+import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.highlight.converter.HighlightConverter;
 import UMC_7th.Closit.domain.highlight.dto.HighlightResponseDTO;
 import UMC_7th.Closit.domain.highlight.entity.Highlight;
@@ -24,16 +25,19 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.UserInfoDTO toUserInfoDTO(User user) {
+    public static UserResponseDTO.UserInfoDTO toUserInfoDTO(User user, long followerCount, long followingCount) {
 
         return UserResponseDTO.UserInfoDTO.builder()
-                .id(user.getId())
+//                .id(user.getId())
                 .role(user.getRole())
                 .clositId(user.getClositId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .birth(user.getBirth())
                 .profileImage(user.getProfileImage())
+                .createdAt(user.getCreatedAt())
+                .followers(followerCount)
+                .following(followingCount)
                 .build();
     }
 

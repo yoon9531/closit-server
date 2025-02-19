@@ -2,6 +2,7 @@ package UMC_7th.Closit.domain.user.service;
 
 import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -14,7 +15,7 @@ public interface UserQueryService {
 
     Slice<User> getFollowingList(String clositId, Pageable pageable);
 
-    User getUserInfo(String clositId);
+    UserResponseDTO.UserInfoDTO getUserInfo(String clositId);
 
     boolean isMissionDone();
 

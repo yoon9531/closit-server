@@ -95,7 +95,7 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserInfoDTO {
-        private Long id;                // User ID
+//        private Long id;                // User ID
         private Role role;              // USer role
         private String clositId;        // 사용자 닉네임
         private String name;            // 사용자 이름
@@ -103,6 +103,10 @@ public class UserResponseDTO {
         @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate birth;        // 생년월일
         private String profileImage;    // 프로필 이미지
+        private long followers;
+        private long following;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime createdAt;
     }
 
     @Builder

@@ -1,5 +1,7 @@
 package UMC_7th.Closit.domain.user.service;
 
+import UMC_7th.Closit.domain.follow.entity.Follow;
+import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.JwtResponse;
 import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserAuthServiceImpl implements UserAuthService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -56,7 +59,10 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         User updatedUser = user.updateRole(newRole);
 
-        return UserConverter.toUserInfoDTO(updatedUser);
+        long followerCount = followRepository.countByReceiver(user);
+        long followingCount = followRepository.countBySender(user);
+
+        return UserConverter.toUserInfoDTO(updatedUser, followerCount, followingCount);
     }
 
     @Override

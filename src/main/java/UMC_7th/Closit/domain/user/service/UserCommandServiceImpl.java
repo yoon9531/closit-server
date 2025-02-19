@@ -1,8 +1,11 @@
 package UMC_7th.Closit.domain.user.service;
 
 import UMC_7th.Closit.domain.follow.entity.Follow;
+import UMC_7th.Closit.domain.follow.repository.FollowRepository;
+import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
+import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final SecurityUtil securityUtil;
@@ -38,7 +42,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private String defaultProfileImage;
 
     @Override
-    public RegisterResponseDTO registerUser (UserRequestDTO.CreateUserDTO userRequestDto) {
+    public RegisterResponseDTO registerUser(UserRequestDTO.CreateUserDTO userRequestDto) {
 
         // Email Already Exists
         if (userRepository.existsByEmail(userRequestDto.getEmail())) {
@@ -76,11 +80,11 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public void deleteUser () {
+    public void deleteUser() {
         // 현재 로그인된 사용자 정보 가져오기
-        User currentUser= securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
+        User currentUser = securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
 
-        if(currentUser == null) {
+        if (currentUser == null) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
@@ -88,7 +92,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public User registerProfileImage (MultipartFile file) {
+    public UserResponseDTO.UserInfoDTO registerProfileImage(MultipartFile file) {
 
         // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
@@ -98,22 +102,24 @@ public class UserCommandServiceImpl implements UserCommandService {
             log.info("file is null or empty");
             amazonS3Manager.deleteFile(currentUser.getProfileImage());
             currentUser.updateProfileImage(null);
-            return currentUser;
+        } else {
+            // 기존 프로필 이미지 삭제
+            if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().equals(defaultProfileImage)) {
+                amazonS3Manager.deleteFile(currentUser.getProfileImage());
+            }
+
+            // 새로운 프로필 이미지 등록
+            String uuid = UUID.randomUUID().toString();
+            String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
+            currentUser.updateProfileImage(storedLocation);
         }
 
-        // 기존 프로필 이미지 삭제
-        if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().equals(defaultProfileImage)) {
-            amazonS3Manager.deleteFile(currentUser.getProfileImage());
-        }
+        long followerCount = followRepository.countByReceiver(currentUser);
+        long followingCount = followRepository.countBySender(currentUser);
 
-        // 새로운 프로필 이미지 등록
-        String uuid = UUID.randomUUID().toString();
-        String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
-
-        currentUser.updateProfileImage(storedLocation);
-
-        return currentUser;
+        return UserConverter.toUserInfoDTO(currentUser, followerCount, followingCount);
     }
+
 
     @Override
     public boolean isClositIdUnique(String clositId) {
@@ -121,10 +127,8 @@ public class UserCommandServiceImpl implements UserCommandService {
         return user.isEmpty();
     }
 
-
     @Override
-    public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
-
+    public UserResponseDTO.UserInfoDTO updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
         User currentUser = securityUtil.getCurrentUser();
         Boolean isChanged = false;
 
@@ -159,7 +163,9 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.NO_CHANGE_DETECTED);
         }
 
-        return currentUser;
-    }
+        long followerCount = followRepository.countByReceiver(currentUser);
+        long followingCount = followRepository.countBySender(currentUser);
 
+        return UserConverter.toUserInfoDTO(currentUser, followerCount, followingCount);
+    }
 }
