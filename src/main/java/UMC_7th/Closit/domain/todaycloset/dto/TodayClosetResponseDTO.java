@@ -1,4 +1,5 @@
 package UMC_7th.Closit.domain.todaycloset.dto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public class TodayClosetResponseDTO {
     @Builder
     public static class CreateResponseDTO {
         private Long todayClosetId;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
 
