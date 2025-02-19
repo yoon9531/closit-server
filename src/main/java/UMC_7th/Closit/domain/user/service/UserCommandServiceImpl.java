@@ -1,8 +1,11 @@
 package UMC_7th.Closit.domain.user.service;
 
 import UMC_7th.Closit.domain.follow.entity.Follow;
+import UMC_7th.Closit.domain.follow.repository.FollowRepository;
+import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
+import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final SecurityUtil securityUtil;
@@ -38,7 +42,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private String defaultProfileImage;
 
     @Override
-    public RegisterResponseDTO registerUser (UserRequestDTO.CreateUserDTO userRequestDto) {
+    public RegisterResponseDTO registerUser(UserRequestDTO.CreateUserDTO userRequestDto) {
 
         // Email Already Exists
         if (userRepository.existsByEmail(userRequestDto.getEmail())) {
@@ -76,11 +80,11 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public void deleteUser () {
+    public void deleteUser() {
         // 현재 로그인된 사용자 정보 가져오기
-        User currentUser= securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
+        User currentUser = securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
 
-        if(currentUser == null) {
+        if (currentUser == null) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
@@ -115,12 +119,12 @@ public class UserCommandServiceImpl implements UserCommandService {
         return currentUser;
     }
 
+
     @Override
     public boolean isClositIdUnique(String clositId) {
         Optional<User> user = userRepository.findByClositId(clositId);
         return user.isEmpty();
     }
-
 
     @Override
     public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
@@ -161,5 +165,4 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         return currentUser;
     }
-
 }
