@@ -61,9 +61,11 @@ public class BattleResponseDTO {
         private String title;
         private String firstClositId;
         private Long firstPostId;
+        private String firstProfileImage;
         private double firstVotingRate;
         private String secondClositId;
         private Long secondPostId;
+        private String secondProfileImage;
         private double secondVotingRate;
     }
 
@@ -87,6 +89,7 @@ public class BattleResponseDTO {
         private Long battleId;
         private String firstClositId;
         private Long firstPostId;
+        private String firstProfileImage;
         private String title;
     }
 
