@@ -10,6 +10,7 @@ public class NotificationRequestDTO {
     @Builder
     public static class SendNotiRequestDTO { // 알림 전송
         private Long receiverId;
+        private Long senderId;
         private String content;
         private NotificationType type;
     }

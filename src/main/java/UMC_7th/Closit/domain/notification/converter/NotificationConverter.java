@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 
 public class NotificationConverter {
 
-    public static Notification toNotification (User user, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
+    public static Notification toNotification (User user, User sender, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
         return Notification.builder()
                 .user(user)
+                .sender(sender)
                 .content(request.getContent())
                 .type(request.getType())
                 .build();
@@ -30,9 +31,10 @@ public class NotificationConverter {
                 .build();
     }
 
-    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest (User receiver, String content, NotificationType notificationType) {
+    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest (User receiver, User sender, String content, NotificationType notificationType) {
         return NotificationRequestDTO.SendNotiRequestDTO.builder()
                 .receiverId(receiver.getId())
+                .senderId(sender.getId())
                 .content(content)
                 .type(notificationType)
                 .build();
