@@ -18,6 +18,7 @@ public class HighlightResponseDTO {
         private Long highlightId;
         private String clositId;
         private Long postId;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
 
