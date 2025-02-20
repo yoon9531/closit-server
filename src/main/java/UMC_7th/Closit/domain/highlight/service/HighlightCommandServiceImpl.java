@@ -40,6 +40,10 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
             throw new GeneralException(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
+        if (highlightRepository.findByPostId(post.getId()).isPresent()) {
+            throw new GeneralException(ErrorStatus.HIGHLIGHT_ALREADY_EXIST);
+        }
+
         Highlight newHighlight = HighlightConverter.toHighlight(request, user, post);
 
         return highlightRepository.save(newHighlight);
@@ -47,25 +51,19 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
 
     @Override
     @Transactional
-    public void deleteHighlight(Long highlightId) {
-        Highlight highlight = validateHighlightEditPermission(highlightId);
-        highlightRepository.delete(highlight);
-    }
-
-    // 특정 하이라이트를 수정 또는 삭제할 수 있는 권한이 있는지 확인하는 메서드
-    private Highlight validateHighlightEditPermission(Long highlightId) {
+    public void deleteHighlight(Long postId) {
         // 현재 로그인된 사용자 정보 가져오기
         User user = securityUtil.getCurrentUser();
 
-        Highlight highlight = highlightRepository.findById(highlightId)
+        Highlight highlight = highlightRepository.findByPostId(postId)
                 .orElseThrow(() -> new HighlightHandler(ErrorStatus.HIGHLIGHT_NOT_FOUND));
 
         // 자기 자신이거나 관리자 권한이 있는 경우만 허용
-            if (!user.getId().equals(highlight.getUser().getId()) &&
-                    !user.getRole().equals(Role.ADMIN)) {
-                throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
-            }
+        if (!user.getId().equals(highlight.getUser().getId()) &&
+                !user.getRole().equals(Role.ADMIN)) {
+            throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
+        }
 
-        return highlight;
+        highlightRepository.delete(highlight);
     }
 }

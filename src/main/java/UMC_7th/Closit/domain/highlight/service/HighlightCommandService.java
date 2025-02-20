@@ -7,5 +7,5 @@ public interface HighlightCommandService {
 
     Highlight createHighlight(HighlightRequestDTO.CreateHighlightDTO request);
 
-    void deleteHighlight(Long highlightId);
+    void deleteHighlight(Long postId);
 }

@@ -11,6 +11,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "highlight", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "post_id")
+})
 public class Highlight extends BaseEntity {
 
     @Id
