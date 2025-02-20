@@ -2,6 +2,7 @@ package UMC_7th.Closit.domain.post.service;
 
 import UMC_7th.Closit.domain.follow.entity.Follow;
 import UMC_7th.Closit.domain.follow.repository.FollowRepository;
+import UMC_7th.Closit.domain.highlight.repository.HighlightRepository;
 import UMC_7th.Closit.domain.post.converter.PostConverter;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.Hashtag;
@@ -34,6 +35,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final PostHashTagRepository postHashTagRepository;
     private final ItemTagRepository itemTagRepository;
     private final SecurityUtil securityUtil;
+    private final HighlightRepository highlightRepository;
 
     public PostResponseDTO.PostPreviewDTO getPostById(Long postId, User currentUser) {
         // 게시글 조회
@@ -46,6 +48,9 @@ public class PostQueryServiceImpl implements PostQueryService {
         // 북마크 여부 확인
         Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
 
+        // 하이라이트 여부 확인
+        Boolean isHighlighted = highlightRepository.existsByPost(post);
+
         // 해시태그 조회
         List<String> hashtags = postHashTagRepository.findByPost(post).stream()
                 .map(postHashtag -> postHashtag.getHashtag().getContent())
@@ -56,7 +61,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
 
         // DTO로 변환
-        return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, hashtags, frontTags, backTags);
+        return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
     }
 
     public Slice<PostResponseDTO.PostPreviewDTO> getPostListByFollowing(boolean follower, Pageable pageable) {
@@ -102,6 +107,9 @@ public class PostQueryServiceImpl implements PostQueryService {
             // 북마크 여부
             Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
 
+            // 하이라이트 여부 확인
+            Boolean isHighlighted = highlightRepository.existsByPost(post);
+
             // 해시태그 조회
             List<String> hashtags = postHashTagRepository.findByPost(post).stream()
                     .map(postHashtag -> postHashtag.getHashtag().getContent())
@@ -112,7 +120,7 @@ public class PostQueryServiceImpl implements PostQueryService {
             List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
 
             // DTO 변환
-            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, hashtags, frontTags, backTags);
+            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
         });
     }
 }
