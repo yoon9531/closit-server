@@ -72,7 +72,6 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             log.info("-------------------- JwtTokenProvider.getClaims ---------------------");
             log.info("⏳ Expired Token: {}", token);
-            log.info("⏳ Expired Token: {}", token);
             log.info("⏳ Expired At: {}", e.getClaims().getExpiration());
             log.info("⏳ Current Time: {}", new Date(System.currentTimeMillis()));
             return e.getClaims();

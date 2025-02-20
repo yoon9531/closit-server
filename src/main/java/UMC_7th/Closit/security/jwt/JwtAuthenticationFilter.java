@@ -40,14 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = resolveToken(request);
-        Cookie[] cookies = request.getCookies();
         String header = request.getHeader("Authorization");
-        HttpSession session = request.getSession();
 
         log.info("🔍 [JwtAuthenticationFilter] - Incoming Request: {}", request.getRequestURI());
         log.info("🔍 [JwtAuthenticationFilter] - Authorization Header: {}", header);
-        log.info("🔍 [JwtAuthenticationFilter] - Session: {}", session);
-        log.info("🔍 [JwtAuthenticationFilter] - Cookies: {}", (cookies != null ? Arrays.toString(cookies) : "No Cookies Found"));
         log.info("🔍 [JwtAuthenticationFilter] - Extracted Token: {}", token);
 
 
@@ -80,6 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     private String resolveToken (HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
