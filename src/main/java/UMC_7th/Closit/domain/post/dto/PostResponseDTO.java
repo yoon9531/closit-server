@@ -24,6 +24,7 @@ public class PostResponseDTO {
         private String backImage;
         private Boolean isLiked;
         private Boolean isSaved;
+        private Boolean isHighlighted;
         private List<String> hashtags;
         private List<ItemTagDTO> frontItemtags;
         private List<ItemTagDTO> backItemtags;

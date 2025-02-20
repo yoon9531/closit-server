@@ -1,6 +1,7 @@
 package UMC_7th.Closit.domain.highlight.repository;
 
 import UMC_7th.Closit.domain.highlight.entity.Highlight;
+import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface HighlightRepository extends JpaRepository<Highlight, Long> {
+
+    Boolean existsByPost(Post post);
 
     Optional<Highlight> findByPostId(Long postId);
 

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class PostConverter {
 
-    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO (Post post, Boolean isLiked, Boolean isSaved,
+    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO (Post post, Boolean isLiked, Boolean isSaved, Boolean isHighlighted,
                                                                    List<String> hashtags, List<ItemTag> frontTags, List<ItemTag> backTags) {
 
         List<PostResponseDTO.ItemTagDTO> frontItemtags = frontTags.stream()
@@ -39,6 +39,7 @@ public class PostConverter {
                 .backImage(post.getBackImage())
                 .isLiked(isLiked)
                 .isSaved(isSaved)
+                .isHighlighted(isHighlighted)
                 .hashtags(hashtags)
                 .frontItemtags(frontItemtags)
                 .backItemtags(backItemtags)
