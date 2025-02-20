@@ -119,6 +119,7 @@ public class UserResponseDTO {
         private String clositId;
         private String name;
         private String email;
+        @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate birth;
         private String profileImage;
     }
