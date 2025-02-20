@@ -87,7 +87,11 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
-        userRepository.delete(currentUser);
+        // 🛠 해결: JPA 영속 상태로 변환
+        User persistentUser = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        userRepository.delete(persistentUser);
     }
 
     @Override

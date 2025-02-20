@@ -93,6 +93,9 @@ public enum ErrorStatus implements BaseErrorCode {
     NOTIFICATION_PUSH_FAILED (HttpStatus.BAD_REQUEST, "NOTIFICATION4001", "알림 전송에 실패했습니다."),
     NOTIFICATION_NOT_FOUND (HttpStatus.NOT_FOUND, "NOTIFICATION4041", "알림을 찾을 수 없습니다."),
 
+    // 파일 업로드 관련 에러
+    MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "UPLOAD4001", "파일 업로드 크기 제한을 초과했습니다."),
+
     // S3 관련 에러
     INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.");
 
