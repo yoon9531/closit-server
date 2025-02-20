@@ -22,6 +22,7 @@ public class BattleCommentConverter {
 
     public static BattleCommentResponseDTO.createBattleCommentResultDTO createBattleCommentResponseDTO (BattleComment battleComment) {
         return BattleCommentResponseDTO.createBattleCommentResultDTO.builder()
+                .clositId(battleComment.getUser().getClositId())
                 .battleCommentId(battleComment.getId())
                 .createdAt(battleComment.getCreatedAt())
                 .build();
