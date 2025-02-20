@@ -18,6 +18,7 @@ public class BattleCommentResponseDTO {
     public static class createBattleCommentResultDTO { // 배틀 댓글 생성
         private Long battleCommentId;
         private String clositId;
+        private String thumbnail;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -29,6 +30,7 @@ public class BattleCommentResponseDTO {
     public static class BattleCommentPreviewDTO { // 배틀 댓글 조회
         private Long battleCommentId;
         private String clositId;
+        private String thumbnail;
         private String content;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;

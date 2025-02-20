@@ -18,6 +18,7 @@ public class BattleResponseDTO {
     @AllArgsConstructor
     public static class CreateBattleResultDTO { // 배틀 생성
         private Long battleId;
+        private String thumbnail;
         @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate deadline;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
@@ -31,8 +32,12 @@ public class BattleResponseDTO {
     public static class ChallengeBattleResultDTO { // 배틀 신청
         private String firstClositId;
         private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
         private String secondClositId;
         private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -60,12 +65,16 @@ public class BattleResponseDTO {
         private boolean isLiked;
         private String title;
         private String firstClositId;
-        private Long firstPostId;
         private String firstProfileImage;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
         private double firstVotingRate;
         private String secondClositId;
-        private Long secondPostId;
         private String secondProfileImage;
+        private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
         private double secondVotingRate;
     }
 
@@ -88,8 +97,10 @@ public class BattleResponseDTO {
     public static class ChallengeBattlePreviewDTO { // 배틀 챌린지 게시글 목록 조회
         private Long battleId;
         private String firstClositId;
-        private Long firstPostId;
         private String firstProfileImage;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
         private String title;
     }
 

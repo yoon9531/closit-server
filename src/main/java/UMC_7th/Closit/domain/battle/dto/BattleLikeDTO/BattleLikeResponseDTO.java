@@ -17,6 +17,7 @@ public class BattleLikeResponseDTO {
     @AllArgsConstructor
     public static class CreateBattleLikeResultDTO { // 배틀 좋아요 생성
         private Long battleLikeId;
+        private String clositId;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
