@@ -16,10 +16,11 @@ public class BookmarkResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class CreateBookmarkResultDTO { // 북마크 생성, 조회
+        private Long bookmarkId;
         private String clositId;
         private String userName;
-        private Long bookmarkId;
         private Long postId;
+        private String thumbnail;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
