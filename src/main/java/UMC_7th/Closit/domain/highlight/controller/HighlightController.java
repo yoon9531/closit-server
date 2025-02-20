@@ -26,10 +26,10 @@ public class HighlightController {
         return ApiResponse.onSuccess(HighlightConverter.toCreateHighlightResultDTO(highlight));
     }
 
-    @Operation(summary = "하이라이트 삭제", description = "ID를 통해 특정 하이라이트를 삭제합니다.")
-    @DeleteMapping("/{highlight_id}")
-    public ApiResponse<String> deleteHighlight(@PathVariable Long highlight_id) {
-        highlightCommandService.deleteHighlight(highlight_id);
-        return ApiResponse.onSuccess("Deleted Highlight with ID: " + highlight_id);
+    @Operation(summary = "하이라이트 삭제", description = "게시글 ID를 통해 특정 하이라이트를 삭제합니다.")
+    @DeleteMapping("/{post_id}")
+    public ApiResponse<String> deleteHighlight(@PathVariable Long post_id) {
+        highlightCommandService.deleteHighlight(post_id);
+        return ApiResponse.onSuccess("Deleted Highlight with post ID: " + post_id);
     }
 }
