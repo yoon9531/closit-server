@@ -11,10 +11,11 @@ public class BookmarkConverter {
 
     public static BookmarkResponseDTO.CreateBookmarkResultDTO toBookmarkStatusDTO(Bookmark bookmark) { // 북마크 생성, 조회
         return BookmarkResponseDTO.CreateBookmarkResultDTO.builder()
+                .bookmarkId(bookmark.getId())
                 .clositId(bookmark.getUser().getClositId())
                 .userName(bookmark.getUser().getName())
-                .bookmarkId(bookmark.getId())
                 .postId(bookmark.getPost().getId())
+                .thumbnail(bookmark.getPost().getFrontImage())
                 .createdAt(bookmark.getCreatedAt())
                 .build();
     }
