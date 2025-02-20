@@ -26,9 +26,10 @@ public class HighlightResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class HighlightDTO {
-        private Long highlightId;
         private String clositId;
+        private String userName;
         private Long postId;
+        private String thumbnail;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")

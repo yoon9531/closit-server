@@ -21,9 +21,10 @@ public class HighlightConverter {
 
     public static HighlightResponseDTO.HighlightDTO toHighlightDTO(Highlight highlight) {
         return HighlightResponseDTO.HighlightDTO.builder()
-                .highlightId(highlight.getId())
                 .clositId(highlight.getUser().getClositId())
+                .userName(highlight.getUser().getName())
                 .postId(highlight.getPost().getId())
+                .thumbnail(highlight.getPost().getFrontImage())
                 .createdAt(highlight.getCreatedAt())
                 .updatedAt(highlight.getUpdatedAt())
                 .build();
