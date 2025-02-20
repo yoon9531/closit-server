@@ -22,6 +22,7 @@ public class BattleConverter {
     public static BattleResponseDTO.CreateBattleResultDTO createBattleResultDTO(Battle battle) {
         return BattleResponseDTO.CreateBattleResultDTO.builder()
                 .battleId(battle.getId())
+                .thumbnail(battle.getPost1().getFrontImage())
                 .deadline(battle.getDeadline())
                 .createdAt(battle.getCreatedAt())
                 .build();
@@ -31,8 +32,12 @@ public class BattleConverter {
         return BattleResponseDTO.ChallengeBattleResultDTO.builder()
                 .firstClositId(battle.getPost1().getUser().getClositId())
                 .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
                 .secondClositId(battle.getPost2().getUser().getClositId())
                 .secondPostId(battle.getPost2().getId())
+                .secondPostFrontImage(battle.getPost2().getFrontImage())
+                .secondPostBackImage(battle.getPost2().getBackImage())
                 .createdAt(battle.getCreatedAt())
                 .build();
     }
@@ -61,12 +66,16 @@ public class BattleConverter {
                 .isLiked(!battle.getBattleLikesList().isEmpty())
                 .title(battle.getTitle())
                 .firstClositId(battle.getPost1().getUser().getClositId())
-                .firstPostId(battle.getPost1().getId())
                 .firstProfileImage(battle.getPost1().getUser().getProfileImage())
+                .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
                 .firstVotingRate(battle.getFirstVotingRate())
                 .secondClositId(battle.getPost2().getUser().getClositId())
-                .secondPostId(battle.getPost2().getId())
                 .secondProfileImage(battle.getPost2().getUser().getProfileImage())
+                .secondPostId(battle.getPost2().getId())
+                .secondPostFrontImage(battle.getPost2().getFrontImage())
+                .secondPostBackImage(battle.getPost2().getBackImage())
                 .secondVotingRate(battle.getSecondVotingRate())
                 .build();
     }
@@ -88,7 +97,10 @@ public class BattleConverter {
         return BattleResponseDTO.ChallengeBattlePreviewDTO.builder()
                 .battleId(battle.getId())
                 .firstClositId(battle.getPost1().getUser().getClositId())
+                .firstProfileImage(battle.getPost1().getUser().getProfileImage())
                 .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
                 .title(battle.getTitle())
                 .build();
     }

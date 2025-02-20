@@ -22,6 +22,7 @@ public class BattleLikeConverter {
     public static BattleLikeResponseDTO.CreateBattleLikeResultDTO createBattleLikeResultDTO(BattleLike battleLike) {
         return BattleLikeResponseDTO.CreateBattleLikeResultDTO.builder()
                 .battleLikeId(battleLike.getId())
+                .clositId(battleLike.getUser().getClositId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }

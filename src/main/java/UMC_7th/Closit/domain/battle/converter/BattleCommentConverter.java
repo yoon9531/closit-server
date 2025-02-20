@@ -22,8 +22,9 @@ public class BattleCommentConverter {
 
     public static BattleCommentResponseDTO.createBattleCommentResultDTO createBattleCommentResponseDTO (BattleComment battleComment) {
         return BattleCommentResponseDTO.createBattleCommentResultDTO.builder()
-                .clositId(battleComment.getUser().getClositId())
                 .battleCommentId(battleComment.getId())
+                .clositId(battleComment.getUser().getClositId())
+                .thumbnail(battleComment.getUser().getProfileImage())
                 .createdAt(battleComment.getCreatedAt())
                 .build();
     }
@@ -32,6 +33,7 @@ public class BattleCommentConverter {
         return BattleCommentResponseDTO.BattleCommentPreviewDTO.builder()
                 .battleCommentId(battleComment.getId())
                 .clositId(battleComment.getUser().getClositId())
+                .thumbnail(battleComment.getUser().getProfileImage())
                 .content(battleComment.getContent())
                 .createdAt(battleComment.getCreatedAt())
                 .build();
