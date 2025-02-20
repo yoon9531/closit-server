@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,16 +27,27 @@ public class AmazonS3Manager {
     private final AmazonConfig amazonConfig;
 
     public String uploadFile(String keyName, MultipartFile file) {
-        ObjectMetadata metadata = new ObjectMetadata();
-        log.info("File size: {} bytes", file.getSize());
+        long fileSize = file.getSize();
+        long maxFileSize = 10 * 1024 * 1024; // 10MB 제한
+
+        log.info("File size: {} bytes", fileSize);
         log.info("File extension: {}", file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         log.info("Original file name: {}", file.getOriginalFilename());
 
+        if (fileSize > maxFileSize) {
+            log.error("❌ Max upload size exceeded: {}", fileSize);
+            throw new GeneralException(ErrorStatus.MAX_UPLOAD_SIZE_EXCEEDED);
+        }
+
+        ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
 
         try (InputStream inputStream = file.getInputStream()) { // ✅ try-with-resources 사용하여 자원 해제 보장
             amazonS3.putObject(new PutObjectRequest(amazonConfig.getBucket(), keyName, inputStream, metadata));
+        } catch (MaxUploadSizeExceededException e) {
+            log.error("❌ Max upload size exceeded: {}", e.getMessage(), e);
+            throw new GeneralException(ErrorStatus.MAX_UPLOAD_SIZE_EXCEEDED);
         } catch (IOException e) {
             log.error("❌ Failed to upload file to S3: {}", e.getMessage(), e);
             throw new RuntimeException("S3 파일 업로드 실패: " + e.getMessage(), e);
