@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 
 public interface PostQueryService {
 
-    PostResponseDTO.PostPreviewDTO getPostById(Long postId, User currentUser);
+    PostResponseDTO.PostPreviewDTO getPostById(Long postId);
 
     // 팔로우 기반 게시글 조회
     Slice<PostResponseDTO.PostPreviewDTO> getPostListByFollowing(boolean follower, Pageable pageable);

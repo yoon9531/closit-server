@@ -37,7 +37,9 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final SecurityUtil securityUtil;
     private final HighlightRepository highlightRepository;
 
-    public PostResponseDTO.PostPreviewDTO getPostById(Long postId, User currentUser) {
+    public PostResponseDTO.PostPreviewDTO getPostById(Long postId) {
+        User currentUser = securityUtil.getCurrentUser();
+
         // 게시글 조회
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND));
@@ -80,7 +82,28 @@ public class PostQueryServiceImpl implements PostQueryService {
             posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
         }
 
-        return convertToPostPreviewDTO(posts, currentUser);
+        return posts.map(post -> {
+            // 좋아요 여부
+            Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+
+            // 북마크 여부
+            Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
+
+            // 하이라이트 여부 확인
+            Boolean isHighlighted = highlightRepository.existsByPost(post);
+
+            // 해시태그 조회
+            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
+                    .map(postHashtag -> postHashtag.getHashtag().getContent())
+                    .collect(Collectors.toList());
+
+            // 아이템 태그 조회
+            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+
+            // DTO 변환
+            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
+        });
     }
 
     public Slice<PostResponseDTO.PostPreviewDTO> getPostListByHashtag(String hashtag, Pageable pageable) {
@@ -96,7 +119,28 @@ public class PostQueryServiceImpl implements PostQueryService {
         Slice<Post> posts = postRepository.findByHashtagId(foundHashtag.getId(), pageable);
 
         User currentUser = securityUtil.getCurrentUser();
-        return convertToPostPreviewDTO(posts, currentUser);
+        return posts.map(post -> {
+            // 좋아요 여부
+            Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+
+            // 북마크 여부
+            Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
+
+            // 하이라이트 여부 확인
+            Boolean isHighlighted = highlightRepository.existsByPost(post);
+
+            // 해시태그 조회
+            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
+                    .map(postHashtag -> postHashtag.getHashtag().getContent())
+                    .collect(Collectors.toList());
+
+            // 아이템 태그 조회
+            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+
+            // DTO 변환
+            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
+        });
     }
 
     private Slice<PostResponseDTO.PostPreviewDTO> convertToPostPreviewDTO(Slice<Post> posts, User currentUser) {

@@ -50,10 +50,9 @@ public class PostController {
 
     @Operation(summary = "특정 게시글 조회")
     @GetMapping("/{post_id}")
-    public ApiResponse<PostResponseDTO.PostPreviewDTO> getPostById(@PathVariable("post_id") Long postId,
-                                                                   @AuthenticationPrincipal User currentUser) {
+    public ApiResponse<PostResponseDTO.PostPreviewDTO> getPostById(@PathVariable("post_id") Long postId) {
 
-        PostResponseDTO.PostPreviewDTO postPreviewDTO = postQueryService.getPostById(postId, currentUser);
+        PostResponseDTO.PostPreviewDTO postPreviewDTO = postQueryService.getPostById(postId);
 
         return ApiResponse.onSuccess(postPreviewDTO);
     }
