@@ -38,12 +38,14 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final HighlightRepository highlightRepository;
 
     public PostResponseDTO.PostPreviewDTO getPostById(Long postId, User currentUser) {
+        User user = securityUtil.getCurrentUser();
+
         // 게시글 조회
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND));
 
         // 좋아요 여부 확인
-        Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+        Boolean isLiked = likeRepository.existsByUserAndPost(user, post);
 
         // 북마크 여부 확인
         Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
