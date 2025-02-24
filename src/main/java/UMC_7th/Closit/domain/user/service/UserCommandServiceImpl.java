@@ -92,7 +92,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 댓글, 좋아요 삭제 후 먼저 삭제 후 탈퇴
+        // 댓글, 좋아요 먼저 삭제 후 탈퇴
         commentRepository.deleteByUserId(persistentUser.getId());
         likeRepository.deleteByUserId(persistentUser.getId());
 
