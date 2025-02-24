@@ -1,11 +1,10 @@
 package UMC_7th.Closit.domain.user.service;
 
-import UMC_7th.Closit.domain.follow.entity.Follow;
-import UMC_7th.Closit.domain.follow.repository.FollowRepository;
-import UMC_7th.Closit.domain.user.converter.UserConverter;
+import UMC_7th.Closit.domain.notification.repository.NotificationRepository;
+import UMC_7th.Closit.domain.post.repository.CommentRepository;
+import UMC_7th.Closit.domain.post.repository.LikeRepository;
 import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
-import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -31,6 +30,8 @@ import java.util.UUID;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final SecurityUtil securityUtil;
@@ -90,6 +91,10 @@ public class UserCommandServiceImpl implements UserCommandService {
         // 🛠 해결: JPA 영속 상태로 변환
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 댓글, 좋아요 삭제 후 먼저 삭제 후 탈퇴
+        commentRepository.deleteByUserId(persistentUser.getId());
+        likeRepository.deleteByUserId(persistentUser.getId());
 
         userRepository.delete(persistentUser);
     }

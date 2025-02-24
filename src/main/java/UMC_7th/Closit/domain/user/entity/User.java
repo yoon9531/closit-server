@@ -60,11 +60,11 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Likes> likesList = new ArrayList<>();
 
@@ -98,7 +98,11 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Notification> notificationList = new ArrayList<>();
+    private List<Notification> notificationUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Notification> notificationSenderList = new ArrayList<>();
 
     public User updateRole(Role newRole) {
         this.role = newRole;

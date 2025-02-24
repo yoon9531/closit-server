@@ -115,7 +115,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         String content = likes.getUser().getName() + "님이 좋아요를 눌렀습니다.";
 
         // 좋아요를 누른 사용자가 본인이 아닐 경우, 알림 전송
-        if (!receiver.getId().equals(likes.getUser().getId())) {
+        if (!receiver.getId().equals(sender.getId())) {
             NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, NotificationType.LIKE);
             sendNotification(request);
         }
@@ -128,7 +128,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         String content = comment.getUser().getName() + "님이 댓글을 작성했습니다.";
 
         // 댓글을 작성한 사용자가 본인이 아닐 경우, 알림 전송
-        if (!receiver.getId().equals(comment.getUser().getId())) {
+        if (!receiver.getId().equals(sender.getId())) {
             NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, NotificationType.COMMENT);
             sendNotification(request);
         }

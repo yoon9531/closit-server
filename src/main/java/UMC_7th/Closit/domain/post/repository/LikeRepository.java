@@ -4,6 +4,9 @@ import UMC_7th.Closit.domain.post.entity.Likes;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,4 +16,8 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
     boolean existsByUserAndPost(User user, Post post);
     
     Optional<Likes> findByUserAndPost(User user, Post post);
+
+    @Modifying
+    @Query(value = "DELETE FROM likes WHERE user_id = :userId", nativeQuery = true)
+    void deleteByUserId(@Param("userId") Long userId);
 }

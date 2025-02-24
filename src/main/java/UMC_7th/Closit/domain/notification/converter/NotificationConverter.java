@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 
 public class NotificationConverter {
 
-    public static Notification toNotification (User user, User sender, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
+    public static Notification toNotification (User receiver, User sender, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
         return Notification.builder()
-                .user(user)
+                .user(receiver)
                 .sender(sender)
                 .content(request.getContent())
                 .type(request.getType())
