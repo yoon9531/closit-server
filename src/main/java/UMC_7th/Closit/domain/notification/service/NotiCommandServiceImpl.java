@@ -41,6 +41,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
     private final SecurityUtil securityUtil;
+    private final String REDIRECTED_URL = "http://localhost:8080/api/auth";
 
     @Override
     public SseEmitter subscribe(Long userId, String lastEventId) { // SSE 연결
@@ -113,10 +114,11 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         User receiver = likes.getPost().getUser(); // 게시글 작성자
         User sender = likes.getUser();
         String content = likes.getUser().getName() + "님이 좋아요를 눌렀습니다.";
+        String url = REDIRECTED_URL + "/posts/" + likes.getPost().getId() + "/likes";
 
         // 좋아요를 누른 사용자가 본인이 아닐 경우, 알림 전송
         if (!receiver.getId().equals(likes.getUser().getId())) {
-            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, NotificationType.LIKE);
+            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.LIKE);
             sendNotification(request);
         }
     }
@@ -126,10 +128,11 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         User receiver = comment.getPost().getUser(); // 게시글 작성자 ID
         User sender = comment.getUser();
         String content = comment.getUser().getName() + "님이 댓글을 작성했습니다.";
+        String url = REDIRECTED_URL + "/posts/" + comment.getPost().getId() + "/comments";
 
         // 댓글을 작성한 사용자가 본인이 아닐 경우, 알림 전송
         if (!receiver.getId().equals(comment.getUser().getId())) {
-            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, NotificationType.COMMENT);
+            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.COMMENT);
             sendNotification(request);
         }
     }
@@ -139,8 +142,9 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         User receiver = follow.getReceiver(); // 팔로워 알림 받는 사용자
         User sender = follow.getSender();
         String content = follow.getSender().getName() + "님이 회원님을 팔로우하기 시작했습니다.";
+        String url = REDIRECTED_URL + "/users/" + receiver.getClositId();
 
-        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, NotificationType.FOLLOW);
+        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.FOLLOW);
 
         sendNotification(request);
     }

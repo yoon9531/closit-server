@@ -17,6 +17,7 @@ public class NotificationConverter {
                 .user(user)
                 .sender(sender)
                 .content(request.getContent())
+                .url(request.getUrl())
                 .type(request.getType())
                 .build();
     }
@@ -26,16 +27,18 @@ public class NotificationConverter {
                 .notificationId(notification.getId())
                 .content(notification.getContent())
                 .type(notification.getType())
+                .url(notification.getUrl())
                 .isRead(notification.isRead())
                 .createdAt(notification.getCreatedAt())
                 .build();
     }
 
-    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest (User receiver, User sender, String content, NotificationType notificationType) {
+    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest (User receiver, User sender, String content, String url, NotificationType notificationType) {
         return NotificationRequestDTO.SendNotiRequestDTO.builder()
                 .receiverId(receiver.getId())
                 .senderId(sender.getId())
                 .content(content)
+                .url(url)
                 .type(notificationType)
                 .build();
     }
@@ -47,6 +50,7 @@ public class NotificationConverter {
                 .userName(notification.getUser().getName())
                 .imageUrl(notification.getSender().getProfileImage())
                 .content(notification.getContent())
+                .url(notification.getUrl())
                 .type(notification.getType())
                 .isRead(notification.isRead())
                 .build();
