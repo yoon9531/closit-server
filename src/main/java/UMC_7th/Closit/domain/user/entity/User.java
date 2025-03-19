@@ -24,7 +24,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -38,7 +37,7 @@ public class User extends BaseEntity {
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role; // USER, ADMIN
+    private Role role; // USER, ADMINS
 
     @Column(length = 20, nullable = false, unique = true)
     private String clositId;

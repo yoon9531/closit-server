@@ -34,7 +34,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomUserDetailService customUserDetailsService; // 🔹 UserDetailsService 추가
+    private final CustomUserDetailService customUserDetailsService;
     private final UserRepository userRepository;
 
     @Override
@@ -54,10 +54,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Role role = Role.valueOf(roleString); // String->Role 반환
 
+            // Blocked User
             User user = userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
             if (user.getRole() == Role.BLOCKED) {
                 log.warn("Blocked user [{}] attempted to access secured resources.", email);
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Blocked user access");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Access is denied.\"}");
                 return;
             }
 

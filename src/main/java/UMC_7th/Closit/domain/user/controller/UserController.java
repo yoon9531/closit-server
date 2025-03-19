@@ -47,9 +47,9 @@ public class UserController {
     }
 
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
-    @PostMapping("/{closit_id}/block")
+    @PatchMapping("/{closit_id}/block")
     public ApiResponse<String> blockUser(@PathVariable String closit_id) {
-        User userInfo = userCommandService.blockUser(closit_id);
+        userCommandService.blockUser(closit_id);
         String responseMsg = "User " + closit_id + " has been blocked";
         return ApiResponse.onSuccess(responseMsg);
     }
