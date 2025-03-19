@@ -145,7 +145,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         User receiver = follow.getReceiver(); // 팔로워 알림 받는 사용자
         User sender = follow.getSender();
         String content = follow.getSender().getName() + "님이 회원님을 팔로우하기 시작했습니다.";
-        String url = URL + "/users/" + receiver.getClositId();
+        String url = URL + "/users/" + sender.getClositId();
 
         NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.FOLLOW);
 
