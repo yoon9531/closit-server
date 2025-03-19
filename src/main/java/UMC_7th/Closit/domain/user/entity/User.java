@@ -24,6 +24,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role; // USER, ADMIN
@@ -44,6 +46,7 @@ public class User extends BaseEntity {
     @Column(length = 20, nullable = false)
     private String name;
 
+    @Setter
     @Column(length = 255, nullable = false)
     private String password;
 
@@ -118,11 +121,8 @@ public class User extends BaseEntity {
         this.clositId = clositId;
     }
 
-    public void setPassword(String encode) {
-        this.password = encode;
-    }
-
     public void setBirth(@PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.") LocalDate birth) {
         this.birth = birth;
     }
+
 }

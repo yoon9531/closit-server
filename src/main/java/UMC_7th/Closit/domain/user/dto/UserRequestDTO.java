@@ -53,4 +53,13 @@ public class UserRequestDTO {
         @PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.")
         private LocalDate birth;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class BlockUserDTO {
+
+        @ExistUserClositId
+        private String clositId;
+
+    }
 }

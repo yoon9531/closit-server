@@ -46,6 +46,13 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 
+    @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
+    @PostMapping("/{closit_id}/block")
+    public ApiResponse<UserResponseDTO.UserInfoDTO> blockUser(@PathVariable String closit_id) {
+        User userInfo = userCommandService.blockUser(closit_id);
+        return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
+    }
+
     @Operation(summary = "사용자 프로필 이미지 등록", description = "특정 사용자의 프로필 이미지를 등록합니다.")
     @PatchMapping(
             value = "/{closit_id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}

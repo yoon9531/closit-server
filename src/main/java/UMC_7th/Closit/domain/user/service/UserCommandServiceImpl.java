@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
+import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -167,5 +168,16 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
         return currentUser;
+    }
+
+    @Override
+    public User blockUser (String clositId) {
+        User targetUser = userRepository.findByClositId(clositId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND))
+                .updateRole(Role.BLOCKED);
+
+        targetUser.setRole(Role.BLOCKED);
+
+        return targetUser;
     }
 }

@@ -147,4 +147,13 @@ public class UserResponseDTO {
         private boolean isLast;
         private boolean hasNext;
     }
+
+    // UserBlockDTO
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserBlockDTO {
+        private String clositId;
+    }
 }
