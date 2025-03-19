@@ -106,7 +106,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         emitters.forEach(
                 (key, emitter) -> {
                     // 데이터 전송
-                    sendToClient(emitter, key, NotificationConverter.sendNotiResult(notification));
+                    sendToClient(emitter, key, NotificationConverter.sendNotiResponse(notification));
                 }
         );
         return notification;
