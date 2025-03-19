@@ -70,34 +70,21 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.info("-------------------- JwtTokenProvider.getClaims ---------------------");
-            log.info("⏳ Expired Token: {}", token);
-            log.info("⏳ Expired At: {}", e.getClaims().getExpiration());
-            log.info("⏳ Current Time: {}", new Date(System.currentTimeMillis()));
             return e.getClaims();
         }
     }
 
     public boolean validateToken(String token) {
         try {
-            log.info("🔍 Validating Token: {}", token);
             Claims claims = getClaims(token);
-            log.info("🔍 Token Claims: {}", claims);
-            log.info("🔍 Token Subject: {}", claims.getSubject());
-            log.info("🔍 Token Expiration: {}", claims.getExpiration());
-            log.info("🔍 Token Issued At: {}", claims.getIssuedAt());
 
             Jwts.parserBuilder()
                     .setSigningKey(key)
-                    // .setAllowedClockSkewSeconds(60) // ✅ Clock Skew 적용 (1분 오차 허용)
                     .build()
                     .parseClaimsJws(token);
 
             return true;
         } catch (ExpiredJwtException e) {
-            log.info("⏳ Expired Token: {}", token);
-            log.info("⏳ Expired At: {}", e.getClaims().getExpiration());
-            log.info("⏳ Current Time: {}", new Date(System.currentTimeMillis()));
             throw new UserHandler(ErrorStatus.EXPIRED_TOKEN);
         } catch (MalformedJwtException e) {
             log.info("🚨 Malformed Token: {}", token);
