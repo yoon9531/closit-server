@@ -43,6 +43,10 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new GeneralException(ErrorStatus.PASSWORD_NOT_CORRESPOND);
         }
 
+        if (user.getRole() == Role.BLOCKED) {
+            throw new UserHandler(ErrorStatus.USER_BLOCKED);
+        }
+
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
 
