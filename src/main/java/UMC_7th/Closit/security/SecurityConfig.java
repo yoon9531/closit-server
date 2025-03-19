@@ -34,14 +34,6 @@ public class SecurityConfig {
                 // disable session management
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 폼 기반 로그인 설정
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/")
-                )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true))
                 // 경로 접속 권한 설정
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         // Swagger, login, register, refresh 허용

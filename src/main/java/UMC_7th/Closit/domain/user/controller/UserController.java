@@ -48,9 +48,10 @@ public class UserController {
 
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
     @PostMapping("/{closit_id}/block")
-    public ApiResponse<UserResponseDTO.UserInfoDTO> blockUser(@PathVariable String closit_id) {
+    public ApiResponse<String> blockUser(@PathVariable String closit_id) {
         User userInfo = userCommandService.blockUser(closit_id);
-        return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
+        String responseMsg = "User " + closit_id + " has been blocked";
+        return ApiResponse.onSuccess(responseMsg);
     }
 
     @Operation(summary = "사용자 프로필 이미지 등록", description = "특정 사용자의 프로필 이미지를 등록합니다.")

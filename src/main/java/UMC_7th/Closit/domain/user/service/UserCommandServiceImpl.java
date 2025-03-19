@@ -172,12 +172,8 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public User blockUser (String clositId) {
-        User targetUser = userRepository.findByClositId(clositId)
+        return userRepository.findByClositId(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND))
                 .updateRole(Role.BLOCKED);
-
-        targetUser.setRole(Role.BLOCKED);
-
-        return targetUser;
     }
 }

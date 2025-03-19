@@ -1,7 +1,11 @@
 package UMC_7th.Closit.security.jwt;
 
 import UMC_7th.Closit.domain.user.entity.Role;
+import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailService customUserDetailsService; // 🔹 UserDetailsService 추가
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal (
@@ -48,6 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String roleString = claims.get("role", String.class);
 
             Role role = Role.valueOf(roleString); // String->Role 반환
+
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            if (user.getRole() == Role.BLOCKED) {
+                log.warn("Blocked user [{}] attempted to access secured resources.", email);
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Blocked user access");
+                return;
+            }
+
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
             // SecurityContext에 UserDetails 설정
