@@ -41,10 +41,6 @@ public class JwtTokenProvider {
         Date issuedAt = Date.from(now);
         Date expiration = Date.from(now.plusMillis(validity));
 
-        log.info("🔑 Creating JWT Token...");
-        log.info("🕒 Issued At: {}", issuedAt);
-        log.info("⏳ Expiration: {}", expiration);
-
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)

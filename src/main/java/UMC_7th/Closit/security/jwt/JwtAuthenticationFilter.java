@@ -50,9 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && jwtTokenProvider.validateToken(token)) {
             Claims claims = jwtTokenProvider.getClaims(token);
             String email = claims.getSubject();
-            String roleString = claims.get("role", String.class);
 
-            Role role = Role.valueOf(roleString); // String->Role 반환
 
             // Blocked User
             User user = userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -70,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, // principal을 UserDetails 객체로 설정
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_"+role.name())) // authorities를 SimpleGrantedAuthority 객체로 설정
+                    List.of(new SimpleGrantedAuthority("ROLE_"+ user.getRole().name())) // authorities를 SimpleGrantedAuthority 객체로 설정
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

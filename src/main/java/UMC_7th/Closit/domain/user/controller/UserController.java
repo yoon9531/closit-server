@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +47,7 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
     @PatchMapping("/{closit_id}/block")
     public ApiResponse<String> blockUser(@PathVariable String closit_id) {
