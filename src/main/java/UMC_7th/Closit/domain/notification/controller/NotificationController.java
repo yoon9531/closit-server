@@ -53,7 +53,7 @@ public class NotificationController {
 
         Notification notification = notiQueryService.readNotification(userId, notification_id);
 
-        return ApiResponse.onSuccess(NotificationConverter.notiPreviewDTO(notification));
+        return ApiResponse.onSuccess(NotificationConverter.getNotiPreviewDTO(notification));
     }
 
     @PatchMapping()
@@ -70,7 +70,7 @@ public class NotificationController {
 
         Slice<Notification> notificationList = notiQueryService.getNotificationList(userId, page);
 
-        return ApiResponse.onSuccess(NotificationConverter.notiPreviewListDTO(notificationList));
+        return ApiResponse.onSuccess(NotificationConverter.getNotiPreviewListDTO(notificationList));
     }
 
     @DeleteMapping("/{notification_id}")
