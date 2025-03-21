@@ -28,6 +28,9 @@ public class Notification extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "url", nullable = false)
+    private String url;
+
     @Column(nullable = false)
     private boolean isRead;
 

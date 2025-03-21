@@ -19,6 +19,7 @@ public class NotificationResponseDTO {
     public static class SendNotiResultDTO { // 알림 전송
         private Long notificationId;
         private String content;
+        private String url;
         private NotificationType type;
         private boolean isRead;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
@@ -35,6 +36,7 @@ public class NotificationResponseDTO {
         private String userName;
         private String imageUrl;
         private String content;
+        private String url;
         private NotificationType type;
         private boolean isRead;
     }

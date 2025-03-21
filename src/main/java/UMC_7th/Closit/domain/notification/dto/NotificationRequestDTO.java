@@ -12,6 +12,7 @@ public class NotificationRequestDTO {
         private Long receiverId;
         private Long senderId;
         private String content;
+        private String url;
         private NotificationType type;
     }
 }
