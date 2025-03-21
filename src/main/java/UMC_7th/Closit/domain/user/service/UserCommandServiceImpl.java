@@ -7,6 +7,8 @@ import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.entity.UserBlock;
+import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
@@ -31,6 +33,7 @@ import java.util.UUID;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final UserBlockRepository userBlockRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final SecurityUtil securityUtil;
@@ -87,7 +90,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
-        // 🛠 해결: JPA 영속 상태로 변환
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -167,5 +169,29 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
         return currentUser;
+    }
+
+    @Override
+    public UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
+        String blockerClositId = blockUserDTO.getBlockerClositId();
+        String blockedClositId = blockUserDTO.getBlockedClositId();
+
+        User blocker = userRepository.findByClositId(blockerClositId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // Throw if there already exist block record
+        if (userBlockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
+            throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
+        }
+
+        UserBlock userBlock = UserBlock.builder()
+                .blocker(blocker)
+                .blocked(blocked)
+                .build();
+
+        return UserConverter.toUserBlockResponseDTO(userBlockRepository.save(userBlock));
     }
 }

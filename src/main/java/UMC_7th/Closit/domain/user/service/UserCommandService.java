@@ -17,4 +17,6 @@ public interface UserCommandService {
     boolean isClositIdUnique(String clositId);
 
     User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO);
+
+    UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
 }

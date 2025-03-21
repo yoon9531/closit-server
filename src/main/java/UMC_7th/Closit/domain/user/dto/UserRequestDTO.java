@@ -53,4 +53,16 @@ public class UserRequestDTO {
         @PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.")
         private LocalDate birth;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public class BlockUserDTO {
+        @NotBlank(message = "차단자의 clositId는 필수 입력 값입니다.")
+        @ExistUserClositId
+        private String blockerClositId;
+
+        @NotBlank(message = "차단할 clositId는 필수 입력 값입니다.")
+        @ExistUserClositId
+        private String blockedClositId;
+    }
 }

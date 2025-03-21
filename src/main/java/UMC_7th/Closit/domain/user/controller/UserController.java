@@ -61,6 +61,13 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
     }
 
+    @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
+    @PostMapping("/block")
+    public ApiResponse<String> blockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
+        userCommandService.blockUser(blockUserDTO);
+        return ApiResponse.onSuccess("User blocked successfully");
+    }
+
     @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers(

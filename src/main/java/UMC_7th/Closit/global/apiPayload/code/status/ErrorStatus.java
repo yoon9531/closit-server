@@ -28,7 +28,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CLOSIT_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4007", "이미 존재하는 ClositId입니다."), // 리소스 충돌
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4008", "비밀번호가 유효하지 않습니다."), // 비밀번호 유효성 검사 실패
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
-
+    USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),
@@ -98,7 +98,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "UPLOAD4001", "파일 업로드 크기 제한을 초과했습니다."),
 
     // S3 관련 에러
-    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.");
+    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.") ;
 
 
     private final HttpStatus httpStatus;
