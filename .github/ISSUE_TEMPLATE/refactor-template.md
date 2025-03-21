@@ -1,8 +1,8 @@
 ---
-name: Feature Template
-about: 기능 추가 이슈 템플릿
-title: 'feat: '
-labels: ['✨feature']
+name: Refactor Template
+about: 리팩토링 템플릿
+title: 'refactor: '
+labels: ['♻️refactor']
 assignees: ''
 
 ---
