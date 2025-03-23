@@ -20,7 +20,6 @@ public class SecurityUtil {
 
     public User getCurrentUser () {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("authentication: {}", authentication);
 
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             throw new UserHandler(ErrorStatus._UNAUTHORIZED);
