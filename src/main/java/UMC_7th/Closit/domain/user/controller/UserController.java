@@ -69,6 +69,13 @@ public class UserController {
         return ApiResponse.onSuccess("User blocked successfully");
     }
 
+    @Operation(summary = "사용자 차단 해제", description = "특정 사용자의 차단을 해제합니다.")
+    @DeleteMapping("/block")
+    public ApiResponse<String> unblockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
+        userCommandService.unblockUser(blockUserDTO);
+        return ApiResponse.onSuccess("User unblocked successfully");
+    }
+
     @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
@@ -119,6 +126,7 @@ public class UserController {
     }
 
     @GetMapping("/{closit_id}/recent-post")
+    @CheckBlocked(targetIdParam = "closit_id")
     @Operation(summary = "사용자의 최근 게시물 조회",
             description = """
             ## 특정 사용자의 최근 게시글 조회

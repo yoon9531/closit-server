@@ -39,6 +39,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final SecurityUtil securityUtil;
 
     private final AmazonS3Manager amazonS3Manager;
+    private final FollowRepository followRepository;
 
     @Value("${cloud.aws.s3.default-profile-image}")
     private String defaultProfileImage;
@@ -184,6 +185,15 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
         }
 
+        // 사용자 팔로워, 팔로잉 목록에서 삭제
+        Follow follow = followRepository.findByFollowerAndFollowing(blocker, blocked);
+        log.info("Receiver: {}", follow.getReceiver());
+        log.info("Sender: {}", follow.getSender());
+        if (follow != null) {
+            followRepository.delete(follow);
+        }
+
+
         UserBlock userBlock = UserBlock.builder()
                 .blocker(blocker)
                 .blocked(blocked)
@@ -201,5 +211,19 @@ public class UserCommandServiceImpl implements UserCommandService {
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         return userBlockRepository.existsByBlockerAndBlocked(targetUser, requesterUser);
+    }
+
+    @Override
+    public void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
+        String blockedClositId = blockUserDTO.getBlockedClositId();
+
+        User blocker = securityUtil.getCurrentUser();
+        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        UserBlock userBlock = userBlockRepository.findByBlockerAndBlocked(blocker, blocked)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
+
+        userBlockRepository.delete(userBlock);
     }
 }

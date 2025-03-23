@@ -25,6 +25,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_MATCH (HttpStatus.FORBIDDEN, "USER4004", "사용자가 일치하지 않습니다."), // 권한 부족
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4005","이미 존재하는 이메일입니다"), // 리소스 충돌
     USER_NOT_FOUND (HttpStatus.NOT_FOUND, "USER4006", "사용자가 존재하지 않습니다."), // 존재하지 않는 사용자
+    USER_NOT_BLOCKED(HttpStatus.NOT_FOUND, "USER4007", "사용자가 차단되지 않았습니다."), // 차단되지 않은 사용자
     CLOSIT_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4007", "이미 존재하는 ClositId입니다."), // 리소스 충돌
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4008", "비밀번호가 유효하지 않습니다."), // 비밀번호 유효성 검사 실패
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
@@ -98,7 +99,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "UPLOAD4001", "파일 업로드 크기 제한을 초과했습니다."),
 
     // S3 관련 에러
-    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.") ;
+    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.");
 
 
     private final HttpStatus httpStatus;

@@ -21,4 +21,6 @@ public interface UserCommandService {
     UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
 
     boolean isBlockedBy(String targetClositId, String clositId);
+
+    void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
 }
