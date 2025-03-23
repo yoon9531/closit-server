@@ -185,12 +185,14 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
         }
 
-        // 사용자 팔로워, 팔로잉 목록에서 삭제
-        Follow follow = followRepository.findByFollowerAndFollowing(blocker, blocked);
-        log.info("Receiver: {}", follow.getReceiver());
-        log.info("Sender: {}", follow.getSender());
-        if (follow != null) {
-            followRepository.delete(follow);
+        // 차단된 사용자가 차단한 사용자를 팔로우 했을 때 팔로우 관계 삭제
+        Follow followBlockedtoBlocker = followRepository.findBySenderAndReceiver(blocked, blocker);
+        if (followBlockedtoBlocker != null) {
+            followRepository.delete(followBlockedtoBlocker);
+        }
+        Follow followBlockertoBlocked = followRepository.findBySenderAndReceiver(blocker, blocked);
+        if (followBlockertoBlocked != null) {
+            followRepository.delete(followBlockertoBlocked);
         }
 
 

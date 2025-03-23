@@ -33,5 +33,5 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("SELECT COUNT(f) FROM Follow f WHERE f.sender = :user")
     long countBySender(@Param("user") User user);
 
-    Follow findByFollowerAndFollowing (User blocker, User blocked);
+    Follow findBySenderAndReceiver (User sender, User receiver);
 }
