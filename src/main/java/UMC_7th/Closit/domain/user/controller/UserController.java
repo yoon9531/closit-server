@@ -9,6 +9,7 @@ import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.domain.user.service.UserQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
+import UMC_7th.Closit.global.validation.annotation.CheckBlocked;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,6 @@ public class UserController {
     @Operation(summary = "사용자 삭제", description = "특정 사용자를 삭제합니다.")
     @DeleteMapping("/")
     public ApiResponse<String> deleteUser() {
-
         userCommandService.deleteUser();
         return ApiResponse.onSuccess("Deletion successful");
     }
@@ -57,7 +57,8 @@ public class UserController {
 
     @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
     @GetMapping("/{closit_id}")
-    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo(@PathVariable String closit_id) {
+    @CheckBlocked(targetIdParam = "closit_id")
+    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable String closit_id) {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
     }
 

@@ -19,4 +19,6 @@ public interface UserCommandService {
     User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO);
 
     UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
+
+    boolean isBlockedBy(String targetClositId, String clositId);
 }

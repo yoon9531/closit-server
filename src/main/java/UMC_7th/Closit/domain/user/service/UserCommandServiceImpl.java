@@ -194,4 +194,15 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         return UserConverter.toUserBlockResponseDTO(userBlockRepository.save(userBlock));
     }
+
+    // Target이 requester(나)를 차단했는지 확인
+    public boolean isBlockedBy(String targetClositId, String requesterClositId) {
+        User targetUser = userRepository.findByClositId(targetClositId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User requesterUser = userRepository.findByClositId(requesterClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return userBlockRepository.existsByBlockerAndBlocked(targetUser, requesterUser);
+    }
 }
