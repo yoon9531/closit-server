@@ -70,8 +70,9 @@ public class UserController {
     }
 
     @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
+    @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
-    public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers(
+    public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
             @PathVariable String closit_id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -81,6 +82,7 @@ public class UserController {
     }
 
     @Operation(summary = "사용자의 팔로잉 목록 조회", description = "특정 사용자의 팔로잉 목록을 조회합니다.")
+    @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
             @PathVariable String closit_id,
@@ -92,6 +94,7 @@ public class UserController {
     }
 
     @Operation(summary = "사용자의 하이라이트 목록 조회", description = "특정 사용자의 하이라이트 목록을 조회합니다.")
+    @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
             @PathVariable String closit_id,

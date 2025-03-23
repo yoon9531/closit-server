@@ -57,10 +57,6 @@ public class UserRequestDTO {
     @Getter
     @AllArgsConstructor
     public static class BlockUserDTO {
-        @NotBlank(message = "차단자의 clositId는 필수 입력 값입니다.")
-        @ExistUserClositId
-        private String blockerClositId;
-
         @NotBlank(message = "차단할 clositId는 필수 입력 값입니다.")
         @ExistUserClositId
         private String blockedClositId;

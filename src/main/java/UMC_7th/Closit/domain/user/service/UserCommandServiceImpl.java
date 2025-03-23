@@ -173,12 +173,9 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
-        String blockerClositId = blockUserDTO.getBlockerClositId();
         String blockedClositId = blockUserDTO.getBlockedClositId();
 
-        User blocker = userRepository.findByClositId(blockerClositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
+        User blocker = securityUtil.getCurrentUser();
         User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
