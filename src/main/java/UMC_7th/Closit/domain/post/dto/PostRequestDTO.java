@@ -12,7 +12,16 @@ public class PostRequestDTO {
 
     @Getter
     @Builder
+    public static class createPresignedUrlDTO {
+        private String frontImageUrl;
+        private String backImageUrl;
+    }
+
+    @Getter
+    @Builder
     public static class CreatePostDTO{
+        private String frontImage;
+        private String backImage;
         private List<String> hashtags;
         private List<PostResponseDTO.ItemTagDTO> frontItemtags;
         private List<PostResponseDTO.ItemTagDTO> backItemtags;

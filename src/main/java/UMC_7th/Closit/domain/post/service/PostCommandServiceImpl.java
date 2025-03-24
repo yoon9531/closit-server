@@ -38,9 +38,8 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final AmazonS3Manager amazonS3Manager;
 
     @Override
-    public Post createPost(PostRequestDTO.CreatePostDTO request, MultipartFile frontImage, MultipartFile backImage) {
+    public Post createPost(PostRequestDTO.CreatePostDTO request) {
         // 1. User 조회
-
         User currentUser = securityUtil.getCurrentUser();
 
         // 2. 사용자가 오늘 작성한 게시글이 있는지 확인
@@ -48,16 +47,10 @@ public class PostCommandServiceImpl implements PostCommandService {
         LocalDateTime now = LocalDateTime.now();
         boolean isMission = postRepository.findAllByUserIdAndCreatedAtBetween(currentUser.getId(), startOfDay, now).isEmpty();
 
-        String uuid_front = UUID.randomUUID().toString();
-        String storedFrontLocation = amazonS3Manager.uploadFile(amazonS3Manager.generatePostFrontImageKeyName(uuid_front), frontImage);
-
-        String uuid_back = UUID.randomUUID().toString();
-        String storedBackLocation = amazonS3Manager.uploadFile(amazonS3Manager.generatePostBackImageKeyName(uuid_back), backImage);
-
         // 3. Post 생성 및 저장
         Post post = Post.builder()
-                .frontImage(storedFrontLocation)
-                .backImage(storedBackLocation)
+                .frontImage(request.getFrontImage())
+                .backImage(request.getBackImage())
                 .pointColor(request.getPointColor())
                 .visibility(request.getVisibility())
                 .user(currentUser)

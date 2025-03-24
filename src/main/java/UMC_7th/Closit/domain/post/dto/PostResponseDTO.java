@@ -11,6 +11,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostResponseDTO {
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class createPresignedUrlDTO { // 게시글 presigned Url 발급
+        private String frontImageUrl;
+        private String backImageUrl;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreatePostResultDTO { // 게시글 업로드 응답 DTO
+        private String clositId;
+        private Long postId;
+        private String frontImage;
+        private String backImage;
+        private Visibility visibility;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime createdAt;
+    }
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -54,19 +78,6 @@ public class PostResponseDTO {
         private boolean isFirst;
         private boolean isLast;
         private boolean hasNext;
-    }
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CreatePostResultDTO { // 게시글 업로드 응답 DTO
-        private String clositId;
-        private Long postId;
-        private String frontImage;
-        private String backImage;
-        private Visibility visibility;
-        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-        private LocalDateTime createdAt;
     }
 
     @Builder

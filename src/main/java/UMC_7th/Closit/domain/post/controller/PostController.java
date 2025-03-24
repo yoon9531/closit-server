@@ -6,44 +6,54 @@ import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.service.PostCommandService;
 import UMC_7th.Closit.domain.post.service.PostQueryService;
-import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.attribute.standard.Media;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/posts")
 public class PostController {
 
+    private final SecurityUtil securityUtil;
+    private final S3Service s3Service;
     private final PostQueryService postQueryService;
     private final PostCommandService postCommandService;
 
-    @Operation(summary = "게시글 업로드")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost (
-            @RequestPart @Valid
-            PostRequestDTO.CreatePostDTO request, // 게시글 정보
-            @RequestPart("frontImage")
-            MultipartFile frontImage, // 앞면 이미지
-            @RequestPart("backImage")
-            MultipartFile backImage    // 뒷면 이미지
-    ) {
+    @Value("${cloud.aws.s3.path.profileImage}")
+    private String profileImagePath;
 
-        Post post = postCommandService.createPost(request, frontImage, backImage);
+    @Value("${cloud.aws.s3.path.post-front}")
+    private String postFrontPath;
+
+    @Value("${cloud.aws.s3.path.post-back}")
+    private String postBackPath;
+
+    @Operation(summary = "게시글 Presigned URL 생성")
+    @PostMapping("/presigned-url")
+    public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) throws UnsupportedEncodingException {
+        String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
+        String backImageUrl = s3Service.getPresignedUrl(postBackPath, request.getBackImageUrl());
+
+        return ApiResponse.onSuccess(PostConverter.getPresignedUrlDTO(frontImageUrl, backImageUrl));
+    }
+
+    @Operation(summary = "게시글 업로드")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost (@RequestPart @Valid PostRequestDTO.CreatePostDTO request) {
+
+        Post post = postCommandService.createPost(request);
 
         return ApiResponse.onSuccess(PostConverter.toCreatePostResultDTO(post));
     }

@@ -61,6 +61,8 @@ public class PostConverter {
 
     public static PostRequestDTO.CreatePostDTO toPost(Post post) {
         return PostRequestDTO.CreatePostDTO.builder()
+                .frontImage(post.getFrontImage())
+                .backImage(post.getBackImage())
                 .pointColor(post.getPointColor())             // 포인트 컬러
                 .visibility(post.getVisibility())             // 공개 여부
                 .isMission(post.isMission())
@@ -83,6 +85,13 @@ public class PostConverter {
                                 .content(itemTag.getItemTagContent())
                                 .build())
                         .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static PostResponseDTO.createPresignedUrlDTO getPresignedUrlDTO(String frontImageUrl, String backImageUrl) {
+        return PostResponseDTO.createPresignedUrlDTO.builder()
+                .frontImageUrl(frontImageUrl)
+                .backImageUrl(backImageUrl)
                 .build();
     }
 
