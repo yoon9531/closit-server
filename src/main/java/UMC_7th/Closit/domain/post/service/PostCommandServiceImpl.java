@@ -12,7 +12,6 @@ import UMC_7th.Closit.domain.post.repository.PostRepository;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
-import UMC_7th.Closit.global.s3.AmazonS3Manager;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostHashTagRepository postHashtagRepository;
     private final ItemTagRepository itemTagRepository;
     private final SecurityUtil securityUtil;
-    private final AmazonS3Manager amazonS3Manager;
 
     @Override
     public Post createPost(PostRequestDTO.CreatePostDTO request) {

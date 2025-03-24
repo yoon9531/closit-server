@@ -12,7 +12,7 @@ public class PostRequestDTO {
 
     @Getter
     @Builder
-    public static class createPresignedUrlDTO {
+    public static class createPresignedUrlDTO { // 게시글 presigned Url 발급
         private String frontImageUrl;
         private String backImageUrl;
     }

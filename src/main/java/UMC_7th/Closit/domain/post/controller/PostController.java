@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.service.PostCommandService;
 import UMC_7th.Closit.domain.post.service.PostQueryService;
+import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
@@ -31,9 +32,6 @@ public class PostController {
     private final PostQueryService postQueryService;
     private final PostCommandService postCommandService;
 
-    @Value("${cloud.aws.s3.path.profileImage}")
-    private String profileImagePath;
-
     @Value("${cloud.aws.s3.path.post-front}")
     private String postFrontPath;
 
@@ -43,6 +41,8 @@ public class PostController {
     @Operation(summary = "게시글 Presigned URL 생성")
     @PostMapping("/presigned-url")
     public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) throws UnsupportedEncodingException {
+        User user = securityUtil.getCurrentUser();
+
         String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
         String backImageUrl = s3Service.getPresignedUrl(postBackPath, request.getBackImageUrl());
 
@@ -51,7 +51,7 @@ public class PostController {
 
     @Operation(summary = "게시글 업로드")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost (@RequestPart @Valid PostRequestDTO.CreatePostDTO request) {
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestPart @Valid PostRequestDTO.CreatePostDTO request) {
 
         Post post = postCommandService.createPost(request);
 
