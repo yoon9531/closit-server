@@ -3,7 +3,6 @@ package UMC_7th.Closit.global.s3;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.config.AmazonConfig;
-import UMC_7th.Closit.global.s3.entity.Uuid;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 @Slf4j
 @Component
