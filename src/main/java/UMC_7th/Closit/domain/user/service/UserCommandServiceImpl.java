@@ -204,6 +204,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         return UserConverter.toUserBlockResponseDTO(userBlockRepository.save(userBlock));
     }
 
+    @Override
     // Target이 requester(나)를 차단했는지 확인
     public boolean isBlockedBy(String targetClositId, String requesterClositId) {
         User targetUser = userRepository.findByClositId(targetClositId)
