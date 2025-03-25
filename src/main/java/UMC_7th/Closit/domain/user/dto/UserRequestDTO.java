@@ -10,6 +10,11 @@ import java.time.LocalDate;
 public class UserRequestDTO {
 
     @Getter
+    public static class CreatePresignedUrlDTO {  // 사용자 프로필 presigned Url 발급
+        private String imageUrl;
+    }
+
+    @Getter
     @Builder
     @AllArgsConstructor
     public static class CreateUserDTO {

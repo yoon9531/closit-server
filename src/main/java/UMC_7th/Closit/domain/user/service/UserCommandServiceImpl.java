@@ -95,13 +95,13 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public User registerProfileImage (MultipartFile file) {
+    public User registerProfileImage (String imageUrl) {
 
         // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
 
         // 사용자가 프로필 이미지를 삭제하려는 경우
-        if (file == null || file.isEmpty()) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
             log.info("file is null or empty");
             amazonS3Manager.deleteFile(currentUser.getProfileImage());
             currentUser.updateProfileImage(null);
@@ -113,15 +113,10 @@ public class UserCommandServiceImpl implements UserCommandService {
             amazonS3Manager.deleteFile(currentUser.getProfileImage());
         }
 
-        // 새로운 프로필 이미지 등록
-        String uuid = UUID.randomUUID().toString();
-        String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
-
-        currentUser.updateProfileImage(storedLocation);
+        currentUser.updateProfileImage(imageUrl);
 
         return currentUser;
     }
-
 
     @Override
     public boolean isClositIdUnique(String clositId) {

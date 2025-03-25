@@ -17,6 +17,14 @@ import java.util.List;
 
 public class UserResponseDTO {
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreatePresignedUrlDTO { // 사용자 프로필 presigned Url 발급
+        private String imageUrl;
+    }
+
     @Builder
     @Getter
     @NoArgsConstructor
