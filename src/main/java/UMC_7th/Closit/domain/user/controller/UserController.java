@@ -51,8 +51,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 
-    @Operation(summary = "사용자 프로필 이미지 Presigned Url 발급")
     @PostMapping("/profile-image/presigned-url")
+    @Operation(summary = "사용자 프로필 이미지 Presigned Url 발급",
+            description = """
+                    ## 사용자 프로필 이미지 등록을 위한 Presigned Url 발급
+                    ### RequestBody
+                    imageUrl [사용자 프로필 이미지 파일명]
+                    ### 등록 과정
+                    1. 등록할 프로필 이미지 파일명 작성
+                    2. 발급 받은 Presigned Url + 실제 파일 (Body -> binary)과 함께 PUT 요청 (Postman에서 진행)
+                    3. 200 OK -> S3 업로드 성공
+                    4. 성공 후, 사용자 프로필 이미지 등록 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
+                    """)
     public ApiResponse<UserResponseDTO.CreatePresignedUrlDTO> getPresignedUrl(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
         User user = securityUtil.getCurrentUser();
 

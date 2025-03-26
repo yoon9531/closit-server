@@ -35,8 +35,19 @@ public class PostController {
     @Value("${cloud.aws.s3.path.post-back}")
     private String postBackPath;
 
-    @Operation(summary = "게시글 Presigned URL 생성")
     @PostMapping("/presigned-url")
+    @Operation(summary = "게시글 Presigned Url 발급",
+            description = """
+                    ## 게시글 등록을 위한 Presigned Url 발급
+                    ### RequestBody
+                    frontImageUrl [전면 이미지 파일명] \n
+                    backImageUrl [후면 이미지 파일명]
+                    ### 등록 과정
+                    1. 등록할 게시글 이미지 파일명 작성
+                    2. 발급 받은 Presigned Url + 실제 파일 (Body -> binary)과 함께 PUT 요청 (Postman에서 진행)
+                    3. 200 OK -> S3 업로드 성공
+                    4. 성공 후, 게시글 업로드 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
+                    """)
     public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) {
         User user = securityUtil.getCurrentUser();
 
