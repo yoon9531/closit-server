@@ -46,33 +46,7 @@ public class AmazonS3Manager {
         return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
     }
 
-    public void deleteFile (String profileImage) {
-        if (profileImage == null || profileImage.isEmpty()) {
-            log.error("profileImage is null or empty");
-            return;
-        }
 
-        try {
-            String fileKey = extractS3Key(profileImage);
-            amazonS3.deleteObject(s3Config.getBucket(), fileKey);
-        } catch (Exception e) {
-            log.error("error at AmazonS3Manager deleteFile : {}", (Object) e.getStackTrace());
-        }
-        amazonS3.deleteObject(s3Config.getBucket(), profileImage);
-    }
-
-    private String extractS3Key(String fileUrl) {
-        String bucketUrl = amazonS3.getUrl(s3Config.getBucket(), "").toString();
-
-        log.info("bucketUrl: {}", bucketUrl);
-
-        if (fileUrl.startsWith(bucketUrl)) {
-            log.info("fileUrl: {}", fileUrl);
-            return fileUrl.substring(bucketUrl.length());
-        }
-
-        throw new GeneralException(ErrorStatus.INVALID_S3_FILE_URL);
-    }
 
     public String generateProfileImageKeyName(String uuid) {
         return s3Config.getProfileImagePath() + '/' + uuid;

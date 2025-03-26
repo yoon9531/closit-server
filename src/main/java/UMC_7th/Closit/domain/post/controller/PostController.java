@@ -40,7 +40,7 @@ public class PostController {
 
     @Operation(summary = "게시글 Presigned URL 생성")
     @PostMapping("/presigned-url")
-    public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) throws UnsupportedEncodingException {
+    public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) {
         User user = securityUtil.getCurrentUser();
 
         String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
@@ -50,9 +50,8 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 업로드")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping()
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestPart @Valid PostRequestDTO.CreatePostDTO request) {
-
         Post post = postCommandService.createPost(request);
 
         return ApiResponse.onSuccess(PostConverter.toCreatePostResultDTO(post));

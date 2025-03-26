@@ -10,6 +10,7 @@ import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.domain.user.service.UserQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class UserController {
 
+    private final SecurityUtil securityUtil;
     private final S3Service s3Service;
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
@@ -55,19 +52,19 @@ public class UserController {
     }
 
     @Operation(summary = "사용자 프로필 이미지 Presigned Url 발급")
-    @PostMapping("/presigned-url/profile-image")
-    public ApiResponse<UserResponseDTO.CreatePresignedUrlDTO> getPresignedUrl(@RequestBody @Valid UserRequestDTO.CreatePresignedUrlDTO request) throws UnsupportedEncodingException {
+    @PostMapping("/profile-image/presigned-url")
+    public ApiResponse<UserResponseDTO.CreatePresignedUrlDTO> getPresignedUrl(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
+        User user = securityUtil.getCurrentUser();
+
         String imageUrl = s3Service.getPresignedUrl(profileImagePath, request.getImageUrl());
 
         return ApiResponse.onSuccess(UserConverter.createPresignedUrlDTO(imageUrl));
     }
 
     @Operation(summary = "사용자 프로필 이미지 등록", description = "특정 사용자의 프로필 이미지를 등록합니다.")
-    @PatchMapping(
-            value = "/{closit_id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestPart(value = "user_image", required = false) String profileImageUrl) {
-        User userInfo = userCommandService.registerProfileImage(profileImageUrl);
+    @PatchMapping(value = "/profile-image")
+    public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
+        User userInfo = userCommandService.registerProfileImage(request.getImageUrl());
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 

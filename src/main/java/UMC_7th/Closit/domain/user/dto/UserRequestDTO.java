@@ -1,6 +1,5 @@
 package UMC_7th.Closit.domain.user.dto;
 
-import UMC_7th.Closit.global.validation.annotation.ExistUserClositId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 public class UserRequestDTO {
 
     @Getter
-    public static class CreatePresignedUrlDTO {  // 사용자 프로필 presigned Url 발급
+    public static class UpdateProfileImageDTO {  // 사용자 프로필 presigned Url 발급 및 프로필 이미지 업로드
         private String imageUrl;
     }
 
