@@ -11,8 +11,7 @@ import java.util.List;
 public class PostRequestDTO {
 
     @Getter
-    @Builder
-    public static class createPresignedUrlDTO { // 게시글 presigned Url 발급
+    public static class GetPresignedUrlDTO { // 게시글 presigned Url 발급
         private String frontImageUrl;
         private String backImageUrl;
     }

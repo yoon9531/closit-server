@@ -48,7 +48,7 @@ public class PostController {
                     3. 200 OK -> S3 업로드 성공
                     4. 성공 후, 게시글 업로드 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
                     """)
-    public ApiResponse<PostResponseDTO.createPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.createPresignedUrlDTO request) {
+    public ApiResponse<PostResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.GetPresignedUrlDTO request) {
         User user = securityUtil.getCurrentUser();
 
         String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
@@ -59,7 +59,7 @@ public class PostController {
 
     @Operation(summary = "게시글 업로드")
     @PostMapping()
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestPart @Valid PostRequestDTO.CreatePostDTO request) {
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestBody @Valid PostRequestDTO.CreatePostDTO request) {
         Post post = postCommandService.createPost(request);
 
         return ApiResponse.onSuccess(PostConverter.toCreatePostResultDTO(post));

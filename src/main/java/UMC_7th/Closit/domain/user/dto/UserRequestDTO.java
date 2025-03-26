@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.user.dto;
 
+import UMC_7th.Closit.global.validation.annotation.ExistUserClositId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.*;
