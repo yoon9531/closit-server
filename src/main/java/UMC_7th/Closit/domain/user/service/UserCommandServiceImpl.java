@@ -1,8 +1,14 @@
 package UMC_7th.Closit.domain.user.service;
 
+import UMC_7th.Closit.domain.follow.entity.Follow;
+import UMC_7th.Closit.domain.follow.repository.FollowRepository;
+import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
+import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.entity.UserBlock;
+import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
@@ -24,6 +30,8 @@ import java.util.Optional;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final UserBlockRepository userBlockRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
     private final S3Service s3Service;
@@ -78,7 +86,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }
 
-        // 🛠 해결: JPA 영속 상태로 변환
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -153,5 +160,63 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
         return currentUser;
+    }
+
+    @Override
+    public UserResponseDTO.UserBlockResponseDTO blockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
+        String blockedClositId = blockUserDTO.getBlockedClositId();
+
+        User blocker = securityUtil.getCurrentUser();
+        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // Throw if there already exist block record
+        if (userBlockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
+            throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
+        }
+
+        // 차단된 사용자가 차단한 사용자를 팔로우 했을 때 팔로우 관계 삭제
+        Follow followBlockedtoBlocker = followRepository.findBySenderAndReceiver(blocked, blocker);
+        if (followBlockedtoBlocker != null) {
+            followRepository.delete(followBlockedtoBlocker);
+        }
+        Follow followBlockertoBlocked = followRepository.findBySenderAndReceiver(blocker, blocked);
+        if (followBlockertoBlocked != null) {
+            followRepository.delete(followBlockertoBlocked);
+        }
+
+
+        UserBlock userBlock = UserBlock.builder()
+                .blocker(blocker)
+                .blocked(blocked)
+                .build();
+
+        return UserConverter.toUserBlockResponseDTO(userBlockRepository.save(userBlock));
+    }
+
+    @Override
+    // Target이 requester(나)를 차단했는지 확인
+    public boolean isBlockedBy(String targetClositId, String requesterClositId) {
+        User targetUser = userRepository.findByClositId(targetClositId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User requesterUser = userRepository.findByClositId(requesterClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return userBlockRepository.existsByBlockerAndBlocked(targetUser, requesterUser);
+    }
+
+    @Override
+    public void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
+        String blockedClositId = blockUserDTO.getBlockedClositId();
+
+        User blocker = securityUtil.getCurrentUser();
+        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
+                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        UserBlock userBlock = userBlockRepository.findByBlockerAndBlocked(blocker, blocked)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
+
+        userBlockRepository.delete(userBlock);
     }
 }
