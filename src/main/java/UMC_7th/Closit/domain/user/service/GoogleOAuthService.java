@@ -27,6 +27,8 @@ public class GoogleOAuthService {
 
     public OAuthUserInfo getUserInfo(String idTokenString) {
         try {
+
+            // Google IdToken 검증
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(), jsonFactory)
                     .setAudience(Collections.singletonList(googleClientId))

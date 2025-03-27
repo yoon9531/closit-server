@@ -1,7 +1,5 @@
 package UMC_7th.Closit.domain.user.service;
 
-import UMC_7th.Closit.domain.follow.entity.Follow;
-import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.JwtResponse;
 import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
@@ -19,7 +17,6 @@ import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.common.SocialLoginType;
 import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,9 +92,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         String newAccessToken = jwtTokenProvider.createAccessToken(email, role);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(email, role);
 
-        log.info("🔁 Refreshing Token -> newAccessToken : {}", newAccessToken);
-        log.info("🔁 Refreshing Token -> newRefreshToken : {}", newRefreshToken);
-
         // Refresh Token 업데이트
         savedToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
@@ -148,16 +142,19 @@ public class UserAuthServiceImpl implements UserAuthService {
         // closit id 임의 생성
         String clositId = generateUniqueClositId(userInfo);
 
-        // 비밀번호는 null로 설정
-        String password = null;
+        // Dummy password => 일반 로그인 사용 X
+        String dummyPassword = UUID.randomUUID().toString();
+        String encodedPassword = passwordEncoder.encode(dummyPassword); // 단순히 null 방지용        String password = null;
+
 
         User newUser = User.builder()
                 .email(email)
                 .name(name)
-                .password(passwordEncoder.encode(password))
                 .profileImage(profileImage)
+                .password(encodedPassword) // Dummy password
+                .provider(userInfo.getProvider().toString())
                 .clositId(clositId)
-                .role(Role.USER) // 기본적으로 USER 부여
+                .role(Role.USER)
                 .build();
 
         return userRepository.save(newUser);
@@ -168,11 +165,13 @@ public class UserAuthServiceImpl implements UserAuthService {
         String suffix;
         String randomClositId;
 
+        log.info("base : {}", base);
         do {
-            suffix = UUID.randomUUID().toString().substring(0, 8);
-            randomClositId = base + "_ " + suffix;
+            suffix = UUID.randomUUID().toString().substring(0, 6);
+            randomClositId = base + "_" + suffix;
         } while(userRepository.existsByClositId(randomClositId));
 
+        log.info("randomClositId : {}", randomClositId);
         return randomClositId;
         }
     }

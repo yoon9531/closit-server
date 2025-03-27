@@ -37,7 +37,7 @@ public class UserAuthController {
     }
 
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 API")
-    @PostMapping("/{socialLoginType}")
+    @PostMapping("/oauth/{socialLoginType}")
     public ApiResponse<JwtResponse> socialLogin(@PathVariable SocialLoginType socialLoginType, @RequestBody OAuthLoginRequestDTO socialLoginRequestDTO) {
         JwtResponse jwtResponse = userAuthService.socialLogin(socialLoginType, socialLoginRequestDTO);
 
