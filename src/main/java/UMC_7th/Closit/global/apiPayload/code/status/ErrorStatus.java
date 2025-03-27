@@ -37,6 +37,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EMPTY_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4004", "토큰이 비어있습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4005", "유효하지 않은 리프레시 토큰입니다."),
 
+    // 소셜 로그인 관련 에러
+    NOT_SUPPORTED_SOCIAL_LOGIN(HttpStatus.BAD_REQUEST, "SOCIAL4001", "지원하지 않는 소셜 로그인입니다."),
     // 게시글 관련 에러
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "게시글이 존재하지 않습니다."),
 

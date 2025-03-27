@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.user.service.UserAuthService;
 import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
+import UMC_7th.Closit.global.common.SocialLoginType;
 import UMC_7th.Closit.security.SecurityUtil;
 import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import jakarta.validation.Valid;
@@ -35,6 +36,13 @@ public class UserAuthController {
     @PostMapping("/login")
     public ApiResponse<JwtResponse> login (@RequestBody @Valid LoginRequestDTO loginRequestDto) {
         JwtResponse jwtResponse = userAuthService.login(loginRequestDto);
+
+        return ApiResponse.onSuccess(jwtResponse);
+    }
+
+    @PostMapping("/{socialLoginType}")
+    public ApiResponse<JwtResponse> socialLogin(@PathVariable SocialLoginType socialLoginType, @RequestBody OAuthLoginRequestDTO socialLoginRequestDTO) {
+        JwtResponse jwtResponse = userAuthService.socialLogin(socialLoginType, socialLoginRequestDTO);
 
         return ApiResponse.onSuccess(jwtResponse);
     }
