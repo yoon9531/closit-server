@@ -33,8 +33,8 @@ public class BattleCommentController {
             ### RequestBody
             content [댓글 내용]
             """)
-    public ApiResponse<BattleCommentResponseDTO.createBattleCommentResultDTO> createBattleComment(@RequestBody @Valid BattleCommentRequestDTO.createBattleCommentRequestDTO request,
-                                                                                                  @PathVariable("battle_id") Long battleId) {
+    public ApiResponse<BattleCommentResponseDTO.CreateBattleCommentDTO> createBattleComment(@RequestBody @Valid BattleCommentRequestDTO.CreateBattleCommentDTO request,
+                                                                                            @PathVariable("battle_id") Long battleId) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();

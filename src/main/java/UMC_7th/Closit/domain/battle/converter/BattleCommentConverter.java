@@ -12,17 +12,19 @@ import java.util.stream.Collectors;
 
 public class BattleCommentConverter {
 
-    public static BattleComment toBattleComment (User user, Battle battle, BattleCommentRequestDTO.createBattleCommentRequestDTO request) { // 배틀 댓글 생성
+    public static BattleComment toBattleComment (User user, Battle battle, BattleComment parentBattleComment, BattleCommentRequestDTO.CreateBattleCommentDTO request) { // 배틀 댓글 생성
         return BattleComment.builder()
                 .user(user)
                 .battle(battle)
+                .parentBattleComment(parentBattleComment)
                 .content(request.getContent())
                 .build();
     }
 
-    public static BattleCommentResponseDTO.createBattleCommentResultDTO createBattleCommentResponseDTO (BattleComment battleComment) {
-        return BattleCommentResponseDTO.createBattleCommentResultDTO.builder()
+    public static BattleCommentResponseDTO.CreateBattleCommentDTO createBattleCommentResponseDTO (BattleComment battleComment) {
+        return BattleCommentResponseDTO.CreateBattleCommentDTO.builder()
                 .battleCommentId(battleComment.getId())
+                .parentBattleCommentId(battleComment.getParentBattleComment().getId())
                 .clositId(battleComment.getUser().getClositId())
                 .thumbnail(battleComment.getUser().getProfileImage())
                 .createdAt(battleComment.getCreatedAt())
