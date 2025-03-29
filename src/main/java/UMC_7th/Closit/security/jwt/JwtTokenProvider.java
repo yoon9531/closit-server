@@ -80,16 +80,11 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            log.info("🔍 Validating Token: {}", token);
             Claims claims = getClaims(token);
-            log.info("🔍 Token Claims: {}", claims);
-            log.info("🔍 Token Subject: {}", claims.getSubject());
-            log.info("🔍 Token Expiration: {}", claims.getExpiration());
-            log.info("🔍 Token Issued At: {}", claims.getIssuedAt());
 
             Jwts.parserBuilder()
                     .setSigningKey(key)
-                    // .setAllowedClockSkewSeconds(60) // ✅ Clock Skew 적용 (1분 오차 허용)
+                    // .setAllowedClockSkewSeconds(60) // Clock Skew 적용 (1분 오차 허용)
                     .build()
                     .parseClaimsJws(token);
 

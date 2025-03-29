@@ -7,6 +7,7 @@ import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.entity.UserBlock;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Slice;
 
@@ -95,4 +96,12 @@ public class UserConverter {
                 .hasNext(postList.hasNext())
                 .build();
     }
+
+    public static UserResponseDTO.UserBlockResponseDTO toUserBlockResponseDTO (UserBlock savedBlock) {
+        return UserResponseDTO.UserBlockResponseDTO.builder()
+                .blockerClositId(savedBlock.getBlocker().getClositId())
+                .blockedClositId(savedBlock.getBlocked().getClositId())
+                .build();
+    }
+
 }

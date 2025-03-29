@@ -32,4 +32,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     // 특정 유저의 전체 팔로잉 수 조회
     @Query("SELECT COUNT(f) FROM Follow f WHERE f.sender = :user")
     long countBySender(@Param("user") User user);
+
+    Follow findBySenderAndReceiver (User sender, User receiver);
 }

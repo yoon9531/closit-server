@@ -25,10 +25,11 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_MATCH (HttpStatus.FORBIDDEN, "USER4004", "사용자가 일치하지 않습니다."), // 권한 부족
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4005","이미 존재하는 이메일입니다"), // 리소스 충돌
     USER_NOT_FOUND (HttpStatus.NOT_FOUND, "USER4006", "사용자가 존재하지 않습니다."), // 존재하지 않는 사용자
+    USER_NOT_BLOCKED(HttpStatus.NOT_FOUND, "USER4007", "사용자가 차단되지 않았습니다."), // 차단되지 않은 사용자
     CLOSIT_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4007", "이미 존재하는 ClositId입니다."), // 리소스 충돌
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4008", "비밀번호가 유효하지 않습니다."), // 비밀번호 유효성 검사 실패
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
-
+    USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),
