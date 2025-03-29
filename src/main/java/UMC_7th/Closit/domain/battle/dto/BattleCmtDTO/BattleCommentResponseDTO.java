@@ -30,6 +30,7 @@ public class BattleCommentResponseDTO {
     @AllArgsConstructor
     public static class BattleCommentPreviewDTO { // 배틀 댓글 조회
         private Long battleCommentId;
+        private Long parentBattleCommentId;
         private String clositId;
         private String thumbnail;
         private String content;

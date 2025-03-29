@@ -24,7 +24,7 @@ public class BattleCommentConverter {
     public static BattleCommentResponseDTO.CreateBattleCommentDTO createBattleCommentResponseDTO (BattleComment battleComment) {
         return BattleCommentResponseDTO.CreateBattleCommentDTO.builder()
                 .battleCommentId(battleComment.getId())
-                .parentBattleCommentId(battleComment.getParentBattleComment().getId())
+                .parentBattleCommentId(battleComment.getParentBattleComment() != null ? battleComment.getParentBattleComment().getId() : null)
                 .clositId(battleComment.getUser().getClositId())
                 .thumbnail(battleComment.getUser().getProfileImage())
                 .createdAt(battleComment.getCreatedAt())
@@ -34,6 +34,7 @@ public class BattleCommentConverter {
     public static BattleCommentResponseDTO.BattleCommentPreviewDTO battleCommentPreviewDTO (BattleComment battleComment) { // 배틀 댓글 조회
         return BattleCommentResponseDTO.BattleCommentPreviewDTO.builder()
                 .battleCommentId(battleComment.getId())
+                .parentBattleCommentId(battleComment.getParentBattleComment() != null ? battleComment.getParentBattleComment().getId() : null)
                 .clositId(battleComment.getUser().getClositId())
                 .thumbnail(battleComment.getUser().getProfileImage())
                 .content(battleComment.getContent())
