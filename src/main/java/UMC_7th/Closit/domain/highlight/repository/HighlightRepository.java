@@ -25,5 +25,5 @@ public interface HighlightRepository extends JpaRepository<Highlight, Long> {
             "WHERE p.user = :user")
     Slice<Highlight> findAllByUser(@Param("user") User user, Pageable pageable);
 
-    int countByUserId(Long userId);
+    int countByPost_User_Id(Long userId);
 }

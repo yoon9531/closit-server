@@ -44,7 +44,7 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
             throw new GeneralException(ErrorStatus.HIGHLIGHT_ALREADY_EXIST);
         }
 
-        int highlightCount = highlightRepository.countByUserId(user.getId());
+        int highlightCount = highlightRepository.countByPost_User_Id(user.getId());
         if (highlightCount >= 5) {
             throw new GeneralException(ErrorStatus.HIGHLIGHT_LIMIT_EXCEEDED);
         }
