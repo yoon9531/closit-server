@@ -8,42 +8,59 @@ import UMC_7th.Closit.domain.post.service.PostCommandService;
 import UMC_7th.Closit.domain.post.service.PostQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.print.attribute.standard.Media;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/posts")
 public class PostController {
 
+    private final SecurityUtil securityUtil;
+    private final S3Service s3Service;
     private final PostQueryService postQueryService;
     private final PostCommandService postCommandService;
 
-    @Operation(summary = "게시글 업로드")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost (
-            @RequestPart @Valid
-            PostRequestDTO.CreatePostDTO request, // 게시글 정보
-            @RequestPart("frontImage")
-            MultipartFile frontImage, // 앞면 이미지
-            @RequestPart("backImage")
-            MultipartFile backImage    // 뒷면 이미지
-    ) {
+    @Value("${cloud.aws.s3.path.post-front}")
+    private String postFrontPath;
 
-        Post post = postCommandService.createPost(request, frontImage, backImage);
+    @Value("${cloud.aws.s3.path.post-back}")
+    private String postBackPath;
+
+    @PostMapping("/presigned-url")
+    @Operation(summary = "게시글 Presigned Url 발급",
+            description = """
+                    ## 게시글 등록을 위한 Presigned Url 발급
+                    ### RequestBody
+                    frontImageUrl [전면 이미지 파일명] \n
+                    backImageUrl [후면 이미지 파일명]
+                    ### 등록 과정
+                    1. 등록할 게시글 이미지 파일명 작성
+                    2. 발급 받은 Presigned Url + 실제 파일 (Body -> binary)과 함께 PUT 요청 (Postman에서 진행)
+                    3. 200 OK -> S3 업로드 성공
+                    4. 성공 후, 게시글 업로드 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
+                    """)
+    public ApiResponse<PostResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.GetPresignedUrlDTO request) {
+        User user = securityUtil.getCurrentUser();
+
+        String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
+        String backImageUrl = s3Service.getPresignedUrl(postBackPath, request.getBackImageUrl());
+
+        return ApiResponse.onSuccess(PostConverter.getPresignedUrlDTO(frontImageUrl, backImageUrl));
+    }
+
+    @Operation(summary = "게시글 업로드")
+    @PostMapping()
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestBody @Valid PostRequestDTO.CreatePostDTO request) {
+        Post post = postCommandService.createPost(request);
 
         return ApiResponse.onSuccess(PostConverter.toCreatePostResultDTO(post));
     }

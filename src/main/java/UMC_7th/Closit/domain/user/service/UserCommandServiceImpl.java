@@ -12,7 +12,7 @@ import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
-import UMC_7th.Closit.global.s3.AmazonS3Manager;
+import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
-import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +31,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
     private final UserBlockRepository userBlockRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    private final SecurityUtil securityUtil;
-
-    private final AmazonS3Manager amazonS3Manager;
     private final FollowRepository followRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final SecurityUtil securityUtil;
+    private final S3Service s3Service;
 
     @Value("${cloud.aws.s3.default-profile-image}")
     private String defaultProfileImage;
@@ -98,33 +93,28 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public User registerProfileImage (MultipartFile file) {
+    public User registerProfileImage (String imageUrl) {
 
         // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
 
         // 사용자가 프로필 이미지를 삭제하려는 경우
-        if (file == null || file.isEmpty()) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
             log.info("file is null or empty");
-            amazonS3Manager.deleteFile(currentUser.getProfileImage());
+            s3Service.deleteFile(currentUser.getProfileImage());
             currentUser.updateProfileImage(null);
             return currentUser;
         }
 
         // 기존 프로필 이미지 삭제
         if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().equals(defaultProfileImage)) {
-            amazonS3Manager.deleteFile(currentUser.getProfileImage());
+            s3Service.deleteFile(currentUser.getProfileImage());
         }
 
-        // 새로운 프로필 이미지 등록
-        String uuid = UUID.randomUUID().toString();
-        String storedLocation = amazonS3Manager.uploadFile(amazonS3Manager.generateProfileImageKeyName(uuid), file);
-
-        currentUser.updateProfileImage(storedLocation);
+        currentUser.updateProfileImage(imageUrl);
 
         return currentUser;
     }
-
 
     @Override
     public boolean isClositIdUnique(String clositId) {

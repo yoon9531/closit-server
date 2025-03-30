@@ -11,8 +11,16 @@ import java.util.List;
 public class PostRequestDTO {
 
     @Getter
+    public static class GetPresignedUrlDTO { // 게시글 presigned Url 발급
+        private String frontImageUrl;
+        private String backImageUrl;
+    }
+
+    @Getter
     @Builder
     public static class CreatePostDTO{
+        private String frontImage;
+        private String backImage;
         private List<String> hashtags;
         private List<PostResponseDTO.ItemTagDTO> frontItemtags;
         private List<PostResponseDTO.ItemTagDTO> backItemtags;
