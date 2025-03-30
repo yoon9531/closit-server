@@ -55,6 +55,12 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.CreatePresignedUrlDTO createPresignedUrlDTO(String imageUrl) {
+        return UserResponseDTO.CreatePresignedUrlDTO.builder()
+                .imageUrl(imageUrl)
+                .build();
+    }
+
     public static UserResponseDTO.UserHighlightSliceDTO toUserHighlightSliceDTO(@NotNull Slice<Highlight> highlightSlice) {
         Slice<HighlightResponseDTO.HighlightDTO> highlightDTOs = highlightSlice.map(HighlightConverter::toHighlightDTO);
 
