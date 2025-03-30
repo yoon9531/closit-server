@@ -10,6 +10,11 @@ import java.time.LocalDate;
 public class UserRequestDTO {
 
     @Getter
+    public static class UpdateProfileImageDTO {  // 사용자 프로필 presigned Url 발급 및 프로필 이미지 업로드
+        private String imageUrl;
+    }
+
+    @Getter
     @Builder
     @AllArgsConstructor
     public static class CreateUserDTO {

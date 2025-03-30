@@ -24,7 +24,7 @@ public class BattleCmtQueryServiceImpl implements BattleCmtQueryService {
     @Override
     @Transactional(readOnly = true)
     public Slice<BattleComment> getBattleCommentList (Long battleId, Integer page) { // 배틀 댓글 조회
-        Battle battle = battleRepository.findById(battleId)
+        battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, 10);

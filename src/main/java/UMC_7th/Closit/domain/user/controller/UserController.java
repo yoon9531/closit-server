@@ -10,16 +10,16 @@ import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.domain.user.service.UserQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.validation.annotation.CheckBlocked;
+import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,18 +27,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class UserController {
 
+    private final SecurityUtil securityUtil;
+    private final S3Service s3Service;
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
 
+    @Value("${cloud.aws.s3.path.profileImage}")
+    private String profileImagePath;
+
     @Operation(summary = "사용자 삭제", description = "특정 사용자를 삭제합니다.")
-    @DeleteMapping("/")
+    @DeleteMapping()
     public ApiResponse<String> deleteUser() {
         userCommandService.deleteUser();
         return ApiResponse.onSuccess("Deletion successful");
     }
 
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
-    @PatchMapping("/")
+    @PatchMapping()
     public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
 
         User userInfo = userCommandService.updateUserInfo(updateUserDTO);
@@ -46,12 +51,30 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 
+    @PostMapping("/profile-image/presigned-url")
+    @Operation(summary = "사용자 프로필 이미지 Presigned Url 발급",
+            description = """
+                    ## 사용자 프로필 이미지 등록을 위한 Presigned Url 발급
+                    ### RequestBody
+                    imageUrl [사용자 프로필 이미지 파일명]
+                    ### 등록 과정
+                    1. 등록할 프로필 이미지 파일명 작성
+                    2. 발급 받은 Presigned Url + 실제 파일 (Body -> binary)과 함께 PUT 요청 (Postman에서 진행)
+                    3. 200 OK -> S3 업로드 성공
+                    4. 성공 후, 사용자 프로필 이미지 등록 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
+                    """)
+    public ApiResponse<UserResponseDTO.CreatePresignedUrlDTO> getPresignedUrl(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
+        User user = securityUtil.getCurrentUser();
+
+        String imageUrl = s3Service.getPresignedUrl(profileImagePath, request.getImageUrl());
+
+        return ApiResponse.onSuccess(UserConverter.createPresignedUrlDTO(imageUrl));
+    }
+
     @Operation(summary = "사용자 프로필 이미지 등록", description = "특정 사용자의 프로필 이미지를 등록합니다.")
-    @PatchMapping(
-            value = "/{closit_id}/profile-image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestPart(value = "user_image", required = false) MultipartFile profileImage) {
-        User userInfo = userCommandService.registerProfileImage(profileImage);
+    @PatchMapping(value = "/profile-image")
+    public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
+        User userInfo = userCommandService.registerProfileImage(request.getImageUrl());
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
     }
 

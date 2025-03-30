@@ -53,7 +53,7 @@ public class User extends BaseEntity {
     @Column
     private LocalDate birth;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

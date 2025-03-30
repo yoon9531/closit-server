@@ -30,6 +30,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4008", "비밀번호가 유효하지 않습니다."), // 비밀번호 유효성 검사 실패
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
     USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
+    PROFILE_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "USER4010", "프로필 이미지가 비어 있습니다."),
+
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),
@@ -74,6 +76,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 하이라이트 관련 에러
     HIGHLIGHT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "HIGHLIGHT4001", "이미 존재하는 하이라이트 입니다."),
+    HIGHLIGHT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "HIGHLIGHT4002", "하이라이트는 최대 5개까지만 등록할 수 있습니다."),
     HIGHLIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "HIGHLIGHT4041", "하이라이트가 존재하지 않습니다."),
 
     // 팔로우 관련 에러
@@ -99,8 +102,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "UPLOAD4001", "파일 업로드 크기 제한을 초과했습니다."),
 
     // S3 관련 에러
-    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S3_4001", "유효하지 않은 S3 파일 URL입니다.");
-
+    INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S34001", "유효하지 않은 S3 파일 URL입니다."),
+    IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

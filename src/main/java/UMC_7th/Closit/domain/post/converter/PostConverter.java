@@ -1,6 +1,5 @@
 package UMC_7th.Closit.domain.post.converter;
 
-import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.ItemTag;
 import UMC_7th.Closit.domain.post.entity.Post;
@@ -59,30 +58,10 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostRequestDTO.CreatePostDTO toPost(Post post) {
-        return PostRequestDTO.CreatePostDTO.builder()
-                .pointColor(post.getPointColor())             // 포인트 컬러
-                .visibility(post.getVisibility())             // 공개 여부
-                .isMission(post.isMission())
-                .hashtags(post.getPostHashtagList().stream()  // 해시태그
-                        .map(postHashtag -> postHashtag.getHashtag().getContent())
-                        .collect(Collectors.toList()))
-                .frontItemtags(post.getItemTagList().stream() // Front ItemTags
-                        .filter(itemTag -> "FRONT".equals(itemTag.getTagType()))
-                        .map(itemTag -> PostResponseDTO.ItemTagDTO.builder()
-                                .x(itemTag.getItemTagX())
-                                .y(itemTag.getItemTagY())
-                                .content(itemTag.getItemTagContent())
-                                .build())
-                        .collect(Collectors.toList()))
-                .backItemtags(post.getItemTagList().stream()  // Back ItemTags
-                        .filter(itemTag -> "BACK".equals(itemTag.getTagType()))
-                        .map(itemTag -> PostResponseDTO.ItemTagDTO.builder()
-                                .x(itemTag.getItemTagX())
-                                .y(itemTag.getItemTagY())
-                                .content(itemTag.getItemTagContent())
-                                .build())
-                        .collect(Collectors.toList()))
+    public static PostResponseDTO.GetPresignedUrlDTO getPresignedUrlDTO(String frontImageUrl, String backImageUrl) {
+        return PostResponseDTO.GetPresignedUrlDTO.builder()
+                .frontImageUrl(frontImageUrl)
+                .backImageUrl(backImageUrl)
                 .build();
     }
 
