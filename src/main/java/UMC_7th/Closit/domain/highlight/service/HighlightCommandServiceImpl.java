@@ -44,6 +44,11 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
             throw new GeneralException(ErrorStatus.HIGHLIGHT_ALREADY_EXIST);
         }
 
+        int highlightCount = highlightRepository.countByPost_User_Id(user.getId());
+        if (highlightCount >= 5) {
+            throw new GeneralException(ErrorStatus.HIGHLIGHT_LIMIT_EXCEEDED);
+        }
+
         Highlight newHighlight = HighlightConverter.toHighlight(request, user, post);
 
         return highlightRepository.save(newHighlight);
@@ -59,7 +64,7 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
                 .orElseThrow(() -> new HighlightHandler(ErrorStatus.HIGHLIGHT_NOT_FOUND));
 
         // 자기 자신이거나 관리자 권한이 있는 경우만 허용
-        if (!user.getId().equals(highlight.getUser().getId()) &&
+        if (!user.getId().equals(highlight.getPost().getUser().getId()) &&
                 !user.getRole().equals(Role.ADMIN)) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
         }

@@ -54,7 +54,7 @@ public class User extends BaseEntity {
     @Column
     private LocalDate birth;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -72,10 +72,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Bookmark> bookmarkList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Highlight> highlightList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default

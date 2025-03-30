@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -19,5 +20,10 @@ public interface HighlightRepository extends JpaRepository<Highlight, Long> {
     @Query("SELECT h FROM Highlight h LEFT JOIN FETCH h.post WHERE h.id = :highlightId")
     Optional<Highlight> findByIdWithPost(Long highlightId);
 
-    Slice<Highlight> findAllByUser(User user, Pageable pageable);
+    @Query("SELECT h FROM Highlight h " +
+            "JOIN h.post p " +
+            "WHERE p.user = :user")
+    Slice<Highlight> findAllByUser(@Param("user") User user, Pageable pageable);
+
+    int countByPost_User_Id(Long userId);
 }

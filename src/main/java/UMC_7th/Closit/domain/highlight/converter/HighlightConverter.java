@@ -13,7 +13,7 @@ public class HighlightConverter {
     public static HighlightResponseDTO.CreateHighlightResultDTO toCreateHighlightResultDTO(Highlight highlight) {
         return HighlightResponseDTO.CreateHighlightResultDTO.builder()
                 .highlightId(highlight.getId())
-                .clositId(highlight.getUser().getClositId())
+                .clositId(highlight.getPost().getUser().getClositId())
                 .postId(highlight.getPost().getId())
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -21,8 +21,8 @@ public class HighlightConverter {
 
     public static HighlightResponseDTO.HighlightDTO toHighlightDTO(Highlight highlight) {
         return HighlightResponseDTO.HighlightDTO.builder()
-                .clositId(highlight.getUser().getClositId())
-                .userName(highlight.getUser().getName())
+                .clositId(highlight.getPost().getUser().getClositId())
+                .userName(highlight.getPost().getUser().getName())
                 .postId(highlight.getPost().getId())
                 .thumbnail(highlight.getPost().getFrontImage())
                 .createdAt(highlight.getCreatedAt())
@@ -33,7 +33,7 @@ public class HighlightConverter {
     public static HighlightResponseDTO.HighlightDetailDTO toHighlightDetailDTO(Highlight highlight) {
         return HighlightResponseDTO.HighlightDetailDTO.builder()
                 .highlightId(highlight.getId())
-                .clositId(highlight.getUser().getClositId())
+                .clositId(highlight.getPost().getUser().getClositId())
                 .createdAt(highlight.getCreatedAt())
                 .updatedAt(highlight.getUpdatedAt())
                 .post(toPostInfoDTO(highlight.getPost()))
@@ -50,7 +50,6 @@ public class HighlightConverter {
 
     public static Highlight toHighlight(HighlightRequestDTO.CreateHighlightDTO request, User user, Post post) {
         return Highlight.builder()
-                .user(user)
                 .post(post)
                 .build();
     }
