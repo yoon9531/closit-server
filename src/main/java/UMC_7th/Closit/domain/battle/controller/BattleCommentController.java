@@ -31,7 +31,8 @@ public class BattleCommentController {
             ### PathVariable
             battle_id [배틀 ID]
             ### RequestBody
-            content [댓글 내용]
+            content [댓글 내용] \n
+            parentCommentId [부모 댓글 ID - 대댓글일 경우에만 요청]
             """)
     public ApiResponse<BattleCommentResponseDTO.CreateBattleCommentDTO> createBattleComment(@RequestBody @Valid BattleCommentRequestDTO.CreateBattleCommentDTO request,
                                                                                             @PathVariable("battle_id") Long battleId) {
