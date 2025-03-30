@@ -10,14 +10,15 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GoogleOAuthService {
 
     @Value("${oauth.google.client-id}")
@@ -28,7 +29,7 @@ public class GoogleOAuthService {
     public OAuthUserInfo getUserInfo(String idTokenString) {
         try {
 
-            // Google IdToken 검증
+            // Verifier Object 생성
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(), jsonFactory)
                     .setAudience(Collections.singletonList(googleClientId))
@@ -37,6 +38,7 @@ public class GoogleOAuthService {
             GoogleIdToken idToken = verifier.verify(idTokenString);
 
             if (idToken == null) {
+                log.info("Invalid ID token.", idTokenString);
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
@@ -44,16 +46,17 @@ public class GoogleOAuthService {
 
             // Issuer 체크
             if (!"accounts.google.com".equals(payload.getIssuer()) && !"https://accounts.google.com".equals(payload.getIssuer())) {
+                log.info("Check Issuer");
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
             // aud (Audience) 검증
             if (!googleClientId.equals(payload.getAudience())) {
+                log.info("Check Audience");
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
             return new GoogleUserInfo(payload);
-
         } catch (Exception e) {
             throw new UserHandler(ErrorStatus.INVALID_TOKEN);
         }
