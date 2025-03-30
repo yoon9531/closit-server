@@ -45,6 +45,7 @@ public class PostConverter {
                 .pointColor(post.getPointColor())
                 .visibility(post.getVisibility())
                 .isMission(post.isMission())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 

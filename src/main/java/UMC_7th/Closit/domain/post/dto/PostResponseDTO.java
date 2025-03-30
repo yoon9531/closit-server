@@ -55,6 +55,8 @@ public class PostResponseDTO {
         private String pointColor;
         private Visibility visibility;
         private boolean isMission;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime createdAt;
     }
 
 
