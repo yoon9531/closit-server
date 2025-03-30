@@ -20,4 +20,6 @@ public interface HighlightRepository extends JpaRepository<Highlight, Long> {
     Optional<Highlight> findByIdWithPost(Long highlightId);
 
     Slice<Highlight> findAllByUser(User user, Pageable pageable);
+
+    int countByUserId(Long userId);
 }

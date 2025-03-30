@@ -76,6 +76,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 하이라이트 관련 에러
     HIGHLIGHT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "HIGHLIGHT4001", "이미 존재하는 하이라이트 입니다."),
+    HIGHLIGHT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "HIGHLIGHT4002", "하이라이트는 최대 5개까지만 등록할 수 있습니다."),
     HIGHLIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "HIGHLIGHT4041", "하이라이트가 존재하지 않습니다."),
 
     // 팔로우 관련 에러
