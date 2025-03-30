@@ -24,14 +24,22 @@ public class BattleCmtCommandServiceImpl implements BattleCmtCommandService {
 
     @Override
     @Transactional
-    public BattleComment createBattleComment(Long userId, Long battleId, BattleCommentRequestDTO.createBattleCommentRequestDTO request) { // 배틀 댓글 생성
+    public BattleComment createBattleComment(Long userId, Long battleId, BattleCommentRequestDTO.CreateBattleCommentDTO request) { // 배틀 댓글 생성
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        BattleComment battleComment = BattleCommentConverter.toBattleComment(user, battle, request);
+        BattleComment parentBattleComment = null;
+
+        // 대댓글일 경우
+        if (request.getParentCommentId() != null) {
+            parentBattleComment = battleCommentRepository.findById(request.getParentCommentId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_COMMENT_NOT_FOUND));
+        }
+
+        BattleComment battleComment = BattleCommentConverter.toBattleComment(user, battle, parentBattleComment, request);
 
         return battleCommentRepository.save(battleComment);
     }

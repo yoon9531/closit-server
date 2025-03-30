@@ -15,8 +15,9 @@ public class BattleCommentResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class createBattleCommentResultDTO { // 배틀 댓글 생성
+    public static class CreateBattleCommentDTO { // 배틀 댓글 생성
         private Long battleCommentId;
+        private Long parentBattleCommentId;
         private String clositId;
         private String thumbnail;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
@@ -29,6 +30,7 @@ public class BattleCommentResponseDTO {
     @AllArgsConstructor
     public static class BattleCommentPreviewDTO { // 배틀 댓글 조회
         private Long battleCommentId;
+        private Long parentBattleCommentId;
         private String clositId;
         private String thumbnail;
         private String content;
