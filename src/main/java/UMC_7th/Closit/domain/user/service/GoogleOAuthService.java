@@ -40,7 +40,19 @@ public class GoogleOAuthService {
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
-            return new GoogleUserInfo(idToken.getPayload());
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            // Issuer 체크
+            if (!"accounts.google.com".equals(payload.getIssuer()) && !"https://accounts.google.com".equals(payload.getIssuer())) {
+                throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+            }
+
+            // aud (Audience) 검증
+            if (!googleClientId.equals(payload.getAudience())) {
+                throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+            }
+
+            return new GoogleUserInfo(payload);
 
         } catch (Exception e) {
             throw new UserHandler(ErrorStatus.INVALID_TOKEN);

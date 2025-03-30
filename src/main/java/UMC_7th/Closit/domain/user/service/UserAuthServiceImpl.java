@@ -113,7 +113,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         }
 
         // 이미 가입된 유저인지 확인
-        User user = userRepository.findByName(userInfo.getName())
+        User user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> registerNewUser(userInfo));
 
 
@@ -131,6 +131,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         return jwtTokenProvider.getClaims(token);
     }
 
+    // Register User info for social login
     private User registerNewUser(OAuthUserInfo userInfo) {
         String email = userInfo.getEmail();
         String name = userInfo.getName();
@@ -144,7 +145,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         // Dummy password => 일반 로그인 사용 X
         String dummyPassword = UUID.randomUUID().toString();
-        String encodedPassword = passwordEncoder.encode(dummyPassword); // 단순히 null 방지용        String password = null;
+        String encodedPassword = passwordEncoder.encode(dummyPassword); // null 방지용;
 
 
         User newUser = User.builder()
