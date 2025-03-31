@@ -45,7 +45,7 @@ public class TodayClosetResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public class TodayClosetCandidateDTO {
+    public static class TodayClosetCandidateDTO {
         private Long postId;
         private String frontImage;
         private String backImage;
