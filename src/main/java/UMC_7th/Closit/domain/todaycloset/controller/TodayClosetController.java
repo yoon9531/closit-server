@@ -21,12 +21,14 @@ public class TodayClosetController {
     private final TodayClosetService todayClosetService;
     private final TodayClosetQueryService todayClosetQueryService;
 
+    /*
     @Operation(summary = "오늘의 옷장 게시글 업로드")
     @PostMapping
     public ApiResponse<TodayClosetResponseDTO.CreateResponseDTO> createTodayCloset(
             @RequestBody TodayClosetRequestDTO.CreateRequestDTO request) {
         return ApiResponse.onSuccess(todayClosetService.createTodayCloset(request));
     }
+     */
 
     @Operation(summary = "오늘의 옷장 게시글 조회")
     @GetMapping
@@ -50,7 +52,7 @@ public class TodayClosetController {
         return ApiResponse.onSuccess(todayClosetQueryService.getTodayClosetCandidates());
     }
 
-    @Operation(summary = "선택한 게시글을 오늘의 옷장으로 등록")
+    @Operation(summary = "선택한 게시글로 오늘의 옷장 게시글 업로드")
     @PostMapping
     public ApiResponse<TodayClosetResponseDTO.CreateResponseDTO> createTodayClosetFromSelectedPost(
             @RequestParam("postId") Long postId) {
