@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/auth/communities/todayclosets")
@@ -42,11 +44,17 @@ public class TodayClosetController {
         return ApiResponse.onSuccess("오늘의 옷장 삭제 성공");
     }
 
-    @Operation(summary = "오늘의 옷장 - 사용자가 선택한 게시글 등록")
-    @PostMapping("/2")
-    public ApiResponse<TodayClosetResponseDTO.CreateResponseDTO> createTodayClosetBySelectedPost(
-            @RequestBody TodayClosetRequestDTO.CreateRequestDTO request) {
-        return ApiResponse.onSuccess(todayClosetService.createTodayClosetBySelectedPost(request));
+    @Operation(summary = "오늘의 옷장 게시글 후보군 조회")
+    @GetMapping("/candidates")
+    public ApiResponse<List<TodayClosetResponseDTO.TodayClosetCandidateDTO>> getTodayClosetCandidates() {
+        return ApiResponse.onSuccess(todayClosetQueryService.getTodayClosetCandidates());
+    }
+
+    @Operation(summary = "선택한 게시글을 오늘의 옷장으로 등록")
+    @PostMapping
+    public ApiResponse<TodayClosetResponseDTO.CreateResponseDTO> createTodayClosetFromSelectedPost(
+            @RequestParam("postId") Long postId) {
+        return ApiResponse.onSuccess(todayClosetService.createTodayClosetByPostId(postId));
     }
 }
 

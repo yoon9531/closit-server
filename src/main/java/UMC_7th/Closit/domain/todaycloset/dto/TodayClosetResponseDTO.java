@@ -40,4 +40,14 @@ public class TodayClosetResponseDTO {
         private boolean isLast;
         private boolean hasNext;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public class TodayClosetCandidateDTO {
+        private Long postId;
+        private String frontImage;
+        private String backImage;
+    }
 }
