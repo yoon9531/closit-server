@@ -1,6 +1,5 @@
 package UMC_7th.Closit.domain.battle.entity;
 
-import UMC_7th.Closit.domain.board.entity.Board;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
