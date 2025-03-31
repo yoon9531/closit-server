@@ -63,10 +63,6 @@ public class Battle extends BaseEntity {
     private List<Vote> voteList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id1")
     private Post post1;
 
