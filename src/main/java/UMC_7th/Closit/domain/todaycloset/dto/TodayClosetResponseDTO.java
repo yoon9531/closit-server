@@ -27,7 +27,6 @@ public class TodayClosetResponseDTO {
         private String frontImage;
         private String backImage;
         private Integer viewCount;
-        private String profileImage;
     }
 
     @Getter

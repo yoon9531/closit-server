@@ -89,6 +89,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //오늘의 옷장 관련 에러
     TODAY_CLOSET_NOT_FOUND(HttpStatus.NOT_FOUND, "TODAYCLOSET4001", "오늘의 옷장이 존재하지 않습니다."),
+    DUPLICATE_TODAY_CLOSET(HttpStatus.CONFLICT, "TODAYCLOSET4002", "이미 오늘의 옷장에 등록된 게시글입니다."),
 
     // 해시태그 관련 관련 에러
     HASHTAG_NOT_FOUND(HttpStatus.NOT_FOUND, "HASHTAG4041", "해시태그가 존재하지 않습니다."),

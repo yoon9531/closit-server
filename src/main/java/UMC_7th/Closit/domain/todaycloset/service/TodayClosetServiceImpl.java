@@ -34,6 +34,24 @@ public class TodayClosetServiceImpl implements TodayClosetService {
 
     @Override
     @Transactional
+    public TodayClosetResponseDTO.CreateResponseDTO createTodayClosetBySelectedPost(TodayClosetRequestDTO.CreateRequestDTO request) {
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        //중복방지
+        boolean exists = todayClosetRepository.existsByPost(post);
+        if (exists) {
+            throw new GeneralException(ErrorStatus.DUPLICATE_TODAY_CLOSET);
+        }
+
+        TodayCloset todayCloset = TodayClosetConverter.toTodayCloset(post);
+        TodayCloset saved = todayClosetRepository.save(todayCloset);
+
+        return TodayClosetConverter.toCreateResponseDTO(saved);
+    }
+
+    @Override
+    @Transactional
     public void deleteTodayCloset(Long todayClosetId) {
         TodayCloset todayCloset = todayClosetRepository.findById(todayClosetId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TODAY_CLOSET_NOT_FOUND));

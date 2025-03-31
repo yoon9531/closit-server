@@ -41,6 +41,13 @@ public class TodayClosetController {
         todayClosetService.deleteTodayCloset(today_closet_id);
         return ApiResponse.onSuccess("오늘의 옷장 삭제 성공");
     }
+
+    @Operation(summary = "오늘의 옷장 - 사용자가 선택한 게시글 등록")
+    @PostMapping("/2")
+    public ApiResponse<TodayClosetResponseDTO.CreateResponseDTO> createTodayClosetBySelectedPost(
+            @RequestBody TodayClosetRequestDTO.CreateRequestDTO request) {
+        return ApiResponse.onSuccess(todayClosetService.createTodayClosetBySelectedPost(request));
+    }
 }
 
 
