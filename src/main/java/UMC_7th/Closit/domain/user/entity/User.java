@@ -12,8 +12,6 @@ import UMC_7th.Closit.domain.post.entity.Likes;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -38,7 +36,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role role; // USER, ADMIN
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String clositId;
 
     @Column(length = 20, nullable = false)
@@ -49,6 +47,9 @@ public class User extends BaseEntity {
 
     @Column(length = 30, nullable = false, unique = true)
     private String email;
+
+    @Column(length = 20, nullable = true)
+    private String provider;
 
     @Column
     private LocalDate birth;
