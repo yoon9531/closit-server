@@ -1,6 +1,5 @@
 package UMC_7th.Closit.domain.battle.entity;
 
-import UMC_7th.Closit.domain.board.entity.Board;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -61,10 +60,6 @@ public class Battle extends BaseEntity {
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Vote> voteList = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id1")

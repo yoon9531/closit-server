@@ -27,7 +27,6 @@ public class TodayClosetResponseDTO {
         private String frontImage;
         private String backImage;
         private Integer viewCount;
-        private String profileImage;
     }
 
     @Getter
@@ -40,5 +39,15 @@ public class TodayClosetResponseDTO {
         private boolean isFirst;
         private boolean isLast;
         private boolean hasNext;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class TodayClosetCandidateDTO {
+        private Long postId;
+        private String frontImage;
+        private String backImage;
     }
 }
