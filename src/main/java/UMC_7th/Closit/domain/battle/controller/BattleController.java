@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleQueryService;
@@ -58,7 +59,7 @@ public class BattleController {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
-        Battle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
+        ChallengeBattle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
 
         return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
     }

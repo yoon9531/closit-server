@@ -3,6 +3,8 @@ package UMC_7th.Closit.domain.battle.converter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
+import UMC_7th.Closit.domain.battle.entity.Status;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -13,32 +15,44 @@ import java.util.stream.Collectors;
 
 public class BattleConverter {
 
-    public static Battle toBattle (Post post, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
+    public static Battle toBattle(Post post, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
         return Battle.builder()
                 .post1(post)
                 .title(request.getTitle())
+                .status(Status.INACTIVE)
                 .build();
     }
+
     public static BattleResponseDTO.CreateBattleResultDTO createBattleResultDTO(Battle battle) {
         return BattleResponseDTO.CreateBattleResultDTO.builder()
                 .battleId(battle.getId())
                 .thumbnail(battle.getPost1().getFrontImage())
+                .status(battle.getStatus())
                 .deadline(battle.getDeadline())
                 .createdAt(battle.getCreatedAt())
                 .build();
     }
 
-    public static BattleResponseDTO.ChallengeBattleResultDTO challengeBattleResultDTO(Battle battle) {
+    public static ChallengeBattle toChallengeBattle(Battle battle, Post post) { // 배틀 신청
+        return ChallengeBattle.builder()
+                .battle(battle)
+                .post(post)
+                .status(Status.PENDING)
+                .build();
+    }
+
+    public static BattleResponseDTO.ChallengeBattleResultDTO challengeBattleResultDTO(ChallengeBattle challengeBattle) {
         return BattleResponseDTO.ChallengeBattleResultDTO.builder()
-                .firstClositId(battle.getPost1().getUser().getClositId())
-                .firstPostId(battle.getPost1().getId())
-                .firstPostFrontImage(battle.getPost1().getFrontImage())
-                .firstPostBackImage(battle.getPost1().getBackImage())
-                .secondClositId(battle.getPost2().getUser().getClositId())
-                .secondPostId(battle.getPost2().getId())
-                .secondPostFrontImage(battle.getPost2().getFrontImage())
-                .secondPostBackImage(battle.getPost2().getBackImage())
-                .createdAt(battle.getCreatedAt())
+                .firstClositId(challengeBattle.getBattle().getPost1().getUser().getClositId())
+                .firstPostId(challengeBattle.getBattle().getPost1().getId())
+                .firstPostFrontImage(challengeBattle.getBattle().getPost1().getFrontImage())
+                .firstPostBackImage(challengeBattle.getBattle().getPost1().getBackImage())
+                .secondClositId(challengeBattle.getPost().getUser().getClositId())
+                .secondPostId(challengeBattle.getPost().getId())
+                .secondPostFrontImage(challengeBattle.getPost().getFrontImage())
+                .secondPostBackImage(challengeBattle.getPost().getBackImage())
+                .status(challengeBattle.getStatus())
+                .createdAt(challengeBattle.getCreatedAt())
                 .build();
     }
 

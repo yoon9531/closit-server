@@ -3,8 +3,11 @@ package UMC_7th.Closit.domain.battle.service.BattleService;
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
+import UMC_7th.Closit.domain.battle.entity.Status;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
+import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BattleCommandServiceImpl implements BattleCommandService {
 
+    private final ChallengeBattleRepository challengeBattleRepository;
     private final BattleRepository battleRepository;
     private final PostRepository postRepository;
     private final VoteRepository voteRepository;
@@ -42,25 +46,27 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle challengeBattle (Long userId, Long battleId, BattleRequestDTO.ChallengeBattleDTO request) { // 배틀 신청
+    public ChallengeBattle challengeBattle (Long userId, Long battleId, BattleRequestDTO.ChallengeBattleDTO request) { // 배틀 신청
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
         Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        Battle challengeBattle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+        ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
 
         // 동일한 게시글로 배틀 불가능
-        if (request.getPostId().equals(challengeBattle.getPost1().getId())) {
+        if (request.getPostId().equals(battle.getPost1().getId())) {
             throw new GeneralException(ErrorStatus.BATTLE_NOT_CHALLENGE);
         }
 
         // 배틀 형성 완료 -> 신청 불가능
-        if (challengeBattle.getPost2() != null) {
+        if (battle.getPost2() != null) {
             throw new GeneralException(ErrorStatus.BATTLE_ALREADY_EXIST);
         }
 
         // 내 게시글에 배틀 신청 불가능
-        if (challengeBattle.getPost1().getUser().getId().equals(userId)) {
+        if (battle.getPost1().getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
         }
 
@@ -69,9 +75,12 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             throw new GeneralException(ErrorStatus.POST_NOT_MINE);
         }
 
-        challengeBattle.setPost2(post);
+        // Status = INACTIVE일 경우에만 배틀 신청 가능
+        if (battle.getStatus().equals(Status.INACTIVE)) {
+            battle.challengeBattle(Status.PENDING);
+        }
 
-        return battleRepository.save(challengeBattle);
+        return challengeBattleRepository.save(challengeBattle);
     }
 
     @Override
