@@ -53,32 +53,9 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
+        validateChallengeBattle(battle, post, userId, request.getPostId());
+
         ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
-
-        // 동일한 게시글로 배틀 불가능
-        if (request.getPostId().equals(battle.getPost1().getId())) {
-            throw new GeneralException(ErrorStatus.BATTLE_NOT_CHALLENGE);
-        }
-
-        // 배틀 형성 완료 -> 신청 불가능
-        if (battle.getPost2() != null) {
-            throw new GeneralException(ErrorStatus.BATTLE_ALREADY_EXIST);
-        }
-
-        // 내 게시글에 배틀 신청 불가능
-        if (battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
-        }
-
-        // 본인의 게시글이 아닐 경우, 배틀 신청 불가능
-        if (!post.getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_MINE);
-        }
-
-        // Status = INACTIVE일 경우에만 배틀 신청 가능
-        if (battle.getStatus().equals(Status.INACTIVE)) {
-            battle.challengeBattle(Status.PENDING);
-        }
 
         return challengeBattleRepository.save(challengeBattle);
     }
@@ -151,5 +128,32 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         }
 
         battleRepository.delete(battle);
+    }
+
+    private void validateChallengeBattle(Battle battle, Post post, Long userId, Long request) {
+        // 동일한 게시글로 배틀 불가능
+        if (request.equals(battle.getPost1().getId())) {
+            throw new GeneralException(ErrorStatus.BATTLE_NOT_CHALLENGE);
+        }
+
+        // 배틀 형성 완료 -> 신청 불가능
+        if (battle.getPost2() != null) {
+            throw new GeneralException(ErrorStatus.BATTLE_ALREADY_EXIST);
+        }
+
+        // 내 게시글에 배틀 신청 불가능
+        if (battle.getPost1().getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
+        }
+
+        // 본인의 게시글이 아닐 경우, 배틀 신청 불가능
+        if (!post.getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.POST_NOT_MINE);
+        }
+
+        // Status = INACTIVE일 경우에만 배틀 신청 가능
+        if (battle.getStatus().equals(Status.INACTIVE)) {
+            battle.challengeBattle(Status.PENDING);
+        }
     }
 }

@@ -10,6 +10,12 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(
+        name = "challenge_battle",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_battle_post", columnNames = {"battle_id", "post_id"})
+        }
+)
 public class ChallengeBattle extends BaseEntity {
 
     @Id
