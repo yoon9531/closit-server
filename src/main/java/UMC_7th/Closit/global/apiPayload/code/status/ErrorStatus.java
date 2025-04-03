@@ -41,8 +41,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 소셜 로그인 관련 에러
     NOT_SUPPORTED_SOCIAL_LOGIN(HttpStatus.BAD_REQUEST, "SOCIAL4001", "지원하지 않는 소셜 로그인입니다."),
+
     // 게시글 관련 에러
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "게시글이 존재하지 않습니다."),
+    INVALID_HASHTAG_LENGTH(HttpStatus.BAD_REQUEST, "POST4001", "해시태그는 20자 이내여야 합니다."),
+    INVALID_ITEMTAG_LENGTH(HttpStatus.BAD_REQUEST, "POST4002", "아이템 태그는 20자 이내여야 합니다."),
 
     // 북마크 관련 에러
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND,"BOOKMARK4041","북마크가 존재하지 않습니다."),

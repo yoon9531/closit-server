@@ -59,6 +59,10 @@ public class PostCommandServiceImpl implements PostCommandService {
         List<PostHashtag> postHashtags = request.getHashtags().stream()
                 .map(hashtagDTO -> {
                     String tagContent = hashtagDTO.getContent();
+                    // 해시태그 길이 검사
+                    if (tagContent.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_HASHTAG_LENGTH);
+                    }
                     Hashtag hashTag = hashtagRepository.findByContent(tagContent)
                             .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
                     return PostHashtag.builder().post(post).hashtag(hashTag).build();
@@ -68,25 +72,37 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // 5. Front ItemTags 처리
         List<ItemTag> frontItemTags = request.getFrontItemtags().stream()
-                .map(itemTagDTO -> ItemTag.builder()
-                        .post(post)
-                        .itemTagX(itemTagDTO.getX())
-                        .itemTagY(itemTagDTO.getY())
-                        .itemTagContent(itemTagDTO.getContent())
-                        .tagType("FRONT")
-                        .build())
+                .map(itemTagDTO -> {
+                    String content = itemTagDTO.getContent();
+                    if (content.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
+                    }
+                    return ItemTag.builder()
+                            .post(post)
+                            .itemTagX(itemTagDTO.getX())
+                            .itemTagY(itemTagDTO.getY())
+                            .itemTagContent(content)
+                            .tagType("FRONT")
+                            .build();
+                })
                 .collect(Collectors.toList());
         itemTagRepository.saveAll(frontItemTags);
 
         // 5. Back ItemTags 처리
         List<ItemTag> backItemTags = request.getBackItemtags().stream()
-                .map(itemTagDTO -> ItemTag.builder()
-                        .post(post)
-                        .itemTagX(itemTagDTO.getX())
-                        .itemTagY(itemTagDTO.getY())
-                        .itemTagContent(itemTagDTO.getContent())
-                        .tagType("BACK")
-                        .build())
+                .map(itemTagDTO -> {
+                    String content = itemTagDTO.getContent();
+                    if (content.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
+                    }
+                    return ItemTag.builder()
+                            .post(post)
+                            .itemTagX(itemTagDTO.getX())
+                            .itemTagY(itemTagDTO.getY())
+                            .itemTagContent(content)
+                            .tagType("BACK")
+                            .build();
+                })
                 .collect(Collectors.toList());
         itemTagRepository.saveAll(backItemTags);
 
@@ -110,6 +126,10 @@ public class PostCommandServiceImpl implements PostCommandService {
         List<PostHashtag> newPostHashtags = request.getHashtags().stream()
                 .map(hashtagDTO -> {
                     String tagContent = hashtagDTO.getContent();
+                    // 해시태그 길이 검사
+                    if (tagContent.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_HASHTAG_LENGTH);
+                    }
                     Hashtag hashTag = hashtagRepository.findByContent(tagContent)
                             .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
                     return PostHashtag.builder().post(post).hashtag(hashTag).build();
@@ -121,23 +141,35 @@ public class PostCommandServiceImpl implements PostCommandService {
         post.getItemTagList().clear();
         List<ItemTag> newItemTags = new ArrayList<>();
         newItemTags.addAll(request.getFrontItemtags().stream()
-                .map(itemTagDTO -> ItemTag.builder()
-                        .post(post)
-                        .itemTagX(itemTagDTO.getX())
-                        .itemTagY(itemTagDTO.getY())
-                        .itemTagContent(itemTagDTO.getContent())
-                        .tagType("FRONT")
-                        .build())
+                .map(itemTagDTO -> {
+                        String content = itemTagDTO.getContent();
+                        if (content.length() > 20) {
+                            throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
+                        }
+                        return ItemTag.builder()
+                            .post(post)
+                            .itemTagX(itemTagDTO.getX())
+                            .itemTagY(itemTagDTO.getY())
+                            .itemTagContent(content)
+                            .tagType("FRONT")
+                            .build();
+                })
                 .toList());
 
         newItemTags.addAll(request.getBackItemtags().stream()
-                .map(itemTagDTO -> ItemTag.builder()
-                        .post(post)
-                        .itemTagX(itemTagDTO.getX())
-                        .itemTagY(itemTagDTO.getY())
-                        .itemTagContent(itemTagDTO.getContent())
-                        .tagType("BACK")
-                        .build())
+                .map(itemTagDTO -> {
+                    String content = itemTagDTO.getContent();
+                    if (content.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
+                    }
+                    return ItemTag.builder()
+                            .post(post)
+                            .itemTagX(itemTagDTO.getX())
+                            .itemTagY(itemTagDTO.getY())
+                            .itemTagContent(content)
+                            .tagType("BACK")
+                            .build();
+                })
                 .toList());
 
         post.getItemTagList().addAll(newItemTags);
