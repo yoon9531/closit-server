@@ -57,7 +57,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // 4. 해시태그 처리
         List<PostHashtag> postHashtags = request.getHashtags().stream()
-                .map(tagContent -> {
+                .map(hashtagDTO -> {
+                    String tagContent = hashtagDTO.getContent();
                     Hashtag hashTag = hashtagRepository.findByContent(tagContent)
                             .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
                     return PostHashtag.builder().post(post).hashtag(hashTag).build();
@@ -107,7 +108,8 @@ public class PostCommandServiceImpl implements PostCommandService {
         // 3. 기존 해시태그 삭제 후 새로운 해시태그 추가
         post.getPostHashtagList().clear();  // 리스트를 비움
         List<PostHashtag> newPostHashtags = request.getHashtags().stream()
-                .map(tagContent -> {
+                .map(hashtagDTO -> {
+                    String tagContent = hashtagDTO.getContent();
                     Hashtag hashTag = hashtagRepository.findByContent(tagContent)
                             .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
                     return PostHashtag.builder().post(post).hashtag(hashTag).build();
