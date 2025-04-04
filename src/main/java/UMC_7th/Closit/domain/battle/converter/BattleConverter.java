@@ -57,8 +57,8 @@ public class BattleConverter {
                 .build();
     }
 
-    public static BattleResponseDTO.AcceptChallengeDTO acceptChallengeDTO(Battle battle) {
-        return BattleResponseDTO.AcceptChallengeDTO.builder()
+    public static BattleResponseDTO.ChallengeDecisionDTO acceptChallengeDTO(Battle battle) {
+        return BattleResponseDTO.ChallengeDecisionDTO.builder()
                 .battleId(battle.getId())
                 .firstClositId(battle.getPost1().getUser().getClositId())
                 .firstPostId(battle.getPost1().getId())

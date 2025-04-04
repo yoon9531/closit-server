@@ -73,8 +73,8 @@ public class BattleController {
             ### RequestBody
             challengeBattleId [챌린지 배틀 ID]
             """)
-    public ApiResponse<BattleResponseDTO.AcceptChallengeDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.AcceptChallengeDTO request,
-                                                                             @PathVariable("battleId") Long battleId) {
+    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
+                                                                               @PathVariable("battleId") Long battleId) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 

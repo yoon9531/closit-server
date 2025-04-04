@@ -21,7 +21,7 @@ public class BattleRequestDTO {
     }
 
     @Getter
-    public static class AcceptChallengeDTO { // 배틀 신청 수락
+    public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
         @NotNull
         private Long challengeBattleId;
     }
