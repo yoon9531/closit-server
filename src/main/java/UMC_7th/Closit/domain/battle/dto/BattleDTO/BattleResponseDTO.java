@@ -21,8 +21,6 @@ public class BattleResponseDTO {
         private Long battleId;
         private String thumbnail;
         private Status status;
-        @JsonFormat(pattern = "yyyy/MM/dd")
-        private LocalDate deadline;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -52,6 +50,7 @@ public class BattleResponseDTO {
     @AllArgsConstructor
     public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
         private Status status;
+        @JsonFormat(pattern = "yyyy/MM/dd")
         private LocalDate deadline;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime updatedAt;

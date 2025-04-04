@@ -28,7 +28,6 @@ public class BattleConverter {
                 .battleId(battle.getId())
                 .thumbnail(battle.getPost1().getFrontImage())
                 .status(battle.getStatus())
-                .deadline(battle.getDeadline())
                 .createdAt(battle.getCreatedAt())
                 .build();
     }
