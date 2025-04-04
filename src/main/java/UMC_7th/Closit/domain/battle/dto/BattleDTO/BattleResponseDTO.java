@@ -61,8 +61,7 @@ public class BattleResponseDTO {
         private String secondPostFrontImage;
         private String secondPostBackImage;
         private Status status;
-        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-        private LocalDateTime updatedAt;
+        private LocalDate deadline;
     }
 
     @Builder

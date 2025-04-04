@@ -69,6 +69,7 @@ public class BattleConverter {
                 .secondPostFrontImage(battle.getPost2().getFrontImage())
                 .secondPostBackImage(battle.getPost2().getBackImage())
                 .status(battle.getStatus())
+                .deadline(battle.getDeadline())
                 .build();
     }
 

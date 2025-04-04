@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -70,7 +72,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         challengeBattleRepository.updateBattleStatus(battle, challengeBattle.getId());
 
-        battle.acceptChallenge(challengeBattle.getPost(), Status.ACTIVE);
+        battle.acceptChallenge(challengeBattle.getPost(), Status.ACTIVE, LocalDate.now().plusDays(3));
 
         return battleRepository.save(battle);
     }
