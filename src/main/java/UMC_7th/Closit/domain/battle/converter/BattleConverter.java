@@ -57,19 +57,11 @@ public class BattleConverter {
                 .build();
     }
 
-    public static BattleResponseDTO.ChallengeDecisionDTO acceptChallengeDTO(Battle battle) {
+    public static BattleResponseDTO.ChallengeDecisionDTO challengeDecisionDTO(Battle battle) {
         return BattleResponseDTO.ChallengeDecisionDTO.builder()
-                .battleId(battle.getId())
-                .firstClositId(battle.getPost1().getUser().getClositId())
-                .firstPostId(battle.getPost1().getId())
-                .firstPostFrontImage(battle.getPost1().getFrontImage())
-                .firstPostBackImage(battle.getPost1().getBackImage())
-                .secondClositId(battle.getPost2().getUser().getClositId())
-                .secondPostId(battle.getPost2().getId())
-                .secondPostFrontImage(battle.getPost2().getFrontImage())
-                .secondPostBackImage(battle.getPost2().getBackImage())
                 .status(battle.getStatus())
                 .deadline(battle.getDeadline())
+                .updatedAt(battle.getUpdatedAt())
                 .build();
     }
 

@@ -51,17 +51,10 @@ public class BattleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
-        private Long battleId;
-        private String firstClositId;
-        private Long firstPostId;
-        private String firstPostFrontImage;
-        private String firstPostBackImage;
-        private String secondClositId;
-        private Long secondPostId;
-        private String secondPostFrontImage;
-        private String secondPostBackImage;
         private Status status;
         private LocalDate deadline;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime updatedAt;
     }
 
     @Builder

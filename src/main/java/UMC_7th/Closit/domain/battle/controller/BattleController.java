@@ -80,7 +80,26 @@ public class BattleController {
 
         Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.acceptChallengeDTO(battle));
+        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
+    }
+
+    @PatchMapping("/{battleId}/challenge/reject")
+    @Operation(summary = "배틀 신청 거절",
+            description = """
+            ## 배틀 신청 거절
+            ### PathVariable
+            battleId [배틀 ID[
+            ### RequestBody
+            challengeBattleId [챌린지 배틀 ID]
+            """)
+    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> rejectChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
+                                                                               @PathVariable("battleId") Long battleId) {
+        User user = securityUtil.getCurrentUser();
+        Long userId = user.getId();
+
+        Battle battle = battleCommandService.rejectChallenge(userId, battleId, request);
+
+        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
     }
 
     @PostMapping("/{battle_id}/voting")

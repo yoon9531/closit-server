@@ -34,4 +34,8 @@ public class ChallengeBattle extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
+    public void rejectBattle() { // 배틀 거절
+        this.status = Status.REJECTED;
+    }
 }

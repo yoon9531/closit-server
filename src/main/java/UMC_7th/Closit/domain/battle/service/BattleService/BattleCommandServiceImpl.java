@@ -78,6 +78,19 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
+    public Battle rejectChallenge (Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request) { // 배틀 신청
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
+        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
+
+        challengeBattle.rejectBattle();
+
+        return battle;
+    }
+
+    @Override
     public Vote voteBattle (Long userId, Long battleId, BattleRequestDTO.VoteBattleDTO request) { // 배틀 투표
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
