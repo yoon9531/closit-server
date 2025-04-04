@@ -82,6 +82,11 @@ public class Battle extends BaseEntity {
         this.status = status;
     }
 
+    public void acceptChallenge(Post post2, Status status) { // 배틀 수락
+        this.post2 = post2;
+        this.status = status;
+    }
+
     @PrePersist
     public void voteDeadline() { // 배틀 투표 - 마감 기한 3일 뒤 설정
         if (this.deadline == null) {

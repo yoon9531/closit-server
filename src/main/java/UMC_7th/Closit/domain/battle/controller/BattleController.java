@@ -64,6 +64,25 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
     }
 
+    @PatchMapping("/{battleId}/challenge/accept")
+    @Operation(summary = "배틀 신청 수락",
+            description = """
+            ## 배틀 신청 수락
+            ### PathVariable
+            battleId [배틀 ID]
+            ### RequestBody
+            challengeBattleId [챌린지 배틀 ID]
+            """)
+    public ApiResponse<BattleResponseDTO.AcceptChallengeDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.AcceptChallengeDTO request,
+                                                                             @PathVariable("battleId") Long battleId) {
+        User user = securityUtil.getCurrentUser();
+        Long userId = user.getId();
+
+        Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
+
+        return ApiResponse.onSuccess(BattleConverter.acceptChallengeDTO(battle));
+    }
+
     @PostMapping("/{battle_id}/voting")
     @Operation(summary = "배틀 투표",
             description = """

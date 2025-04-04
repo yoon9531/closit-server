@@ -32,6 +32,7 @@ public class BattleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeBattleResultDTO { // 배틀 신청
+        private Long challengeBattleId;
         private String firstClositId;
         private Long firstPostId;
         private String firstPostFrontImage;
@@ -43,6 +44,25 @@ public class BattleResponseDTO {
         private Status status;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AcceptChallengeDTO { // 배틀 신청 수락
+        private Long battleId;
+        private String firstClositId;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
+        private String secondClositId;
+        private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
+        private Status status;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime updatedAt;
     }
 
     @Builder

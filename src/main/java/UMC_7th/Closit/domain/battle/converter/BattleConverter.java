@@ -43,6 +43,7 @@ public class BattleConverter {
 
     public static BattleResponseDTO.ChallengeBattleResultDTO challengeBattleResultDTO(ChallengeBattle challengeBattle) {
         return BattleResponseDTO.ChallengeBattleResultDTO.builder()
+                .challengeBattleId(challengeBattle.getId())
                 .firstClositId(challengeBattle.getBattle().getPost1().getUser().getClositId())
                 .firstPostId(challengeBattle.getBattle().getPost1().getId())
                 .firstPostFrontImage(challengeBattle.getBattle().getPost1().getFrontImage())
@@ -53,6 +54,21 @@ public class BattleConverter {
                 .secondPostBackImage(challengeBattle.getPost().getBackImage())
                 .status(challengeBattle.getStatus())
                 .createdAt(challengeBattle.getCreatedAt())
+                .build();
+    }
+
+    public static BattleResponseDTO.AcceptChallengeDTO acceptChallengeDTO(Battle battle) {
+        return BattleResponseDTO.AcceptChallengeDTO.builder()
+                .battleId(battle.getId())
+                .firstClositId(battle.getPost1().getUser().getClositId())
+                .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
+                .secondClositId(battle.getPost2().getUser().getClositId())
+                .secondPostId(battle.getPost2().getId())
+                .secondPostFrontImage(battle.getPost2().getFrontImage())
+                .secondPostBackImage(battle.getPost2().getBackImage())
+                .status(battle.getStatus())
                 .build();
     }
 

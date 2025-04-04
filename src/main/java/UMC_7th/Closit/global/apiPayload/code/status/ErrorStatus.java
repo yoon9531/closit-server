@@ -63,6 +63,9 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_APPLY(HttpStatus.BAD_REQUEST, "BATTLE4007", "본인의 게시글에 배틀을 신청할 수 없습니다."),
     POST_NOT_MINE(HttpStatus.BAD_REQUEST, "BATTLE4008", "해당 게시글은 다른 사용자의 게시글입니다."),
 
+    // 챌린지 배틀 관련 에러
+    CHALLENGE_BATTLE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGEBATTLE4041", "챌린지 배틀이 존재하지 않습니다."),
+
     // 투표 관련 에러
     VOTE_ALREADY_EXIST (HttpStatus.BAD_REQUEST, "VOTE4001", "이미 투표를 했습니다."),
     VOTE_EXPIRED (HttpStatus.BAD_REQUEST, "VOTE4002", "이미 종료된 투표 입니다."),
