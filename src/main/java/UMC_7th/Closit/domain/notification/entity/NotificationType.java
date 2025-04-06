@@ -10,5 +10,7 @@ public enum NotificationType {
     @Schema(description = "팔로우 알림")
     FOLLOW,
     @Schema(description = "미션 알림")
-    MISSION;
+    MISSION,
+    @Schema(description = "배틀 신청 알림")
+    CHALLENGE_BATTLE
 }

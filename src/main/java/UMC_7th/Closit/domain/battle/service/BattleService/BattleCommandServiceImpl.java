@@ -9,6 +9,7 @@ import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
+import UMC_7th.Closit.domain.notification.service.NotiCommandService;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -31,6 +32,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     private final PostRepository postRepository;
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
+    private final NotiCommandService notiCommandService;
 
     @Override
     public Battle createBattle (Long userId, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
@@ -58,6 +60,8 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         validateChallengeBattle(battle, post, userId, request.getPostId());
 
         ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
+
+        notiCommandService.challengeBattleNotification(challengeBattle);
 
         return challengeBattleRepository.save(challengeBattle);
     }
