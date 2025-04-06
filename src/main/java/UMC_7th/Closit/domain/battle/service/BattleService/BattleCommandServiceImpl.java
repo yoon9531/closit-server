@@ -76,6 +76,10 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         challengeBattleRepository.updateBattleStatus(battle, challengeBattle.getId());
 
+        // Post1 게시글 작성자만 수락 가능
+        if (!battle.getPost1().getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
+        }
         battle.acceptChallenge(challengeBattle.getPost(), Status.ACTIVE, LocalDate.now().plusDays(3));
 
         return battleRepository.save(battle);
@@ -89,6 +93,10 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
+        // Post1 게시글 작성자만 거절 가능
+        if (!battle.getPost1().getUser().getId().equals(userId)) {
+            throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
+        }
         challengeBattle.rejectBattle();
 
         return battle;
