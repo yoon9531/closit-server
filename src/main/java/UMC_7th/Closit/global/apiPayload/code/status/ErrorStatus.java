@@ -61,7 +61,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_IS_CHALLENGE (HttpStatus.BAD_REQUEST, "BATTLE4005", "해당 게시글은 배틀 챌린지 게시글입니다."),
     BATTLE_NOT_FOUND (HttpStatus.NOT_FOUND, "BATTLE4041", "배틀이 존재하지 않습니다."),
     POST_NOT_APPLY(HttpStatus.BAD_REQUEST, "BATTLE4007", "본인의 게시글에 배틀을 신청할 수 없습니다."),
-    POST_NOT_MINE(HttpStatus.BAD_REQUEST, "BATTLE4008", "해당 게시글은 다른 사용자의 게시글입니다."),
+    POST_UNAUTHORIZED_ACCESS(HttpStatus.BAD_REQUEST, "BATTLE4008", "해당 게시글은 다른 사용자의 게시글입니다."),
     BATTLE_UNAUTHORIZED_ACCESS(HttpStatus.BAD_REQUEST, "BATTLE4009", "해당 배틀 게시글은 다른 사용자의 배틀 게시글 입니다."),
 
     // 챌린지 배틀 관련 에러

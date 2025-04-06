@@ -43,7 +43,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         // 본인의 게시글이 아닐 경우, 배틀 게시글로 업로드 불가능
         if (!post.getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_MINE);
+            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
 
         return battleRepository.save(battle);
@@ -166,7 +166,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         // 배틀 게시글을 생성한 이가 아닐 경우 , 삭제 불가능
         if (!battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_MINE);
+            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
 
         battleRepository.delete(battle);
@@ -190,7 +190,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         // 본인의 게시글이 아닐 경우, 배틀 신청 불가능
         if (!post.getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_MINE);
+            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
 
         // Status = INACTIVE일 경우에만 배틀 신청 가능
