@@ -50,7 +50,7 @@ public class SecurityConfig {
                                          "/api/auth/login",
                                          "/api/auth/refresh",
                                          "/api/auth/users/isunique/**",
-                                         "/api/auth/mail").permitAll()
+                                         "/api/auth/email-tokens/**").permitAll()
                         .anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

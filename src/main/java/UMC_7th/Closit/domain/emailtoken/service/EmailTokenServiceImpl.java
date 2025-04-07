@@ -30,7 +30,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
         emailTokenRepository.save(emailToken);
 
         // 이메일 발송
-        String verificationLink = "https://yourdomain.com/api/auth/verify-email?token=" + token;
+        String verificationLink = "http://localhost:8080/api/auth/email-tokens/verify?token=" + token;
         mailService.sendEmail(email, "이메일 인증", verificationLink);
     }
 
