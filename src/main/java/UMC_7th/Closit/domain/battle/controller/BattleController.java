@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleQueryService;
@@ -58,9 +59,47 @@ public class BattleController {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
-        Battle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
+        ChallengeBattle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
 
         return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
+    }
+
+    @PatchMapping("/{battleId}/challenge/accept")
+    @Operation(summary = "배틀 신청 수락",
+            description = """
+            ## 배틀 신청 수락
+            ### PathVariable
+            battleId [배틀 ID]
+            ### RequestBody
+            challengeBattleId [챌린지 배틀 ID]
+            """)
+    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
+                                                                               @PathVariable("battleId") Long battleId) {
+        User user = securityUtil.getCurrentUser();
+        Long userId = user.getId();
+
+        Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
+
+        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
+    }
+
+    @PatchMapping("/{battleId}/challenge/reject")
+    @Operation(summary = "배틀 신청 거절",
+            description = """
+            ## 배틀 신청 거절
+            ### PathVariable
+            battleId [배틀 ID[
+            ### RequestBody
+            challengeBattleId [챌린지 배틀 ID]
+            """)
+    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> rejectChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
+                                                                               @PathVariable("battleId") Long battleId) {
+        User user = securityUtil.getCurrentUser();
+        Long userId = user.getId();
+
+        Battle battle = battleCommandService.rejectChallenge(userId, battleId, request);
+
+        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
     }
 
     @PostMapping("/{battle_id}/voting")

@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.battle.dto.BattleDTO;
 
+import UMC_7th.Closit.domain.battle.entity.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,7 @@ public class BattleResponseDTO {
     public static class CreateBattleResultDTO { // 배틀 생성
         private Long battleId;
         private String thumbnail;
-        @JsonFormat(pattern = "yyyy/MM/dd")
-        private LocalDate deadline;
+        private Status status;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -30,6 +30,7 @@ public class BattleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeBattleResultDTO { // 배틀 신청
+        private Long challengeBattleId;
         private String firstClositId;
         private Long firstPostId;
         private String firstPostFrontImage;
@@ -38,8 +39,21 @@ public class BattleResponseDTO {
         private Long secondPostId;
         private String secondPostFrontImage;
         private String secondPostBackImage;
+        private Status status;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
+        private Status status;
+        @JsonFormat(pattern = "yyyy/MM/dd")
+        private LocalDate deadline;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime updatedAt;
     }
 
     @Builder

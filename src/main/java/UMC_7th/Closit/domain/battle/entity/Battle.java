@@ -4,8 +4,6 @@ import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,8 +12,6 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@DynamicUpdate
-@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Battle extends BaseEntity {
@@ -28,8 +24,8 @@ public class Battle extends BaseEntity {
     @Column
     private String title;
 
-    @Column(nullable = false)
-    private LocalDate deadline = LocalDate.now().plusDays(3);
+    @Column
+    private LocalDate deadline;
 
     @Column
     @Builder.Default
@@ -48,6 +44,14 @@ public class Battle extends BaseEntity {
     @Column
     @Builder.Default
     private Integer likeCount = 0;
+
+    @Column
+    @Builder.Default
+    private Integer view = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
     @Builder.Default
@@ -69,15 +73,14 @@ public class Battle extends BaseEntity {
     @JoinColumn(name = "post_id2")
     private Post post2;
 
-    public void setPost2 (Post post2) { // 배틀 신청
-        this.post2 = post2;
+    public void challengeBattle(Status status) { // 배틀 신청
+        this.status = status;
     }
 
-    @PrePersist
-    public void voteDeadline() { // 배틀 투표 - 마감 기한 3일 뒤 설정
-        if (this.deadline == null) {
-            this.deadline = LocalDate.now().plusDays(3);
-        }
+    public void acceptChallenge(Post post2, Status status, LocalDate deadline) { // 배틀 수락
+        this.post2 = post2;
+        this.status = status;
+        this.deadline = deadline;
     }
 
     public boolean availableVote () {
