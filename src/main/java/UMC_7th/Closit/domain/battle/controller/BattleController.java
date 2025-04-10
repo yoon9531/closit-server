@@ -3,9 +3,7 @@ package UMC_7th.Closit.domain.battle.controller;
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
-import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
-import UMC_7th.Closit.domain.battle.entity.Vote;
+import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -128,8 +126,10 @@ public class BattleController {
             ## 배틀 게시글 목록 조회 - 투표 하지 않은 배틀 게시글은 0으로 보임
             ### Parameters
             page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
+            status [배틀 진행 상태] - 
             """)
-    public ApiResponse<BattleResponseDTO.BattlePreviewListDTO> getBattleList(@RequestParam(name = "page") Integer page) {
+    public ApiResponse<BattleResponseDTO.BattlePreviewListDTO> getBattleList(@RequestParam(name = "page") Integer page,
+                                                                             @RequestParam(name = "battleStatus")BattleStatus battleStatus) {
 
         Slice<Battle> battleList = battleQueryService.getBattleList(page);
 

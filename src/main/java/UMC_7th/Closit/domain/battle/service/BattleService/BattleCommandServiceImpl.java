@@ -2,10 +2,7 @@ package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
-import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
-import UMC_7th.Closit.domain.battle.entity.Status;
-import UMC_7th.Closit.domain.battle.entity.Vote;
+import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
@@ -74,13 +71,13 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
-        challengeBattleRepository.updateBattleStatus(battle, challengeBattle.getId());
+        challengeBattleRepository.updateChallengeStatus(battle, challengeBattle.getId());
 
         // Post1 게시글 작성자만 수락 가능
         if (!battle.getPost1().getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
         }
-        battle.acceptChallenge(challengeBattle.getPost(), Status.ACTIVE, LocalDate.now().plusDays(3));
+        battle.acceptChallenge(challengeBattle.getPost(), LocalDate.now().plusDays(3));
 
         return battleRepository.save(battle);
     }
@@ -194,8 +191,8 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         }
 
         // Status = INACTIVE일 경우에만 배틀 신청 가능
-        if (battle.getStatus().equals(Status.INACTIVE)) {
-            battle.challengeBattle(Status.PENDING);
+        if (battle.getBattleStatus().equals(BattleStatus.INACTIVE)) {
+            battle.challengeBattle();
         }
     }
 }

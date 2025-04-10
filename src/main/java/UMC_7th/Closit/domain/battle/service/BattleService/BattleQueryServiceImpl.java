@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class BattleQueryServiceImpl implements BattleQueryService {
 
     @Override
     public Slice<Battle> getBattleList(Integer page) { // 배틀 게시글 목록 조회
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         // secondPostId가 not null 인 것을 기준으로 조회
         Slice<Battle> battleList = battleRepository.findByPost2IsNotNull(pageable);

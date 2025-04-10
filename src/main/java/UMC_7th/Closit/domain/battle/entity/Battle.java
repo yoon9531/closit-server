@@ -51,7 +51,7 @@ public class Battle extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private BattleStatus battleStatus;
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
     @Builder.Default
@@ -73,13 +73,13 @@ public class Battle extends BaseEntity {
     @JoinColumn(name = "post_id2")
     private Post post2;
 
-    public void challengeBattle(Status status) { // 배틀 신청
-        this.status = status;
+    public void challengeBattle() { // 배틀 신청
+        this.battleStatus = BattleStatus.PENDING;
     }
 
-    public void acceptChallenge(Post post2, Status status, LocalDate deadline) { // 배틀 수락
+    public void acceptChallenge(Post post2, LocalDate deadline) { // 배틀 수락
         this.post2 = post2;
-        this.status = status;
+        this.battleStatus = BattleStatus.ACTIVE;
         this.deadline = deadline;
     }
 

@@ -2,10 +2,7 @@ package UMC_7th.Closit.domain.battle.converter;
 
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
-import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
-import UMC_7th.Closit.domain.battle.entity.Status;
-import UMC_7th.Closit.domain.battle.entity.Vote;
+import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Slice;
@@ -19,7 +16,7 @@ public class BattleConverter {
         return Battle.builder()
                 .post1(post)
                 .title(request.getTitle())
-                .status(Status.INACTIVE)
+                .battleStatus(BattleStatus.INACTIVE)
                 .build();
     }
 
@@ -27,7 +24,7 @@ public class BattleConverter {
         return BattleResponseDTO.CreateBattleResultDTO.builder()
                 .battleId(battle.getId())
                 .thumbnail(battle.getPost1().getFrontImage())
-                .status(battle.getStatus())
+                .battleStatus(battle.getBattleStatus())
                 .createdAt(battle.getCreatedAt())
                 .build();
     }
@@ -36,7 +33,7 @@ public class BattleConverter {
         return ChallengeBattle.builder()
                 .battle(battle)
                 .post(post)
-                .status(Status.PENDING)
+                .challengeStatus(ChallengeStatus.PENDING)
                 .build();
     }
 
@@ -51,14 +48,14 @@ public class BattleConverter {
                 .secondPostId(challengeBattle.getPost().getId())
                 .secondPostFrontImage(challengeBattle.getPost().getFrontImage())
                 .secondPostBackImage(challengeBattle.getPost().getBackImage())
-                .status(challengeBattle.getStatus())
+                .challengeStatus(challengeBattle.getChallengeStatus())
                 .createdAt(challengeBattle.getCreatedAt())
                 .build();
     }
 
     public static BattleResponseDTO.ChallengeDecisionDTO challengeDecisionDTO(Battle battle) {
         return BattleResponseDTO.ChallengeDecisionDTO.builder()
-                .status(battle.getStatus())
+                .battleStatus(battle.getBattleStatus())
                 .deadline(battle.getDeadline())
                 .updatedAt(battle.getUpdatedAt())
                 .build();
