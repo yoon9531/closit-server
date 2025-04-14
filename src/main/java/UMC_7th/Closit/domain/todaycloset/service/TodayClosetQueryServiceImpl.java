@@ -32,15 +32,13 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
 
     @Override
     public Slice<TodayCloset> getTodayClosetList(Integer page, String sort) {
-        Pageable pageable;
+        Pageable pageable = PageRequest.of(page, 10);
 
         if (sort.equals("view")) {
-            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "view"));
-        } else { // 기본: 최신순
-            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+            return todayClosetRepository.findAllOrderByPostView(pageable);
+        } else {
+            return todayClosetRepository.findAll(pageable);
         }
-
-        return todayClosetRepository.findAll(pageable);
     }
 
     @Override
