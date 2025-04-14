@@ -125,13 +125,13 @@ public class BattleController {
             description = """
             ## 배틀 게시글 목록 조회 - 투표 하지 않은 배틀 게시글은 0으로 보임
             ### Parameters
-            page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
+            page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌 \n
             status [배틀 진행 상태] - 
             """)
     public ApiResponse<BattleResponseDTO.BattlePreviewListDTO> getBattleList(@RequestParam(name = "page") Integer page,
                                                                              @RequestParam(name = "battleStatus")BattleStatus battleStatus) {
 
-        Slice<Battle> battleList = battleQueryService.getBattleList(page);
+        Slice<Battle> battleList = battleQueryService.getBattleList(page, battleStatus);
 
         return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(battleList));
     }

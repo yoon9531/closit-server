@@ -95,19 +95,13 @@ public class Battle extends BaseEntity {
         this.secondVotingCnt++;
     }
 
-    public void setFirstVotingCnt (Integer firstVotingCnt) { // 배틀 게시글 목록 조회
+    public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회
         this.firstVotingCnt = firstVotingCnt;
-    }
-
-    public void setSecondVotingCnt (Integer secondVotingCnt) {
         this.secondVotingCnt = secondVotingCnt;
     }
 
-    public void setFirstVotingRate (double firstVotingRate) {
+    public void updateVotingRate (double firstVotingRate, double secondVotingRate) {
         this.firstVotingRate = firstVotingRate;
-    }
-
-    public void setSecondVotingRate (double secondVotingRate) {
         this.secondVotingRate = secondVotingRate;
     }
 

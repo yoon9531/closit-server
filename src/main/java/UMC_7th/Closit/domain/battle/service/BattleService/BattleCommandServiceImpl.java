@@ -110,34 +110,16 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
+        validateVoteBattle(battle, userId, request);
+
         Vote vote = BattleConverter.toVote(user, request);
-
-        // 배틀이 아닌 게시글에 투표 불가능
-        if (!battle.getPost1().getId().equals(request.getPostId()) && !battle.getPost2().getId().equals(request.getPostId())) {
-            throw new GeneralException(ErrorStatus.POST_NOT_BATTLE);
-        }
-
-        // 이미 투표한 곳에 중복 투표 방지
-        boolean alreadyVoted = voteRepository.existsByBattleIdAndUserId(battleId, userId);
-        if (alreadyVoted) {
-            throw new GeneralException(ErrorStatus.VOTE_ALREADY_EXIST);
-        }
-
-        // 마감 기한 후 투표 방지
-        if (battle.availableVote()) {
-            throw new GeneralException(ErrorStatus.VOTE_EXPIRED);
-        }
-
-        // 챌린지 게시글 투표 방지
-        if (battle.getPost2() == null) {
-            throw new GeneralException(ErrorStatus.POST_IS_CHALLENGE);
-        }
 
         if (battle.getPost1().getId().equals(vote.getVotedPostId())) { // 첫 번째 게시글에 투표
             battle.incrementFirstVotingCnt();
         } else if (battle.getPost2().getId().equals(vote.getVotedPostId())) { // 두 번째 게시글에 투표
             battle.incrementSecondVotingCnt();
         }
+
         Integer firstVotingCnt = battle.getFirstVotingCnt();
         Integer secondVotingCnt = battle.getSecondVotingCnt();
         int totalVoting = firstVotingCnt + secondVotingCnt;
@@ -146,12 +128,9 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         double firstVotingPercentage = (totalVoting == 0) ? 0.0 : (firstVotingCnt * 100.0) / totalVoting;
         double secondVotingPercentage = (totalVoting == 0) ? 0.0 : (secondVotingCnt * 100.0) / totalVoting;
 
-        battle.setFirstVotingRate(firstVotingPercentage);
-        battle.setSecondVotingRate(secondVotingPercentage);
+        battle.updateVotingRate(firstVotingPercentage, secondVotingPercentage);
 
-        vote.setUser(userId);
-        vote.setBattle(battle);
-        vote.setVotedPostId(request.getPostId());
+        vote.voteBattle(user, battle, request.getPostId());
 
         return voteRepository.save(vote);
     }
@@ -161,7 +140,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        // 배틀 게시글을 생성한 이가 아닐 경우 , 삭제 불가능
+        // 배틀 게시글을 생성한 이가 아닐 경우, 삭제 불가능
         if (!battle.getPost1().getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
@@ -193,6 +172,29 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         // Status = INACTIVE일 경우에만 배틀 신청 가능
         if (battle.getBattleStatus().equals(BattleStatus.INACTIVE)) {
             battle.challengeBattle();
+        }
+    }
+
+    private void validateVoteBattle(Battle battle, Long userId, BattleRequestDTO.VoteBattleDTO request) {
+        // 배틀이 아닌 게시글에 투표 불가능
+        if (!battle.getPost1().getId().equals(request.getPostId()) && !battle.getPost2().getId().equals(request.getPostId())) {
+            throw new GeneralException(ErrorStatus.POST_NOT_BATTLE);
+        }
+
+        // 이미 투표한 곳에 중복 투표 방지
+        boolean alreadyVoted = voteRepository.existsByBattleIdAndUserId(battle.getId(), userId);
+        if (alreadyVoted) {
+            throw new GeneralException(ErrorStatus.VOTE_ALREADY_EXIST);
+        }
+
+        // 마감 기한 후 투표 방지
+        if (battle.availableVote()) {
+            throw new GeneralException(ErrorStatus.VOTE_EXPIRED);
+        }
+
+        // 챌린지 게시글 투표 방지
+        if (battle.getPost2() == null) {
+            throw new GeneralException(ErrorStatus.POST_IS_CHALLENGE);
         }
     }
 }
