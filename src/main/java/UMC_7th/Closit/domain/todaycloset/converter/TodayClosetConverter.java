@@ -12,7 +12,6 @@ public class TodayClosetConverter {
     public static TodayCloset toTodayCloset(Post post) {
         return TodayCloset.builder()
                 .post(post)
-                .view(0)
                 .build();
     }
 
@@ -29,7 +28,7 @@ public class TodayClosetConverter {
                 .postId(todayCloset.getPost().getId())
                 .frontImage(todayCloset.getPost().getFrontImage())
                 .backImage(todayCloset.getPost().getBackImage())
-                .viewCount(todayCloset.getView())
+                .viewCount(todayCloset.getPost().getView())
                 .build();
     }
 
