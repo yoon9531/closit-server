@@ -33,9 +33,10 @@ public class TodayClosetController {
     @Operation(summary = "오늘의 옷장 게시글 조회")
     @GetMapping
     public ApiResponse<TodayClosetResponseDTO.TodayClosetListDTO> getTodayClosetList(
-            @RequestParam(name = "page") Integer page) {
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort) {
 
-        Slice<TodayCloset> todayClosetList = todayClosetQueryService.getTodayClosetList(page);
+        Slice<TodayCloset> todayClosetList = todayClosetQueryService.getTodayClosetList(page, sort);
         return ApiResponse.onSuccess(TodayClosetConverter.toListDTO(todayClosetList));
     }
 

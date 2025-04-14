@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +31,14 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
     private final SecurityUtil securityUtil;
 
     @Override
-    public Slice<TodayCloset> getTodayClosetList(Integer page) {
-        Pageable pageable = PageRequest.of(page, 10);
+    public Slice<TodayCloset> getTodayClosetList(Integer page, String sort) {
+        Pageable pageable;
+
+        if (sort.equals("view")) {
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "view"));
+        } else { // 기본: 최신순
+            pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        }
 
         return todayClosetRepository.findAll(pageable);
     }
