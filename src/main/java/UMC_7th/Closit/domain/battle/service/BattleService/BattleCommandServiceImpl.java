@@ -14,10 +14,14 @@ import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -77,7 +81,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         if (!battle.getPost1().getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
         }
-        battle.acceptChallenge(challengeBattle.getPost(), LocalDate.now().plusDays(3));
+        battle.acceptChallenge(challengeBattle.getPost(), LocalDateTime.now().minusHours(72));
 
         return battleRepository.save(battle);
     }
@@ -136,6 +140,27 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
+    public void completeBattle() {
+        int pageSize = 100;
+        Pageable pageable = PageRequest.of(0, pageSize);
+        boolean hasNext = true;
+
+        while (hasNext) {
+            Slice<Battle> battleList = battleRepository.findByBattleStatusAndDeadlineIsNotNullAndDeadlineBefore(
+                    BattleStatus.ACTIVE, LocalDateTime.now(), pageable
+            );
+
+            List<Battle> updateBattleList = battleList.getContent();
+            updateBattleList.forEach(Battle::completeBattle);
+
+            battleRepository.saveAll(updateBattleList);
+
+            hasNext = battleList.hasNext();
+            pageable = battleList.nextPageable();
+        }
+    }
+
+    @Override
     public void deleteBattle (Long userId, Long battleId) {
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
@@ -187,7 +212,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             throw new GeneralException(ErrorStatus.VOTE_ALREADY_EXIST);
         }
 
-        // 마감 기한 후 투표 방지
+        // 마감 기한 후 투표 방dho 지
         if (battle.availableVote()) {
             throw new GeneralException(ErrorStatus.VOTE_EXPIRED);
         }

@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,8 +50,8 @@ public class BattleResponseDTO {
     @AllArgsConstructor
     public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
         private BattleStatus battleStatus;
-        @JsonFormat(pattern = "yyyy/MM/dd")
-        private LocalDate deadline;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime deadline;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime updatedAt;
     }

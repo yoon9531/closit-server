@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface BattleRepository extends JpaRepository<Battle,Long> {
@@ -24,4 +25,5 @@ public interface BattleRepository extends JpaRepository<Battle,Long> {
         )
     """)
     Slice<Battle> findVotedBattlesByUserAndPost2IsNotNull(@Param("user") User user, Pageable pageable); // 내가 투표한 게시글 목록 조회
+    Slice<Battle> findByBattleStatusAndDeadlineIsNotNullAndDeadlineBefore(BattleStatus battleStatus, LocalDateTime deadline, Pageable pageable); // 배틀 스케줄러 - 진행 상태 변경
 }

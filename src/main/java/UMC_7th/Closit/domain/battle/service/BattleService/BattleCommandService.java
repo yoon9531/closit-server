@@ -12,5 +12,6 @@ public interface BattleCommandService {
     Battle acceptChallenge(Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request); // 배틀 수락
     Battle rejectChallenge(Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request); // 배틀 거절
     Vote voteBattle(Long userId, Long battleId, BattleRequestDTO.VoteBattleDTO request); // 배틀 투표
+    void completeBattle(); // 배틀 진행 상태 갱신
     void deleteBattle(Long userId, Long battleId); // 배틀 삭제
 }

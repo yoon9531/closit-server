@@ -5,7 +5,7 @@ import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class Battle extends BaseEntity {
     private String title;
 
     @Column
-    private LocalDate deadline;
+    private LocalDateTime deadline;
 
     @Column
     @Builder.Default
@@ -77,14 +77,18 @@ public class Battle extends BaseEntity {
         this.battleStatus = BattleStatus.PENDING;
     }
 
-    public void acceptChallenge(Post post2, LocalDate deadline) { // 배틀 수락
+    public void acceptChallenge(Post post2, LocalDateTime deadline) { // 배틀 수락
         this.post2 = post2;
         this.battleStatus = BattleStatus.ACTIVE;
         this.deadline = deadline;
     }
 
+    public void completeBattle() { // 배틀 스케줄러 - 진행 상태 변경
+        this.battleStatus = BattleStatus.COMPLETED;
+    }
+
     public boolean availableVote () {
-        return LocalDate.now().isAfter(deadline);
+        return LocalDateTime.now().isAfter(deadline);
     }
 
     public void incrementFirstVotingCnt() { // 첫 번째 게시글 투표
