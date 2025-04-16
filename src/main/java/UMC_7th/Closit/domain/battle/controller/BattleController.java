@@ -126,12 +126,14 @@ public class BattleController {
             ## 배틀 게시글 목록 조회 - 투표 하지 않은 배틀 게시글은 0으로 보임
             ### Parameters
             page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌 \n
-            status [배틀 진행 상태] - 
+            battleSorting [배틀 정렬 방식] - 최신순 (LATEST), 인기순 (TRENDING) \n
+            battleStatus [배틀 진행 상태] - 진행 중 (ACTIVE), 종료 (COMPLETED)
             """)
     public ApiResponse<BattleResponseDTO.BattlePreviewListDTO> getBattleList(@RequestParam(name = "page") Integer page,
-                                                                             @RequestParam(name = "battleStatus")BattleStatus battleStatus) {
+                                                                             @RequestParam(name ="battleSorting") BattleSorting battleSorting,
+                                                                             @RequestParam(name = "battleStatus") BattleStatus battleStatus) {
 
-        Slice<Battle> battleList = battleQueryService.getBattleList(page, battleStatus);
+        Slice<Battle> battleList = battleQueryService.getBattleList(page, battleSorting, battleStatus);
 
         return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(battleList));
     }

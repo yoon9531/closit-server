@@ -1,6 +1,7 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
+import UMC_7th.Closit.domain.battle.entity.BattleSorting;
 import UMC_7th.Closit.domain.battle.entity.BattleStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
@@ -24,11 +25,11 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     private final SecurityUtil securityUtil;
 
     @Override
-    public Slice<Battle> getBattleList(Integer page, BattleStatus battleStatus) { // 배틀 게시글 목록 조회 - 최신순
+    public Slice<Battle> getBattleList(Integer page, BattleSorting battleSorting, BattleStatus battleStatus) { // 배틀 게시글 목록 조회
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, 10, battleSorting.getSort());
 
         // secondPostId가 not null 기준으로 조회
         Slice<Battle> battleList = battleRepository.findByPost2IsNotNullAndBattleStatus(pageable, battleStatus);
