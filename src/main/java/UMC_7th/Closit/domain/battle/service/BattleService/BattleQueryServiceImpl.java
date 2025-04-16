@@ -57,10 +57,7 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     public Slice<Battle> getChallengeBattleList(Integer page) { // 배틀 챌린지 게시글 목록 조회 - 최신순
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        // secondPostId가 null 인 것을 기준으로 조회
-        Slice<Battle> challengeBattleList = battleRepository.findByPost2IsNull(pageable);
-
-        return challengeBattleList;
+        return battleRepository.findByPost2IsNull(pageable);
     }
 
     @Override
