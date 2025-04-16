@@ -152,6 +152,20 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.challengeBattlePreviewListDTO(challengeBattleList));
     }
 
+    @GetMapping("/my-voted-posts")
+    @Operation(summary = "내가 투표한 게시글 목록 조회",
+            description = """
+            ## 내가 투표한 배틀 게시글 목록 조회
+            ### Parameters
+            page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
+            """)
+    public ApiResponse<BattleResponseDTO.BattlePreviewListDTO> getMyVotedPostList(@RequestParam(name = "page") Integer page) {
+
+        Slice<Battle> votedBattleList = battleQueryService.getMyVotedBattleList(page);
+
+        return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(votedBattleList));
+    }
+
     @DeleteMapping("/{battle_id}")
     @Operation(summary = "배틀 삭제",
             description = """

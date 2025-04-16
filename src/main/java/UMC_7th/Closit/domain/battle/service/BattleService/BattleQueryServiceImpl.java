@@ -62,4 +62,13 @@ public class BattleQueryServiceImpl implements BattleQueryService {
 
         return challengeBattleList;
     }
+
+    @Override
+    public Slice<Battle> getMyVotedBattleList(Integer page) { // 내가 투표한 게시글 - 최신순
+        User user = securityUtil.getCurrentUser();
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return battleRepository.findVotedBattlesByUserAndPost2IsNotNull(user, pageable);
+    }
 }
