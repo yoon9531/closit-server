@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 @Getter
 public enum BattleSorting {
     LATEST(Sort.by(Sort.Direction.DESC, "createdAt")),
-    TRENDING(Sort.by(Sort.Direction.DESC, "view"));
+    TRENDING(Sort.by(Sort.Direction.DESC, "viewCount"));
 
     private final Sort sort;
 
