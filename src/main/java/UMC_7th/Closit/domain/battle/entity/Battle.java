@@ -47,7 +47,7 @@ public class Battle extends BaseEntity {
 
     @Column
     @Builder.Default
-    private Integer view = 0;
+    private Integer viewCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -123,5 +123,9 @@ public class Battle extends BaseEntity {
         } else {
             this.likeCount--;
         }
+    }
+
+    public void increaseView() { // 배틀 조회수 증가
+        this.viewCount++;
     }
 }
