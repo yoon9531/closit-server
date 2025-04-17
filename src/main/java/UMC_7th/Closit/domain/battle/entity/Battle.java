@@ -110,11 +110,7 @@ public class Battle extends BaseEntity {
     }
 
     public void increaseLikeCount() { // 배틀 좋아요 생성
-        if (this.likeCount == null) {
-            this.likeCount = 1;
-        } else {
-            this.likeCount++;
-        }
+        this.likeCount++;
     }
 
     public void decreaseLikeCount() { // 배틀 좋아요 삭제
