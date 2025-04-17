@@ -10,11 +10,13 @@ import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "[배틀 게시판]", description = "배틀 게시판 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/communities/battle")
