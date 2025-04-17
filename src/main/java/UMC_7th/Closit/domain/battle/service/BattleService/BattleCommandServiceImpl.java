@@ -81,7 +81,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         if (!battle.getPost1().getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
         }
-        battle.acceptChallenge(challengeBattle.getPost(), LocalDateTime.now().minusHours(72));
+        battle.acceptChallenge(challengeBattle.getPost(), LocalDateTime.now().plusHours(72));
 
         return battleRepository.save(battle);
     }

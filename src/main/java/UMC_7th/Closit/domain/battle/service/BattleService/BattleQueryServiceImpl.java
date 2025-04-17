@@ -35,20 +35,7 @@ public class BattleQueryServiceImpl implements BattleQueryService {
         Slice<Battle> battleList = battleRepository.findByPost2IsNotNullAndBattleStatus(pageable, battleStatus);
 
         battleList.forEach(battle -> {
-            boolean isVoted = voteRepository.existsByBattleIdAndUserId(battle.getId(), userId);
-            if (!isVoted) { // 투표하지 않았으면 해당 배틀 투표 수 null로 표시
-                battle.updateVotingCnt(null, null);
-            } else { // 투표했을 경우
-                Integer firstVotingCnt = battle.getFirstVotingCnt();
-                Integer secondVotingCnt = battle.getSecondVotingCnt();
-                int totalVoting = firstVotingCnt + secondVotingCnt;
-
-                // 투표 수 비율로 반환
-                double firstVotingPercentage = (totalVoting == 0) ? 0.0 : (firstVotingCnt * 100.0) / totalVoting;
-                double secondVotingPercentage = (totalVoting == 0) ? 0.0 : (secondVotingCnt * 100.0) / totalVoting;
-
-                battle.updateVotingRate(firstVotingPercentage, secondVotingPercentage);
-            }
+            calculateVotes(battle, userId);
         });
         return battleList;
     }
@@ -66,6 +53,29 @@ public class BattleQueryServiceImpl implements BattleQueryService {
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return battleRepository.findVotedBattlesByUserAndPost2IsNotNull(user, pageable);
+        Slice<Battle> votedBattleList = battleRepository.findVotedBattlesByUserAndPost2IsNotNull(user, pageable);
+
+        votedBattleList.forEach(battle -> {
+            calculateVotes(battle, user.getId());
+        });
+
+        return votedBattleList;
+    }
+
+    private void calculateVotes(Battle battle, Long userId) {
+        boolean isVoted = voteRepository.existsByBattleIdAndUserId(battle.getId(), userId);
+        if (!isVoted) { // 투표하지 않았으면 해당 배틀 투표 수 null로 표시
+            battle.updateVotingCnt(null, null);
+        } else { // 투표했을 경우
+            Integer firstVotingCnt = battle.getFirstVotingCnt();
+            Integer secondVotingCnt = battle.getSecondVotingCnt();
+            int totalVoting = firstVotingCnt + secondVotingCnt;
+
+            // 투표 수 비율로 반환
+            double firstVotingPercentage = (totalVoting == 0) ? 0.0 : (firstVotingCnt * 100.0) / totalVoting;
+            double secondVotingPercentage = (totalVoting == 0) ? 0.0 : (secondVotingCnt * 100.0) / totalVoting;
+
+            battle.updateVotingRate(firstVotingPercentage, secondVotingPercentage);
+        }
     }
 }
