@@ -149,7 +149,6 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             Slice<Battle> battleList = battleRepository.findByBattleStatusAndDeadlineIsNotNullAndDeadlineBefore(
                     BattleStatus.ACTIVE, LocalDateTime.now(), pageable
             );
-
             List<Battle> updateBattleList = battleList.getContent();
             updateBattleList.forEach(Battle::completeBattle);
 
@@ -212,7 +211,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             throw new GeneralException(ErrorStatus.VOTE_ALREADY_EXIST);
         }
 
-        // 마감 기한 후 투표 방dho 지
+        // 마감 기한 후 투표 방지
         if (battle.availableVote()) {
             throw new GeneralException(ErrorStatus.VOTE_EXPIRED);
         }
