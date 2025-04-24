@@ -8,6 +8,9 @@ build/
 ### application.yml ###
 application.yml
 
+### firebase ###
+/src/main/resources/firebase/**
+
 ### STS ###
 .apt_generated
 .classpath
