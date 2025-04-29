@@ -201,7 +201,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
     private void validateVoteBattle(Battle battle, Long userId, BattleRequestDTO.VoteBattleDTO request) {
         // 배틀이 아닌 게시글에 투표 불가능
-        if (!battle.getPost1().getId().equals(request.getPostId()) && !battle.getPost2().getId().equals(request.getPostId())) {
+        if (isInvalidBattlePost(battle, request.getPostId())) {
             throw new GeneralException(ErrorStatus.POST_NOT_BATTLE);
         }
 
@@ -220,5 +220,9 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         if (battle.getPost2() == null) {
             throw new GeneralException(ErrorStatus.POST_IS_CHALLENGE);
         }
+    }
+
+    private boolean isInvalidBattlePost(Battle battle, Long postId) {
+        return !battle.getPost1().getId().equals(postId) && !battle.getPost2().getId().equals(postId);
     }
 }
