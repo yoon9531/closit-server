@@ -20,7 +20,7 @@ public class PostRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public class HashtagDTO {
+    public static class HashtagDTO {
         @Size(max = 20, message = "해시태그는 20자 이내여야 합니다.")
         private String content;
     }

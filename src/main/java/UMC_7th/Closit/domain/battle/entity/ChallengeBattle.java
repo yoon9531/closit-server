@@ -25,7 +25,7 @@ public class ChallengeBattle extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private ChallengeStatus challengeStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "battle_id", nullable = false)
@@ -36,6 +36,6 @@ public class ChallengeBattle extends BaseEntity {
     private Post post;
 
     public void rejectBattle() { // 배틀 거절
-        this.status = Status.REJECTED;
+        this.challengeStatus = ChallengeStatus.REJECTED;
     }
 }
