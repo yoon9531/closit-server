@@ -109,7 +109,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S34001", "유효하지 않은 S3 파일 URL입니다."),
-    IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다.");
+    IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다."),
+    INVALID_TODAY_CLOSET_SORT(HttpStatus.BAD_REQUEST, "TODAYCLOSET4003", "잘못된 정렬 방식입니다."),;
 
     private final HttpStatus httpStatus;
     private final String code;

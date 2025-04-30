@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.todaycloset.dto.TodayClosetResponseDTO;
 import UMC_7th.Closit.domain.todaycloset.entity.TodayCloset;
 import UMC_7th.Closit.domain.todaycloset.repository.TodayClosetRepository;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -36,8 +38,10 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
 
         if (sort.equals("view")) {
             return todayClosetRepository.findAllOrderByPostView(pageable);
-        } else {
+        } else if (sort.equals("latest")) {
             return todayClosetRepository.findAll(pageable);
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_TODAY_CLOSET_SORT);
         }
     }
 
