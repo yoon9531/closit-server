@@ -165,4 +165,6 @@ public class UserController {
 
         return ApiResponse.onSuccess(UserConverter.userRecentPostListDTO(recentPostList));
     }
+
+
 }

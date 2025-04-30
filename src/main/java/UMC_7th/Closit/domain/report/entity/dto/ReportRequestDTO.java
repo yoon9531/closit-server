@@ -1,0 +1,31 @@
+package UMC_7th.Closit.domain.report.entity.dto;
+
+import UMC_7th.Closit.domain.report.entity.Description;
+import UMC_7th.Closit.domain.report.entity.Type;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReportRequestDTO {
+    @NotNull(message = "senderId는 필수값입니다.")
+    private Long senderId;
+
+    @NotNull(message = "receiverId는 필수값입니다.")
+    private Long receiverId;
+
+    @NotNull(message = "type은 필수값입니다.")
+    private Type type;
+
+    @NotNull(message = "description은 필수값입니다.")
+    private Description description;
+
+    @Size(max = 500, message = "otherReason은 최대 500자까지 입력 가능합니다.")
+    private String otherReason; // 기타 사유
+}
