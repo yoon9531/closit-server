@@ -22,5 +22,5 @@ public interface UserQueryService {
 
     Slice<Post> getRecentPostList(String clositId, Integer page); // 특정 사용자의 최근 게시글 조회
 
-    Slice<User> getBlockedUserList(PageRequest pageable);
+    Slice<User> getBlockedUserList(Pageable pageable);
 }

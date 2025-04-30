@@ -96,7 +96,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
-    public Slice<User> getBlockedUserList(PageRequest pageable) {
+    public Slice<User> getBlockedUserList(Pageable pageable) {
         User currentUser = securityUtil.getCurrentUser();
         return userBlockRepository.findBlockedUsersByBlocker(currentUser, pageable);
     }
