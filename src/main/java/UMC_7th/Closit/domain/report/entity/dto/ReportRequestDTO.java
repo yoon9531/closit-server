@@ -4,14 +4,10 @@ import UMC_7th.Closit.domain.report.entity.Description;
 import UMC_7th.Closit.domain.report.entity.Type;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ReportRequestDTO {
     @NotNull(message = "receiverId는 필수값입니다.")
