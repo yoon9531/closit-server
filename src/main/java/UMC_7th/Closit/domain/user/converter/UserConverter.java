@@ -112,7 +112,7 @@ public class UserConverter {
 
     public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<User> blockedUserSlice) {
         List<UserResponseDTO.UserBlockDTO> blockedUserList =
-                blockedUserSlice.getContent().stream()      // ← here
+                blockedUserSlice.getContent().stream()
                         .map(user -> UserResponseDTO.UserBlockDTO.builder()
                                 .clositId(user.getClositId())
                                 .name(user.getName())
