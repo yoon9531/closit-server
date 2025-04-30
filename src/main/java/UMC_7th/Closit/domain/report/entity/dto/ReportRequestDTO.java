@@ -14,11 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportRequestDTO {
-    @NotNull(message = "senderId는 필수값입니다.")
-    private Long senderId;
-
     @NotNull(message = "receiverId는 필수값입니다.")
-    private Long receiverId;
+    private String receiverClositId;
 
     @NotNull(message = "type은 필수값입니다.")
     private Type type;
