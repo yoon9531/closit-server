@@ -110,4 +110,22 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<User> blockedUserSlice) {
+        List<UserResponseDTO.UserBlockDTO> blockedUserList =
+                blockedUserSlice.getContent().stream()      // ← here
+                        .map(user -> UserResponseDTO.UserBlockDTO.builder()
+                                .clositId(user.getClositId())
+                                .name(user.getName())
+                                .profileImage(user.getProfileImage())
+                                .build())
+                        .collect(Collectors.toList());
+
+        return UserResponseDTO.UserBlockListDTO.builder()
+                .blockedUsers(blockedUserList)
+                .hasNext(blockedUserSlice.hasNext())
+                .pageNumber(blockedUserSlice.getNumber())
+                .size(blockedUserSlice.getSize())
+                .build();
+    }
+
 }
