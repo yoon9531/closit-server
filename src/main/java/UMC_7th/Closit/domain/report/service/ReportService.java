@@ -1,9 +1,9 @@
-package UMC_7th.Closit.domain.report.entity.service;
+package UMC_7th.Closit.domain.report.service;
 
 import UMC_7th.Closit.domain.report.entity.Description;
 import UMC_7th.Closit.domain.report.entity.Report;
-import UMC_7th.Closit.domain.report.entity.dto.ReportRequestDTO;
-import UMC_7th.Closit.domain.report.entity.repository.ReportRepository;
+import UMC_7th.Closit.domain.report.dto.ReportRequestDTO;
+import UMC_7th.Closit.domain.report.repository.ReportRepository;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -44,5 +44,8 @@ public class ReportService {
                 .build();
 
         reportRepository.save(report);
+        // Increment the report count of receiver
+        userRepository.incrementReportCount(receiver.getId());
     }
+
 }

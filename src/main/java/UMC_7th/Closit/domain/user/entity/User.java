@@ -57,6 +57,10 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String profileImage;
 
+    // The count of report, default value is 0
+    @Column(nullable = false)
+    private int countReport;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
@@ -115,6 +119,10 @@ public class User extends BaseEntity {
         this.clositId = clositId;
     }
 
+
+    public void incrementCountReport() {
+        this.countReport++;
+    }
     public void setPassword(String encode) {
         this.password = encode;
     }

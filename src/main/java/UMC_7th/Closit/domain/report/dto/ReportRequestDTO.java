@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.report.entity.dto;
+package UMC_7th.Closit.domain.report.dto;
 
 import UMC_7th.Closit.domain.report.entity.Description;
 import UMC_7th.Closit.domain.report.entity.Type;

@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.report.entity.repository;
+package UMC_7th.Closit.domain.report.repository;
 
 import UMC_7th.Closit.domain.report.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
