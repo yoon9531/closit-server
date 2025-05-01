@@ -164,4 +164,27 @@ public class UserResponseDTO {
         private String blockerClositId;
         private String blockedClositId;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserBlockListDTO {
+        private List<UserBlockDTO> blockedUsers;
+        private boolean hasNext;
+        private int pageNumber; // 페이지 번호
+        private int size; // 페이지 당 조회 개수
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserBlockDTO {
+        private String clositId;
+        private String name;
+        private String profileImage;
+    }
+
 }
