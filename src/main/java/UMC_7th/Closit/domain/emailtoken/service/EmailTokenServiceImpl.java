@@ -13,7 +13,7 @@ import java.util.UUID;
 public class EmailTokenServiceImpl implements EmailTokenService {
 
     private final EmailTokenRepository emailTokenRepository;
-    private final MailService mailService; // 이메일 보내는 서비스
+    private final EmailService emailService;
 
     @Override
     public void createEmailToken(String email) {
@@ -24,6 +24,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
                 .email(email)
                 .token(token)
                 .expiredAt(expiredAt)
+                .verified(false)
                 .used(false)
                 .build();
 
@@ -31,13 +32,17 @@ public class EmailTokenServiceImpl implements EmailTokenService {
 
         // 이메일 발송
         String verificationLink = "http://localhost:8080/api/auth/email-tokens/verify?token=" + token;
-        mailService.sendEmail(email, "이메일 인증", verificationLink);
+        emailService.sendEmail(email, "[Closit] 이메일 인증을 완료해주세요", verificationLink);
     }
 
     @Override
     public void verifyEmailToken(String token) {
         EmailToken emailToken = emailTokenRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 토큰입니다."));
+
+        if (emailToken.isVerified()) {
+            throw new IllegalStateException("이미 인증된 토큰입니다.");
+        }
 
         if (emailToken.isUsed()) {
             throw new IllegalStateException("이미 사용된 토큰입니다.");
@@ -47,7 +52,27 @@ public class EmailTokenServiceImpl implements EmailTokenService {
             throw new IllegalStateException("토큰이 만료되었습니다.");
         }
 
-        emailToken.setUsed(true);
+        emailToken.setVerified(true);
         emailTokenRepository.save(emailToken);
+    }
+
+    @Override
+    public boolean isEmailVerified(String email) {
+        return emailTokenRepository.findTopByEmailOrderByCreatedAtDesc(email)
+                .map(token -> token.isVerified() && !token.isUsed() && token.getExpiredAt().isAfter(LocalDateTime.now()))
+                .orElse(false);
+    }
+
+    @Override
+    public void markTokenAsUsed(String email) {
+        EmailToken token = emailTokenRepository.findTopByEmailOrderByCreatedAtDesc(email)
+                .orElseThrow(() -> new IllegalArgumentException("인증된 토큰이 없습니다."));
+
+        if (!token.isVerified() || token.isUsed() || token.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("유효한 인증 토큰이 아닙니다.");
+        }
+
+        token.setUsed(true);
+        emailTokenRepository.save(token);
     }
 }

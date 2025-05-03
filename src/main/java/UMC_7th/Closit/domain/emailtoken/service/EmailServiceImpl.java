@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MailServiceImpl implements MailService {
+public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
@@ -36,7 +36,6 @@ public class MailServiceImpl implements MailService {
             helper.setText(htmlContent, true); // HTML 본문 설정 (true)
 
             mailSender.send(message);
-
         } catch (MessagingException e) {
             throw new RuntimeException("메일 전송 실패", e);
         }

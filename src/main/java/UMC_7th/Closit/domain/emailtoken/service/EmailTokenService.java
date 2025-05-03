@@ -5,4 +5,8 @@ public interface EmailTokenService {
     void createEmailToken(String email);
 
     void verifyEmailToken(String token);
+
+    boolean isEmailVerified(String email);
+
+    void markTokenAsUsed(String email);
 }
