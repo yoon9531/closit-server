@@ -1,22 +1,17 @@
 package UMC_7th.Closit.domain.battle.entity;
 
-import UMC_7th.Closit.domain.board.entity.Board;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
-@DynamicUpdate
-@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Battle extends BaseEntity {
@@ -29,8 +24,8 @@ public class Battle extends BaseEntity {
     @Column
     private String title;
 
-    @Column(nullable = false)
-    private LocalDate deadline = LocalDate.now().plusDays(3);
+    @Column
+    private LocalDateTime deadline;
 
     @Column
     @Builder.Default
@@ -50,6 +45,14 @@ public class Battle extends BaseEntity {
     @Builder.Default
     private Integer likeCount = 0;
 
+    @Column
+    @Builder.Default
+    private Integer viewCount = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BattleStatus battleStatus;
+
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
     @Builder.Default
     private List<BattleLike> battleLikesList = new ArrayList<>();
@@ -63,10 +66,6 @@ public class Battle extends BaseEntity {
     private List<Vote> voteList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id1")
     private Post post1;
 
@@ -74,19 +73,22 @@ public class Battle extends BaseEntity {
     @JoinColumn(name = "post_id2")
     private Post post2;
 
-    public void setPost2 (Post post2) { // 배틀 신청
-        this.post2 = post2;
+    public void challengeBattle() { // 배틀 신청
+        this.battleStatus = BattleStatus.PENDING;
     }
 
-    @PrePersist
-    public void voteDeadline() { // 배틀 투표 - 마감 기한 3일 뒤 설정
-        if (this.deadline == null) {
-            this.deadline = LocalDate.now().plusDays(3);
-        }
+    public void acceptChallenge(Post post2, LocalDateTime deadline) { // 배틀 수락
+        this.post2 = post2;
+        this.battleStatus = BattleStatus.ACTIVE;
+        this.deadline = deadline;
+    }
+
+    public void completeBattle() { // 배틀 스케줄러 - 진행 상태 변경
+        this.battleStatus = BattleStatus.COMPLETED;
     }
 
     public boolean availableVote () {
-        return LocalDate.now().isAfter(deadline);
+        return LocalDateTime.now().isAfter(deadline);
     }
 
     public void incrementFirstVotingCnt() { // 첫 번째 게시글 투표
@@ -97,28 +99,18 @@ public class Battle extends BaseEntity {
         this.secondVotingCnt++;
     }
 
-    public void setFirstVotingCnt (Integer firstVotingCnt) { // 배틀 게시글 목록 조회
+    public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회
         this.firstVotingCnt = firstVotingCnt;
-    }
-
-    public void setSecondVotingCnt (Integer secondVotingCnt) {
         this.secondVotingCnt = secondVotingCnt;
     }
 
-    public void setFirstVotingRate (double firstVotingRate) {
+    public void updateVotingRate (double firstVotingRate, double secondVotingRate) {
         this.firstVotingRate = firstVotingRate;
-    }
-
-    public void setSecondVotingRate (double secondVotingRate) {
         this.secondVotingRate = secondVotingRate;
     }
 
     public void increaseLikeCount() { // 배틀 좋아요 생성
-        if (this.likeCount == null) {
-            this.likeCount = 1;
-        } else {
-            this.likeCount++;
-        }
+        this.likeCount++;
     }
 
     public void decreaseLikeCount() { // 배틀 좋아요 삭제
@@ -127,5 +119,9 @@ public class Battle extends BaseEntity {
         } else {
             this.likeCount--;
         }
+    }
+
+    public void increaseView() { // 배틀 조회수 증가
+        this.viewCount++;
     }
 }

@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.notification.service;
 
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.follow.entity.Follow;
 import UMC_7th.Closit.domain.notification.converter.NotificationConverter;
 import UMC_7th.Closit.domain.notification.dto.NotificationRequestDTO;
@@ -171,6 +172,18 @@ public class NotiCommandServiceImpl implements NotiCommandService {
                 sendToClient(emitter, emitterId, content.getBytes(StandardCharsets.UTF_8));
             } scheduler.shutdown(); // 작업 완료 후, 스레드 종료
         }, 10, TimeUnit.SECONDS); // SSE 연결 10초 후, 한 번만 실행
+    }
+
+    @Override
+    public void challengeBattleNotification(ChallengeBattle challengeBattle) {
+        User receiver = challengeBattle.getBattle().getPost1().getUser();
+        User sender = challengeBattle.getPost().getUser();
+        String content = challengeBattle.getPost().getUser().getName() + "님이 배틀을 신청하셨습니다.";
+        String url = URL + "/communities/battle/challenge/upload/" + challengeBattle.getBattle().getId();
+
+        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.CHALLENGE_BATTLE);
+
+        sendNotification(request);
     }
 
     @Override

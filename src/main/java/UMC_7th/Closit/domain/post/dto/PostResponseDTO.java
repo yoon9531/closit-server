@@ -2,6 +2,7 @@ package UMC_7th.Closit.domain.post.dto;
 
 import UMC_7th.Closit.domain.post.entity.Visibility;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +56,8 @@ public class PostResponseDTO {
         private String pointColor;
         private Visibility visibility;
         private boolean isMission;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime createdAt;
     }
 
 
@@ -65,6 +68,7 @@ public class PostResponseDTO {
     public static class ItemTagDTO {
         private Double x; // X 좌표
         private Double y; // Y 좌표
+        @Size(max = 20, message = "해시태그는 20자 이내여야 합니다.")
         private String content; // 태그 내용
     }
 

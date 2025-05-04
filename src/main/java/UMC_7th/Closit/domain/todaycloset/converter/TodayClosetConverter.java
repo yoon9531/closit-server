@@ -30,7 +30,6 @@ public class TodayClosetConverter {
                 .frontImage(todayCloset.getPost().getFrontImage())
                 .backImage(todayCloset.getPost().getBackImage())
                 .viewCount(todayCloset.getView())
-                .profileImage(todayCloset.getPost().getUser().getProfileImage())
                 .build();
     }
 

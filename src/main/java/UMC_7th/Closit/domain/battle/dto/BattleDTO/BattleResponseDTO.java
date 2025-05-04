@@ -1,12 +1,13 @@
 package UMC_7th.Closit.domain.battle.dto.BattleDTO;
 
+import UMC_7th.Closit.domain.battle.entity.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.ChallengeStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,8 +20,7 @@ public class BattleResponseDTO {
     public static class CreateBattleResultDTO { // 배틀 생성
         private Long battleId;
         private String thumbnail;
-        @JsonFormat(pattern = "yyyy/MM/dd")
-        private LocalDate deadline;
+        private BattleStatus battleStatus;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -30,6 +30,7 @@ public class BattleResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeBattleResultDTO { // 배틀 신청
+        private Long challengeBattleId;
         private String firstClositId;
         private Long firstPostId;
         private String firstPostFrontImage;
@@ -38,8 +39,21 @@ public class BattleResponseDTO {
         private Long secondPostId;
         private String secondPostFrontImage;
         private String secondPostBackImage;
+        private ChallengeStatus challengeStatus;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChallengeDecisionDTO { // 배틀 신청 수락 or 거절
+        private BattleStatus battleStatus;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime deadline;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime updatedAt;
     }
 
     @Builder
@@ -60,7 +74,7 @@ public class BattleResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BattlePreviewDTO { // 배틀 게시글 목록 조회
+    public static class BattlePreviewDTO { // 배틀 게시글 목록, 내가 투표한 게시글 목록 조회
         private Long battleId;
         private boolean isLiked;
         private String title;

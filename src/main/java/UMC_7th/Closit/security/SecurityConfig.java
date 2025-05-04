@@ -52,7 +52,8 @@ public class SecurityConfig {
                                          "/api/auth/find-id",
                                          "/api/auth/reset-password",
                                          "/email-verification-success.html",
-                                         "/email-verification-failed.html").permitAll()
+                                         "/email-verification-failed.html",
+                                         "/api/auth/oauth/**").permitAll()
                         .anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -48,8 +48,13 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_TOKEN_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "EMAIL4042", "인증된 토큰이 존재하지 않습니다."),
     EMAIL_TOKEN_INVALID_FOR_USE(HttpStatus.BAD_REQUEST, "EMAIL4004", "유효한 인증 토큰이 아닙니다."),
 
+    // 소셜 로그인 관련 에러
+    NOT_SUPPORTED_SOCIAL_LOGIN(HttpStatus.BAD_REQUEST, "SOCIAL4001", "지원하지 않는 소셜 로그인입니다."),
+
     // 게시글 관련 에러
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "게시글이 존재하지 않습니다."),
+    INVALID_HASHTAG_LENGTH(HttpStatus.BAD_REQUEST, "POST4001", "해시태그는 20자 이내여야 합니다."),
+    INVALID_ITEMTAG_LENGTH(HttpStatus.BAD_REQUEST, "POST4002", "아이템 태그는 20자 이내여야 합니다."),
 
     // 북마크 관련 에러
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND,"BOOKMARK4041","북마크가 존재하지 않습니다."),
@@ -70,7 +75,11 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_IS_CHALLENGE (HttpStatus.BAD_REQUEST, "BATTLE4005", "해당 게시글은 배틀 챌린지 게시글입니다."),
     BATTLE_NOT_FOUND (HttpStatus.NOT_FOUND, "BATTLE4041", "배틀이 존재하지 않습니다."),
     POST_NOT_APPLY(HttpStatus.BAD_REQUEST, "BATTLE4007", "본인의 게시글에 배틀을 신청할 수 없습니다."),
-    POST_NOT_MINE(HttpStatus.BAD_REQUEST, "BATTLE4008", "해당 게시글은 다른 사용자의 게시글입니다."),
+    POST_UNAUTHORIZED_ACCESS(HttpStatus.BAD_REQUEST, "BATTLE4008", "해당 게시글은 다른 사용자의 게시글입니다."),
+    BATTLE_UNAUTHORIZED_ACCESS(HttpStatus.BAD_REQUEST, "BATTLE4009", "해당 배틀 게시글은 다른 사용자의 배틀 게시글 입니다."),
+
+    // 챌린지 배틀 관련 에러
+    CHALLENGE_BATTLE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGEBATTLE4041", "챌린지 배틀이 존재하지 않습니다."),
 
     // 투표 관련 에러
     VOTE_ALREADY_EXIST (HttpStatus.BAD_REQUEST, "VOTE4001", "이미 투표를 했습니다."),
@@ -98,6 +107,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 오늘의 옷장 관련 에러
     TODAY_CLOSET_NOT_FOUND(HttpStatus.NOT_FOUND, "TODAYCLOSET4001", "오늘의 옷장이 존재하지 않습니다."),
+    DUPLICATE_TODAY_CLOSET(HttpStatus.CONFLICT, "TODAYCLOSET4002", "이미 오늘의 옷장에 등록된 게시글입니다."),
 
     // 해시태그 관련 관련 에러
     HASHTAG_NOT_FOUND(HttpStatus.NOT_FOUND, "HASHTAG4041", "해시태그가 존재하지 않습니다."),
