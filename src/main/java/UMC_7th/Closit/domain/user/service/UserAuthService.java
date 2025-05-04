@@ -12,4 +12,6 @@ public interface UserAuthService {
     UserResponseDTO.UserInfoDTO updateUserRole(Long userId, Role role);
 
     JwtResponse refresh(String refreshToken);
+
+    String findClositIdByEmail(String email);
 }

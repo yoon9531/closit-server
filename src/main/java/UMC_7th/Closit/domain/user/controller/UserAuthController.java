@@ -1,18 +1,14 @@
 package UMC_7th.Closit.domain.user.controller;
 
+import UMC_7th.Closit.domain.emailtoken.service.EmailTokenService;
 import UMC_7th.Closit.domain.user.dto.*;
 import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.service.UserAuthService;
 import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
-import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
-import UMC_7th.Closit.security.SecurityUtil;
-import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +20,7 @@ public class UserAuthController {
 
     private final UserCommandService userCommandService;
     private final UserAuthService userAuthService;
+    private final EmailTokenService emailTokenService;
 
     @PostMapping("/register")
     public ApiResponse<RegisterResponseDTO> register (@RequestBody @Valid UserRequestDTO.CreateUserDTO userRequestDto){
@@ -38,7 +35,6 @@ public class UserAuthController {
 
         return ApiResponse.onSuccess(jwtResponse);
     }
-
 
     @PostMapping("/refresh")
     public ApiResponse<JwtResponse> refresh(@RequestBody RefreshRequestDTO refreshRequestDTO) {
@@ -57,5 +53,12 @@ public class UserAuthController {
         UserResponseDTO.UserInfoDTO userInfoDTO = userAuthService.updateUserRole(user_id, newRole);
 
         return ApiResponse.onSuccess(userInfoDTO);
+    }
+
+    @GetMapping("/find-id")
+    public ApiResponse<String> findClositId(@RequestParam String email) {
+        String clositId = userAuthService.findClositIdByEmail(email);
+
+        return ApiResponse.onSuccess(clositId);
     }
 }
