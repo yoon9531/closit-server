@@ -2,6 +2,8 @@ package UMC_7th.Closit.domain.emailtoken.service;
 
 import UMC_7th.Closit.domain.emailtoken.entity.EmailToken;
 import UMC_7th.Closit.domain.emailtoken.repository.EmailTokenRepository;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.handler.EmailTokenHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +43,15 @@ public class EmailTokenServiceImpl implements EmailTokenService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 토큰입니다."));
 
         if (emailToken.isVerified()) {
-            throw new IllegalStateException("이미 인증된 토큰입니다.");
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_VERIFIED);
         }
 
         if (emailToken.isUsed()) {
-            throw new IllegalStateException("이미 사용된 토큰입니다.");
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
         }
 
         if (emailToken.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("토큰이 만료되었습니다.");
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
         }
 
         emailToken.setVerified(true);
@@ -66,10 +68,18 @@ public class EmailTokenServiceImpl implements EmailTokenService {
     @Override
     public void markTokenAsUsed(String email) {
         EmailToken token = emailTokenRepository.findTopByEmailOrderByCreatedAtDesc(email)
-                .orElseThrow(() -> new IllegalArgumentException("인증된 토큰이 없습니다."));
+                .orElseThrow(() -> new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_NOT_FOUND));
 
-        if (!token.isVerified() || token.isUsed() || token.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("유효한 인증 토큰이 아닙니다.");
+        if (!token.isVerified()) {
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+        }
+
+        if (token.isUsed()) {
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
+        }
+
+        if (token.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
         }
 
         token.setUsed(true);

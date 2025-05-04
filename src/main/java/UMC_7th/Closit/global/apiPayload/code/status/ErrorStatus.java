@@ -31,6 +31,7 @@ public enum ErrorStatus implements BaseErrorCode {
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
     USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
     PROFILE_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "USER4010", "프로필 이미지가 비어 있습니다."),
+    EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "USER4011", "이메일 인증이 완료되지 않았습니다."),
 
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
@@ -39,13 +40,21 @@ public enum ErrorStatus implements BaseErrorCode {
     EMPTY_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4004", "토큰이 비어있습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4005", "유효하지 않은 리프레시 토큰입니다."),
 
+    // 이메일 인증 관련 에러
+    EMAIL_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "EMAIL4041", "해당 이메일 인증 토큰이 존재하지 않습니다."),
+    EMAIL_TOKEN_ALREADY_VERIFIED(HttpStatus.BAD_REQUEST, "EMAIL4001", "이미 인증된 토큰입니다."),
+    EMAIL_TOKEN_ALREADY_USED(HttpStatus.BAD_REQUEST, "EMAIL4002", "이미 사용된 토큰입니다."),
+    EMAIL_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "EMAIL4003", "토큰이 만료되었습니다."),
+    EMAIL_TOKEN_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "EMAIL4042", "인증된 토큰이 존재하지 않습니다."),
+    EMAIL_TOKEN_INVALID_FOR_USE(HttpStatus.BAD_REQUEST, "EMAIL4004", "유효한 인증 토큰이 아닙니다."),
+
     // 게시글 관련 에러
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "게시글이 존재하지 않습니다."),
 
     // 북마크 관련 에러
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND,"BOOKMARK4041","북마크가 존재하지 않습니다."),
 
-    //좋아요 관련 에러
+    // 좋아요 관련 에러
     LIKES_ALREADY_EXIST (HttpStatus.BAD_REQUEST, "LIKE4001", "이미 좋아요를 누른 게시글 입니다."),
     LIKES_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE4041", "좋아요가 존재하지 않습니다."),
 
@@ -87,7 +96,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 미션 관련 에러
     MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION4041", "미션이 존재하지 않습니다."),
 
-    //오늘의 옷장 관련 에러
+    // 오늘의 옷장 관련 에러
     TODAY_CLOSET_NOT_FOUND(HttpStatus.NOT_FOUND, "TODAYCLOSET4001", "오늘의 옷장이 존재하지 않습니다."),
 
     // 해시태그 관련 관련 에러

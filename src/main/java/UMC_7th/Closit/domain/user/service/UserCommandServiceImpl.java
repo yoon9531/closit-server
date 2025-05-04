@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.user.service;
 
+import UMC_7th.Closit.domain.emailtoken.service.EmailTokenService;
 import UMC_7th.Closit.domain.follow.entity.Follow;
 import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
@@ -32,6 +33,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final UserBlockRepository userBlockRepository;
     private final FollowRepository followRepository;
+    private final EmailTokenService emailTokenService;
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
     private final S3Service s3Service;
@@ -46,6 +48,14 @@ public class UserCommandServiceImpl implements UserCommandService {
         if (userRepository.existsByEmail(userRequestDto.getEmail())) {
             throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
         }
+
+        // 이메일 인증 여부 확인
+        if (!emailTokenService.isEmailVerified(userRequestDto.getEmail())) {
+            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+        }
+
+        // 인증 토큰 사용 처리 (중복 회원가입 방지)
+        emailTokenService.markTokenAsUsed(userRequestDto.getEmail());
 
         // ClositId Already Exists
         if (userRepository.existsByClositId(userRequestDto.getClositId())) {

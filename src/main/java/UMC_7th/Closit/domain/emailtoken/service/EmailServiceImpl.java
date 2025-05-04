@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -21,6 +23,11 @@ public class EmailServiceImpl implements EmailService {
 
             helper.setTo(to);
             helper.setSubject(subject);
+            try {
+                helper.setFrom("clositback@gmail.com", "Closit");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("보낸 사람 이름 설정 실패", e);
+            }
 
             // HTML 메일 본문
             String htmlContent = "<div style=\"font-family: Arial, sans-serif; padding: 20px; text-align: center;\">" +
