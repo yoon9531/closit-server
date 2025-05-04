@@ -50,6 +50,7 @@ public class SecurityConfig {
                                          "/api/auth/users/isunique/**",
                                          "/api/auth/email-tokens/**",
                                          "/api/auth/find-id",
+                                         "/api/auth/reset-password",
                                          "/email-verification-success.html",
                                          "/email-verification-failed.html").permitAll()
                         .anyRequest().authenticated())

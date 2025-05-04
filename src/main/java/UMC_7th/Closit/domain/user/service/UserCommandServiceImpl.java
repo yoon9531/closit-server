@@ -54,7 +54,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
         }
 
-        // 인증 토큰 사용 처리 (중복 회원가입 방지)
+        // 인증 토큰 사용 처리
         emailTokenService.markTokenAsUsed(userRequestDto.getEmail());
 
         // ClositId Already Exists

@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.service.UserAuthService;
 import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +56,19 @@ public class UserAuthController {
         return ApiResponse.onSuccess(userInfoDTO);
     }
 
+    @Operation(summary = "Closit ID 찾기", description = "이메일 인증을 완료한 사용자에 한해 Closit ID를 조회합니다.")
     @GetMapping("/find-id")
     public ApiResponse<String> findClositId(@RequestParam String email) {
         String clositId = userAuthService.findClositIdByEmail(email);
 
         return ApiResponse.onSuccess(clositId);
+    }
+
+    @Operation(summary = "비밀번호 재설정", description = "이메일 인증을 완료한 사용자에 한해 비밀번호를 재설정합니다.")
+    @PostMapping("/reset-password")
+    public ApiResponse<String> resetPassword(@RequestBody @Valid PasswordResetRequestDTO request) {
+        userAuthService.resetPassword(request.getEmail(), request.getNewPassword());
+
+        return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
 }

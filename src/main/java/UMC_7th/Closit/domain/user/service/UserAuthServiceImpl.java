@@ -105,11 +105,33 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
         }
 
-        // Closit ID 조회
+        // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        // 인증 토큰 사용 처리
+        emailTokenService.markTokenAsUsed(email);
+
         return user.getClositId();
+    }
+
+    @Override
+    public void resetPassword(String email, String newPassword) {
+        // 이메일 인증 여부 확인
+        if (!emailTokenService.isEmailVerified(email)) {
+            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+        }
+
+        // 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 비밀번호 변경
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+
+        // 인증 토큰 사용 처리
+        emailTokenService.markTokenAsUsed(email);
     }
 
     // Get Claims from Token

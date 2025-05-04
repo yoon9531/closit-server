@@ -14,4 +14,6 @@ public interface UserAuthService {
     JwtResponse refresh(String refreshToken);
 
     String findClositIdByEmail(String email);
+
+    void resetPassword(String email, String newPassword);
 }
