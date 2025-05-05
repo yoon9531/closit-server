@@ -49,6 +49,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_TOKEN_INVALID_FOR_USE(HttpStatus.BAD_REQUEST, "EMAIL4004", "유효한 인증 토큰이 아닙니다."),
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "이메일 전송에 실패했습니다."),
     EMAIL_SENDER_ENCODING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5002", "이메일 발신자 이름 인코딩에 실패했습니다."),
+    EMAIL_TEMPLATE_LOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5003", "이메일 템플릿을 불러오는 데 실패했습니다."),
 
     // 소셜 로그인 관련 에러
     NOT_SUPPORTED_SOCIAL_LOGIN(HttpStatus.BAD_REQUEST, "SOCIAL4001", "지원하지 않는 소셜 로그인입니다."),
