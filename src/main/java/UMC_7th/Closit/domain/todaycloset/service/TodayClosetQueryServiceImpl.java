@@ -39,7 +39,7 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
         if (sort.equals("view")) {
             return todayClosetRepository.findAllOrderByPostView(pageable);
         } else if (sort.equals("latest")) {
-            return todayClosetRepository.findAll(pageable);
+            return todayClosetRepository.findAllOrderByCreatedAt(pageable);
         } else {
             throw new GeneralException(ErrorStatus.INVALID_TODAY_CLOSET_SORT);
         }

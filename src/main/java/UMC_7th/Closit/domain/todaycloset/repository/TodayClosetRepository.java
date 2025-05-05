@@ -10,7 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TodayClosetRepository extends JpaRepository<TodayCloset, Long> {
     Page<TodayCloset> findAll(Pageable pageable);
+
     boolean existsByPost(Post post);
     @Query("SELECT tc FROM TodayCloset tc JOIN tc.post p ORDER BY p.view DESC")
     Slice<TodayCloset> findAllOrderByPostView(Pageable pageable);
+    @Query("SELECT tc FROM TodayCloset tc ORDER BY tc.createdAt DESC")
+    Slice<TodayCloset> findAllOrderByCreatedAt(Pageable pageable);
 }
