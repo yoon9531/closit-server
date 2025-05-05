@@ -1,5 +1,8 @@
 package UMC_7th.Closit.domain.emailtoken.service;
 
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.handler.EmailEncodingHandler;
+import UMC_7th.Closit.global.apiPayload.exception.handler.EmailSendHandler;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
             try {
                 helper.setFrom("clositback@gmail.com", "Closit");
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("보낸 사람 이름 설정 실패", e);
+                throw new EmailEncodingHandler(ErrorStatus.EMAIL_SENDER_ENCODING_ERROR);
             }
 
             // HTML 메일 본문
@@ -44,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("메일 전송 실패", e);
+            throw new EmailSendHandler(ErrorStatus.EMAIL_SEND_FAILED);
         }
     }
 }

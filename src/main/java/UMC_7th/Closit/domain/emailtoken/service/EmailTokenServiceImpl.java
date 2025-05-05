@@ -42,17 +42,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
         EmailToken emailToken = emailTokenRepository.findByToken(token)
                 .orElseThrow(() -> new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_NOT_FOUND));
 
-        if (emailToken.isVerified()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_VERIFIED);
-        }
-
-        if (emailToken.isUsed()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
-        }
-
-        if (emailToken.isExpired()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
-        }
+        emailToken.validateUsable();
 
         emailToken.verify();
         emailTokenRepository.save(emailToken);
@@ -70,17 +60,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
         EmailToken token = emailTokenRepository.findTopByEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_NOT_FOUND));
 
-        if (!token.isVerified()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
-        }
-
-        if (token.isUsed()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
-        }
-
-        if (token.isExpired()) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
-        }
+        token.validateUsable();
 
         token.use();
         emailTokenRepository.save(token);
