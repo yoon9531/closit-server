@@ -43,6 +43,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
     private String profileImage;
+
     // login
     @Override
     public JwtResponse login(LoginRequestDTO loginRequestDto) {
@@ -131,10 +132,11 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         // 비밀번호 변경
         String encodedPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(encodedPassword);
+        user.updatePassword(encodedPassword);
 
         // 인증 토큰 사용 처리
         emailTokenService.markTokenAsUsed(email);
+    }
 
     @Override
     public JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO) {
@@ -211,5 +213,5 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         log.info("randomClositId : {}", randomClositId);
         return randomClositId;
-        }
     }
+}
