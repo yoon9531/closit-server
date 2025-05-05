@@ -6,11 +6,14 @@ import UMC_7th.Closit.domain.todaycloset.dto.TodayClosetResponseDTO;
 import UMC_7th.Closit.domain.todaycloset.entity.TodayCloset;
 import UMC_7th.Closit.domain.todaycloset.repository.TodayClosetRepository;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +33,16 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
     private final SecurityUtil securityUtil;
 
     @Override
-    public Slice<TodayCloset> getTodayClosetList(Integer page) {
+    public Slice<TodayCloset> getTodayClosetList(Integer page, String sort) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return todayClosetRepository.findAll(pageable);
+        if (sort.equals("view")) {
+            return todayClosetRepository.findAllOrderByPostView(pageable);
+        } else if (sort.equals("latest")) {
+            return todayClosetRepository.findAllOrderByCreatedAt(pageable);
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_TODAY_CLOSET_SORT);
+        }
     }
 
     @Override

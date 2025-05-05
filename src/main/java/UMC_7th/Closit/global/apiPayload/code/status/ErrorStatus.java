@@ -99,6 +99,8 @@ public enum ErrorStatus implements BaseErrorCode {
     //오늘의 옷장 관련 에러
     TODAY_CLOSET_NOT_FOUND(HttpStatus.NOT_FOUND, "TODAYCLOSET4001", "오늘의 옷장이 존재하지 않습니다."),
     DUPLICATE_TODAY_CLOSET(HttpStatus.CONFLICT, "TODAYCLOSET4002", "이미 오늘의 옷장에 등록된 게시글입니다."),
+    INVALID_TODAY_CLOSET_SORT(HttpStatus.BAD_REQUEST, "TODAYCLOSET4003", "잘못된 정렬 방식입니다."),
+
 
     // 해시태그 관련 관련 에러
     HASHTAG_NOT_FOUND(HttpStatus.NOT_FOUND, "HASHTAG4041", "해시태그가 존재하지 않습니다."),
@@ -114,7 +116,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // S3 관련 에러
     INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S34001", "유효하지 않은 S3 파일 URL입니다."),
     IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다.");
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

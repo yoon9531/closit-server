@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 
 public interface TodayClosetQueryService {
-    Slice<TodayCloset> getTodayClosetList(Integer page);
+    Slice<TodayCloset> getTodayClosetList(Integer page, String sort);
     List<TodayClosetResponseDTO.TodayClosetCandidateDTO> getTodayClosetCandidates();
 }
 

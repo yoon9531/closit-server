@@ -39,6 +39,14 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private boolean isMission;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private int view = 0;
+    //조회수 증가
+    public void increaseView() {
+        this.view++;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
