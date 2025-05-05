@@ -40,7 +40,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
     @Override
     public void verifyEmailToken(String token) {
         EmailToken emailToken = emailTokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 토큰입니다."));
+                .orElseThrow(() -> new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_NOT_FOUND));
 
         if (emailToken.isVerified()) {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_VERIFIED);
@@ -50,11 +50,11 @@ public class EmailTokenServiceImpl implements EmailTokenService {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
         }
 
-        if (emailToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+        if (emailToken.isExpired()) {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
         }
 
-        emailToken.setVerified(true);
+        emailToken.verify();
         emailTokenRepository.save(emailToken);
     }
 
@@ -78,11 +78,11 @@ public class EmailTokenServiceImpl implements EmailTokenService {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
         }
 
-        if (token.getExpiredAt().isBefore(LocalDateTime.now())) {
+        if (token.isExpired()) {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_EXPIRED);
         }
 
-        token.setUsed(true);
+        token.use();
         emailTokenRepository.save(token);
     }
 }

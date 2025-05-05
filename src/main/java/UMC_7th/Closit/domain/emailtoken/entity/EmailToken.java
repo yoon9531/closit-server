@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,4 +32,19 @@ public class EmailToken extends BaseEntity {
 
     @Column(nullable = false)
     private boolean used;
+
+    // 이메일 인증 완료 처리
+    public void verify() {
+        this.verified = true;
+    }
+
+    // 이메일 토큰 사용 처리
+    public void use() {
+        this.used = true;
+    }
+
+    // 만료 여부 확인
+    public boolean isExpired() {
+        return this.expiredAt.isBefore(LocalDateTime.now());
+    }
 }
