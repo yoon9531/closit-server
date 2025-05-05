@@ -155,7 +155,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
         } else {
             if (updateUserDTO.getPassword() != null) {
-                currentUser.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+                currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
                 isChanged = true;
             }
         }

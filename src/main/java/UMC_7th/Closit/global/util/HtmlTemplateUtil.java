@@ -24,7 +24,7 @@ public class HtmlTemplateUtil {
 
     public static String loadHtml(String filename) {
         try {
-            ClassPathResource resource = new ClassPathResource("static/" + filename);
+            ClassPathResource resource = new ClassPathResource("templates/email/" + filename);
             Path path = resource.getFile().toPath();
             return Files.readString(path);
         } catch (IOException e) {

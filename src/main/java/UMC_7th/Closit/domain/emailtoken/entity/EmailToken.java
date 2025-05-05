@@ -52,9 +52,6 @@ public class EmailToken extends BaseEntity {
 
     // 이메일 토큰이 사용 가능한 상태인지 확인
     public void validateUsable() {
-        if (!this.verified) {
-            throw new EmailTokenHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
-        }
         if (this.used) {
             throw new EmailTokenHandler(ErrorStatus.EMAIL_TOKEN_ALREADY_USED);
         }
