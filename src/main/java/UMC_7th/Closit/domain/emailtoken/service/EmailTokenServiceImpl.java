@@ -5,6 +5,7 @@ import UMC_7th.Closit.domain.emailtoken.repository.EmailTokenRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.EmailTokenHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,9 @@ public class EmailTokenServiceImpl implements EmailTokenService {
 
     private final EmailTokenRepository emailTokenRepository;
     private final EmailService emailService;
+
+    @Value("${server.domain}")
+    private String serverDomain;
 
     @Override
     public void createEmailToken(String email) {
@@ -33,7 +37,7 @@ public class EmailTokenServiceImpl implements EmailTokenService {
         emailTokenRepository.save(emailToken);
 
         // 이메일 발송
-        String verificationLink = "http://localhost:8080/api/auth/email-tokens/verify?token=" + token;
+        String verificationLink = serverDomain + "/api/auth/email-tokens/verify?token=" + token;
         emailService.sendEmail(email, "[Closit] 이메일 인증을 완료해주세요", verificationLink);
     }
 
