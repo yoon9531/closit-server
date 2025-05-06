@@ -5,7 +5,6 @@ import UMC_7th.Closit.domain.highlight.dto.HighlightResponseDTO;
 import UMC_7th.Closit.domain.highlight.dto.HighlightRequestDTO;
 import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.highlight.service.HighlightCommandService;
-import UMC_7th.Closit.domain.highlight.service.HighlightQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
