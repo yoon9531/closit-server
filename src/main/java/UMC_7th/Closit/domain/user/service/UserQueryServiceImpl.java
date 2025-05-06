@@ -9,6 +9,7 @@ import UMC_7th.Closit.domain.post.repository.PostRepository;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
@@ -32,6 +33,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     private final FollowRepository followRepository;
     private final PostRepository postRepository;
     private final SecurityUtil securityUtil;
+    private final UserBlockRepository userBlockRepository;
 
     @Override
     public Slice<Highlight> getHighlightList(String clositId, Pageable pageable) {
@@ -91,5 +93,11 @@ public class UserQueryServiceImpl implements UserQueryService {
         Slice<Post> recentPostList = postRepository.findRecentPostList(clositId, week, pageable);
 
         return recentPostList;
+    }
+
+    @Override
+    public Slice<User> getBlockedUserList(Pageable pageable) {
+        User currentUser = securityUtil.getCurrentUser();
+        return userBlockRepository.findBlockedUsersByBlocker(currentUser, pageable);
     }
 }

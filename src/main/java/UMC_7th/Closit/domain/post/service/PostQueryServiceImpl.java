@@ -37,12 +37,16 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final SecurityUtil securityUtil;
     private final HighlightRepository highlightRepository;
 
+    @Transactional // ← readOnly 제거 또는 false 설정
     public PostResponseDTO.PostPreviewDTO getPostById(Long postId) {
         User currentUser = securityUtil.getCurrentUser();
 
         // 게시글 조회
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND));
+
+        // 조회수 증가
+        post.increaseView();
 
         // 좋아요 여부 확인
         Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);

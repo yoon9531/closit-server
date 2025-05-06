@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,10 +36,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 폼 기반 로그인 설정
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/")
-                )
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
@@ -50,8 +48,12 @@ public class SecurityConfig {
                                          "/api/auth/login",
                                          "/api/auth/refresh",
                                          "/api/auth/users/isunique/**",
-                                         "/api/auth/mail",
-                                        "/api/auth/oauth/**").permitAll()
+                                         "/api/auth/email-tokens/**",
+                                         "/api/auth/find-id",
+                                         "/api/auth/reset-password",
+                                         "/email-verification-success.html",
+                                         "/email-verification-failed.html",
+                                         "/api/auth/oauth/**").permitAll()
                         .anyRequest().authenticated())
                 // UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
