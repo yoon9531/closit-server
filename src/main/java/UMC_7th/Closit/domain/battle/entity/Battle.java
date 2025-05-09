@@ -25,6 +25,9 @@ public class Battle extends BaseEntity {
     private String title;
 
     @Column
+    private String description;
+
+    @Column
     private LocalDateTime deadline;
 
     @Column
