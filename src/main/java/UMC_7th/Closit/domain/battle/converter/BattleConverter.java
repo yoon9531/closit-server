@@ -84,6 +84,7 @@ public class BattleConverter {
                 .battleId(battle.getId())
                 .title(battle.getTitle())
                 .description(battle.getDescription())
+                .deadline(battle.getDeadline())
                 .firstClositId(battle.getPost1().getUser().getClositId())
                 .firstProfileImage(battle.getPost1().getUser().getProfileImage())
                 .firstPostId(battle.getPost1().getId())

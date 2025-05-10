@@ -138,6 +138,7 @@ public class BattleResponseDTO {
         private Long battleId;
         private String title;
         private String description;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime deadline;
         private String firstClositId;
         private String firstProfileImage;

@@ -29,10 +29,12 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     @Override
     @Transactional
     public Battle getBattleDetail(Long battleId) {
-        Battle battle = battleRepository.findById(battleId)
+        Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        return null
+        battleRepository.incrementViewCount(battle.getId());
+
+        return battle;
     }
 
     @Override
