@@ -29,10 +29,14 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     @Override
     @Transactional
     public Battle getBattleDetail(Long battleId) {
+        User user = securityUtil.getCurrentUser();
+
         Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
         battleRepository.incrementViewCount(battle.getId());
+
+        calculateVotes(battle, user.getId());
 
         return battle;
     }
