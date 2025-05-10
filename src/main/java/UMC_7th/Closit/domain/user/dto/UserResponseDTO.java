@@ -187,4 +187,12 @@ public class UserResponseDTO {
         private String profileImage;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IsBlockedDTO {
+        private boolean isBlocked;
+    }
+
 }

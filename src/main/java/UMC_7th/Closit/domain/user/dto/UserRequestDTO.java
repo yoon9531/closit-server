@@ -16,6 +16,7 @@ public class UserRequestDTO {
 
     @Getter
     @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class CreateUserDTO {
         @NotBlank(message = "이름은 필수 입력 값입니다.")
@@ -61,6 +62,7 @@ public class UserRequestDTO {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class BlockUserDTO {
         @NotBlank(message = "차단할 clositId는 필수 입력 값입니다.")
         @ExistUserClositId

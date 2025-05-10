@@ -8,8 +8,8 @@ import UMC_7th.Closit.domain.user.dto.RegisterResponseDTO;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
-import UMC_7th.Closit.domain.user.entity.UserBlock;
-import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
+import UMC_7th.Closit.domain.user.entity.Block;
+import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
@@ -31,7 +31,7 @@ import java.util.Optional;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
-    private final UserBlockRepository userBlockRepository;
+    private final BlockRepository blockRepository;
     private final FollowRepository followRepository;
     private final EmailTokenService emailTokenService;
     private final PasswordEncoder passwordEncoder;
@@ -48,14 +48,14 @@ public class UserCommandServiceImpl implements UserCommandService {
         if (userRepository.existsByEmail(userRequestDto.getEmail())) {
             throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
         }
-
-        // 이메일 인증 여부 확인
-        if (!emailTokenService.isEmailVerified(userRequestDto.getEmail())) {
-            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
-        }
-
-        // 인증 토큰 사용 처리
-        emailTokenService.markTokenAsUsed(userRequestDto.getEmail());
+//
+//        // 이메일 인증 여부 확인
+//        if (!emailTokenService.isEmailVerified(userRequestDto.getEmail())) {
+//            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+//        }
+//
+//        // 인증 토큰 사용 처리
+//        emailTokenService.markTokenAsUsed(userRequestDto.getEmail());
 
         // ClositId Already Exists
         if (userRepository.existsByClositId(userRequestDto.getClositId())) {
@@ -143,14 +143,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             isChanged = true;
         }
 
-//        if (updateUserDTO.getClositId() != null) {
-//            if (!isClositIdUnique(updateUserDTO.getClositId())) {
-//                throw new UserHandler(ErrorStatus.CLOSIT_ID_ALREADY_EXISTS);
-//            }
-//            currentUser.setClositId(updateUserDTO.getClositId());
-//            isChanged = true;
-//        }
-
         if (!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), currentUser.getPassword())) {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
         } else {
@@ -181,7 +173,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // Throw if there already exist block record
-        if (userBlockRepository.existsByBlockerAndBlocked(blocker, blocked)) {
+        if (blockRepository.existsByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())) {
             throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
         }
 
@@ -190,18 +182,18 @@ public class UserCommandServiceImpl implements UserCommandService {
         if (followBlockedtoBlocker != null) {
             followRepository.delete(followBlockedtoBlocker);
         }
+
         Follow followBlockertoBlocked = followRepository.findBySenderAndReceiver(blocker, blocked);
         if (followBlockertoBlocked != null) {
             followRepository.delete(followBlockertoBlocked);
         }
 
-
-        UserBlock userBlock = UserBlock.builder()
-                .blocker(blocker)
-                .blocked(blocked)
+        Block userBlock = Block.builder()
+                .blockerId(blocker.getClositId())
+                .blockedId(blockUserDTO.getBlockedClositId())
                 .build();
 
-        return UserConverter.toUserBlockResponseDTO(userBlockRepository.save(userBlock));
+        return UserConverter.toUserBlockResponseDTO(blockRepository.save(userBlock));
     }
 
     @Override
@@ -213,7 +205,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         User requesterUser = userRepository.findByClositId(requesterClositId).orElseThrow(
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        return userBlockRepository.existsByBlockerAndBlocked(targetUser, requesterUser);
+        return blockRepository.existsByBlockerIdAndBlockedId(targetClositId, requesterClositId);
     }
 
     @Override
@@ -224,9 +216,9 @@ public class UserCommandServiceImpl implements UserCommandService {
         User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        UserBlock userBlock = userBlockRepository.findByBlockerAndBlocked(blocker, blocked)
+        Block userBlock = blockRepository.findByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
 
-        userBlockRepository.delete(userBlock);
+        blockRepository.delete(userBlock);
     }
 }
