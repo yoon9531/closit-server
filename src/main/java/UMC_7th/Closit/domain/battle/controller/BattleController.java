@@ -141,7 +141,12 @@ public class BattleController {
     }
 
     @GetMapping("/{battleId}")
-    @Operation()
+    @Operation(summary = "배틀 게시글 상세 조회",
+            description = """
+            ## 배틀 게시글 상세 조회 - 투표 하지 않은 배틀 게시글은 투표 수 = 0으로 보임
+            ### PathVariable
+            battleId - [조회할 배틀 ID]
+            """)
     public ApiResponse<BattleResponseDTO.GetBattleDetailDTO> getBattleDetail(@PathVariable("battleId") Long battleId) {
         Battle battle = battleQueryService.getBattleDetail(battleId);
 
