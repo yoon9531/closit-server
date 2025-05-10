@@ -16,6 +16,7 @@ public class BattleConverter {
         return Battle.builder()
                 .post1(post)
                 .title(request.getTitle())
+                .description(request.getDescription())
                 .battleStatus(BattleStatus.INACTIVE)
                 .build();
     }
