@@ -16,9 +16,6 @@ public class TodayCloset extends BaseEntity {
     @Column(name = "todays_closet_id")
     private Long id;
 
-    @Column(nullable = false)
-    private Integer view;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;

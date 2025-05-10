@@ -57,7 +57,6 @@ public class TodayClosetServiceImpl implements TodayClosetService {
         // 3. TodayCloset 객체 생성 및 저장
         TodayCloset todayCloset = TodayCloset.builder()
                 .post(post)
-                .view(0)
                 .build();
 
         TodayCloset saved = todayClosetRepository.save(todayCloset);

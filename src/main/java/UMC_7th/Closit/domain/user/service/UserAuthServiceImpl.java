@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.user.service;
 
+import UMC_7th.Closit.domain.emailtoken.service.EmailTokenService;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.JwtResponse;
 import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public class UserAuthServiceImpl implements UserAuthService {
 
     private final UserRepository userRepository;
+    private final EmailTokenService emailTokenService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -41,6 +43,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
     private String profileImage;
+
     // login
     @Override
     public JwtResponse login(LoginRequestDTO loginRequestDto) {
@@ -97,6 +100,42 @@ public class UserAuthServiceImpl implements UserAuthService {
         refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
 
         return new JwtResponse(user.getClositId(), newAccessToken, newRefreshToken);
+    }
+
+    @Override
+    public String findClositIdByEmail(String email) {
+        // 이메일 인증 여부 확인
+        if (!emailTokenService.isEmailVerified(email)) {
+            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+        }
+
+        // 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 인증 토큰 사용 처리
+        emailTokenService.markTokenAsUsed(email);
+
+        return user.getClositId();
+    }
+
+    @Override
+    public void resetPassword(String email, String newPassword) {
+        // 이메일 인증 여부 확인
+        if (!emailTokenService.isEmailVerified(email)) {
+            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+        }
+
+        // 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 비밀번호 변경
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.updatePassword(encodedPassword);
+
+        // 인증 토큰 사용 처리
+        emailTokenService.markTokenAsUsed(email);
     }
 
     @Override
@@ -175,5 +214,5 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         log.info("randomClositId : {}", randomClositId);
         return randomClositId;
-        }
     }
+}

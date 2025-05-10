@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -20,4 +21,6 @@ public interface UserQueryService {
     boolean isMissionDone();
 
     Slice<Post> getRecentPostList(String clositId, Integer page); // 특정 사용자의 최근 게시글 조회
+
+    Slice<User> getBlockedUserList(Pageable pageable);
 }

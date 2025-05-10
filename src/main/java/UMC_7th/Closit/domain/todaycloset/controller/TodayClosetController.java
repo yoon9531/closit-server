@@ -8,6 +8,8 @@ import UMC_7th.Closit.domain.todaycloset.service.TodayClosetQueryService;
 import UMC_7th.Closit.domain.todaycloset.service.TodayClosetService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,16 @@ public class TodayClosetController {
     @Operation(summary = "오늘의 옷장 게시글 조회")
     @GetMapping
     public ApiResponse<TodayClosetResponseDTO.TodayClosetListDTO> getTodayClosetList(
-            @RequestParam(name = "page") Integer page) {
+            @RequestParam(name = "page") Integer page,
+            @Parameter(
+                    name = "sort",
+                    description = "정렬 기준: latest(최신순), view(조회순)",
+                    example = "latest",
+                    schema = @Schema(allowableValues = {"latest", "view"})
+            )
+            @RequestParam(name = "sort", defaultValue = "latest") String sort) {
 
-        Slice<TodayCloset> todayClosetList = todayClosetQueryService.getTodayClosetList(page);
+        Slice<TodayCloset> todayClosetList = todayClosetQueryService.getTodayClosetList(page, sort);
         return ApiResponse.onSuccess(TodayClosetConverter.toListDTO(todayClosetList));
     }
 

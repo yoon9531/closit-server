@@ -99,6 +99,14 @@ public class UserController {
         return ApiResponse.onSuccess("User unblocked successfully");
     }
 
+    @Operation(summary = "사용자 차단 목록 조회", description = "특정 사용자의 차단 목록을 조회합니다.")
+    @GetMapping("/block")
+    public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList() {
+        // 한번에 10명씩 조회
+        Slice<User> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(0, 10));
+        return ApiResponse.onSuccess(UserConverter.toUserBlockListDTO(blockedUserSlice));
+    }
+
     @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
