@@ -93,7 +93,7 @@ class ReportServiceTest {
 
         // then
         User updated = userRepository.findByClositId("dummy123").orElseThrow();
-        System.out.println("\uD83D\uDCC9 최종 reportCount: " + updated.getCountReport());
+        System.out.println("최종 reportCount: " + updated.getCountReport());
         assertThat(updated.getCountReport()).isEqualTo(threadCount);
     }
 
