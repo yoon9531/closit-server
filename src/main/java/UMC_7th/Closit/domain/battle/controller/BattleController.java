@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "[배틀 게시판]", description = "배틀 게시판 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/communities/battle")
+@RequestMapping("/api/v1/communities/battle")
 public class BattleController {
 
     private final BattleCommandService battleCommandService;
@@ -44,17 +44,17 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.createBattleResultDTO(battle));
     }
 
-    @PostMapping("/challenge/upload/{battle_id}")
+    @PostMapping("/{battleId}/challenge/upload")
     @Operation(summary = "배틀 신청",
             description = """
             ## 배틀 챌린지 게시글에 배틀 도전
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             ### RequestBody
             post_id [게시글 ID]
             """)
     public ApiResponse<BattleResponseDTO.ChallengeBattleResultDTO> challengeBattle(@RequestBody @Valid BattleRequestDTO.ChallengeBattleDTO request,
-                                                                                   @PathVariable("battle_id") Long battleId) {
+                                                                                   @PathVariable("battleId") Long battleId) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
@@ -102,17 +102,17 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
     }
 
-    @PostMapping("/{battle_id}/voting")
+    @PostMapping("/{battleId}/voting")
     @Operation(summary = "배틀 투표",
             description = """
             ## 배틀 게시글 중 한 게시글에 배틀 투표
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             ### RequestBody
             post_id [게시글 ID]
             """)
     public ApiResponse<BattleResponseDTO.VoteBattleResultDTO> voteBattle(@RequestBody @Valid BattleRequestDTO.VoteBattleDTO request,
-                                                                         @PathVariable("battle_id") Long battleId) {
+                                                                         @PathVariable("battleId") Long battleId) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
@@ -181,14 +181,14 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(votedBattleList));
     }
 
-    @DeleteMapping("/{battle_id}")
+    @DeleteMapping("/{battleId}")
     @Operation(summary = "배틀 삭제",
             description = """
             ## 특정 배틀 게시글 삭제
             ### PathVariable
             battle_id [배틀 ID]
             """)
-    public ApiResponse<String> deleteBattle(@PathVariable("battle_id") Long battleId) {
+    public ApiResponse<String> deleteBattle(@PathVariable("battleId") Long battleId) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
