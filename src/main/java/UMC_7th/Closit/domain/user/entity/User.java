@@ -124,8 +124,6 @@ public class User extends BaseEntity {
         this.countReport++;
     }
 
-    public void setPassword(String encode) {
-    }
 
     public void updatePassword(String encode) {
         this.password = encode;
