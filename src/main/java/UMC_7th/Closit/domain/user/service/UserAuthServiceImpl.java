@@ -195,6 +195,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .provider(userInfo.getProvider().toString())
                 .clositId(clositId)
                 .role(Role.USER)
+                .countReport(0)
                 .build();
 
         return userRepository.save(newUser);
