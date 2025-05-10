@@ -6,7 +6,7 @@ import UMC_7th.Closit.domain.battle.entity.BattleStatus;
 import org.springframework.data.domain.Slice;
 
 public interface BattleQueryService {
-
+    Battle getBattleDetail(Long battleId);
     Slice<Battle> getBattleList(Integer page, BattleSorting battleSorting, BattleStatus battleStatus); // 배틀 게시글 목록 조회
     Slice<Battle> getChallengeBattleList(Integer page); // 배틀 챌린지 게시글 목록 조회 - 최신순
     Slice<Battle> getMyVotedBattleList(Integer page); // 내가 투표한 게시글 - 최신순

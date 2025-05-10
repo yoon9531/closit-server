@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.battle.entity.BattleStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +25,15 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     private final BattleRepository battleRepository;
     private final VoteRepository voteRepository;
     private final SecurityUtil securityUtil;
+
+    @Override
+    @Transactional
+    public Battle getBattleDetail(Long battleId) {
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
+        return null
+    }
 
     @Override
     public Slice<Battle> getBattleList(Integer page, BattleSorting battleSorting, BattleStatus battleStatus) { // 배틀 게시글 목록 조회

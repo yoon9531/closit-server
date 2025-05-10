@@ -140,6 +140,14 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(battleList));
     }
 
+    @GetMapping("/{battleId}")
+    @Operation()
+    public ApiResponse<BattleResponseDTO.GetBattleDetailDTO> getBattleDetail(@PathVariable("battleId") Long battleId) {
+        Battle battle = battleQueryService.getBattleDetail(battleId);
+
+        return ApiResponse.onSuccess(BattleConverter.getBattleDetail(battle));
+    }
+
     @GetMapping("/challenge")
     @Operation(summary = "배틀 챌린지 게시글 목록 조회",
             description = """
