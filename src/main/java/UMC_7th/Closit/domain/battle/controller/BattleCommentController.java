@@ -52,7 +52,7 @@ public class BattleCommentController {
             description = """
             ## 배틀 게시글 댓글 목록 조회
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             ### Parameters
             page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
             """)
