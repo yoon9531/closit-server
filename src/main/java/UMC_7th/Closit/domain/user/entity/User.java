@@ -119,9 +119,11 @@ public class User extends BaseEntity {
         this.clositId = clositId;
     }
 
+
     public void incrementCountReport() {
         this.countReport++;
     }
+
 
     public void updatePassword(String encode) {
         this.password = encode;

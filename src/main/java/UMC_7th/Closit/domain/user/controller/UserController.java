@@ -87,9 +87,9 @@ public class UserController {
 
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
     @PostMapping("/block")
-    public ApiResponse<String> blockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
-        userCommandService.blockUser(blockUserDTO);
-        return ApiResponse.onSuccess("User blocked successfully");
+    public ApiResponse<UserResponseDTO.UserBlockResponseDTO> blockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
+        UserResponseDTO.UserBlockResponseDTO userBlockResponseDTO = userCommandService.blockUser(blockUserDTO);
+        return ApiResponse.onSuccess(userBlockResponseDTO);
     }
 
     @Operation(summary = "사용자 차단 해제", description = "특정 사용자의 차단을 해제합니다.")
@@ -100,11 +100,19 @@ public class UserController {
     }
 
     @Operation(summary = "사용자 차단 목록 조회", description = "특정 사용자의 차단 목록을 조회합니다.")
-    @GetMapping("/block")
-    public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList() {
-        // 한번에 10명씩 조회
-        Slice<User> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(0, 10));
+    @GetMapping("/blocks")
+    public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Slice<User> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserBlockListDTO(blockedUserSlice));
+    }
+
+    @Operation(summary = "사용자 차단 여부 조회", description = "특정 사용자의 차단 여부를 합니다.")
+    @GetMapping("/block")
+    public ApiResponse<UserResponseDTO.IsBlockedDTO> isBlockedBy(@RequestParam("closit_id") String closit_id) {
+        return ApiResponse.onSuccess(userQueryService.isBlockedBy(closit_id));
     }
 
     @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")

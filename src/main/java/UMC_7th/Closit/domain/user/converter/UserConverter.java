@@ -1,13 +1,12 @@
 package UMC_7th.Closit.domain.user.converter;
 
-import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.highlight.converter.HighlightConverter;
 import UMC_7th.Closit.domain.highlight.dto.HighlightResponseDTO;
 import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
-import UMC_7th.Closit.domain.user.entity.UserBlock;
+import UMC_7th.Closit.domain.user.entity.Block;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Slice;
 
@@ -103,10 +102,10 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.UserBlockResponseDTO toUserBlockResponseDTO (UserBlock savedBlock) {
+    public static UserResponseDTO.UserBlockResponseDTO toUserBlockResponseDTO (Block savedBlock) {
         return UserResponseDTO.UserBlockResponseDTO.builder()
-                .blockerClositId(savedBlock.getBlocker().getClositId())
-                .blockedClositId(savedBlock.getBlocked().getClositId())
+                .blockerClositId(savedBlock.getBlockerId())
+                .blockedClositId(savedBlock.getBlockedId())
                 .build();
     }
 

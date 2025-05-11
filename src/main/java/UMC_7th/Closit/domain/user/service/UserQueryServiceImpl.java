@@ -9,7 +9,7 @@ import UMC_7th.Closit.domain.post.repository.PostRepository;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.User;
-import UMC_7th.Closit.domain.user.repository.UserBlockRepository;
+import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
@@ -33,7 +33,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     private final FollowRepository followRepository;
     private final PostRepository postRepository;
     private final SecurityUtil securityUtil;
-    private final UserBlockRepository userBlockRepository;
+    private final BlockRepository userBlockRepository;
 
     @Override
     public Slice<Highlight> getHighlightList(String clositId, Pageable pageable) {
@@ -98,6 +98,21 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public Slice<User> getBlockedUserList(Pageable pageable) {
         User currentUser = securityUtil.getCurrentUser();
-        return userBlockRepository.findBlockedUsersByBlocker(currentUser, pageable);
+        return userBlockRepository.findBlockedUsersByBlocker(currentUser.getClositId(), pageable);
+    }
+
+    @Override
+    public UserResponseDTO.IsBlockedDTO isBlockedBy(String targetClositId) {
+
+        User targetUser = userRepository.findByClositId(targetClositId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User currentUser = securityUtil.getCurrentUser();
+
+        UserResponseDTO.IsBlockedDTO isblockedDTO = UserResponseDTO.IsBlockedDTO.builder()
+                .isBlocked(userBlockRepository.existsByBlockerIdAndBlockedId(targetClositId, currentUser.getClositId()))
+                .build();
+
+        return isblockedDTO;
     }
 }
