@@ -12,6 +12,7 @@ public class BattleRequestDTO {
         private Long postId;
         @NotBlank
         private String title;
+        private String description;
     }
 
     @Getter

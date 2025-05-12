@@ -129,4 +129,28 @@ public class BattleResponseDTO {
         private boolean isLast;
         private boolean hasNext;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetBattleDetailDTO {
+        private Long battleId;
+        private String title;
+        private String description;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime deadline;
+        private String firstClositId;
+        private String firstProfileImage;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
+        private double firstVotingRate;
+        private String secondClositId;
+        private String secondProfileImage;
+        private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
+        private double secondVotingRate;
+    }
 }

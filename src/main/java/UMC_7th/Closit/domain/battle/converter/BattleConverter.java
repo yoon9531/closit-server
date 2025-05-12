@@ -16,6 +16,7 @@ public class BattleConverter {
         return Battle.builder()
                 .post1(post)
                 .title(request.getTitle())
+                .description(request.getDescription())
                 .battleStatus(BattleStatus.INACTIVE)
                 .build();
     }
@@ -79,6 +80,26 @@ public class BattleConverter {
                 .build();
     }
 
+    public static BattleResponseDTO.GetBattleDetailDTO getBattleDetail(Battle battle) {
+        return BattleResponseDTO.GetBattleDetailDTO.builder()
+                .battleId(battle.getId())
+                .title(battle.getTitle())
+                .description(battle.getDescription())
+                .deadline(battle.getDeadline())
+                .firstClositId(battle.getPost1().getUser().getClositId())
+                .firstProfileImage(battle.getPost1().getUser().getProfileImage())
+                .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
+                .firstVotingRate(battle.getFirstVotingRate())
+                .secondClositId(battle.getPost2().getUser().getClositId())
+                .secondProfileImage(battle.getPost2().getUser().getProfileImage())
+                .secondPostId(battle.getPost2().getId())
+                .secondPostFrontImage(battle.getPost2().getFrontImage())
+                .secondPostBackImage(battle.getPost2().getBackImage())
+                .secondVotingRate(battle.getSecondVotingRate())
+                .build();
+    }
     public static BattleResponseDTO.BattlePreviewDTO battlePreviewDTO(Battle battle) { // 배틀 게시글 목록 조회
         return BattleResponseDTO.BattlePreviewDTO.builder()
                 .battleId(battle.getId())

@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,7 +14,14 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface BattleRepository extends JpaRepository<Battle,Long> {
-    Optional<Battle> findById(Long battleId);
+    @Modifying
+    @Query("UPDATE Battle b " +
+           "SET b.viewCount = b.viewCount + 1 " +
+           "WHERE b.id = :id")
+    void incrementViewCount(@Param("id") Long id);
+
+    Optional<Battle> findByIdAndPost2IsNotNull(Long battleId);
+
     Slice<Battle> findByPost2IsNotNullAndBattleStatus(Pageable pageable, BattleStatus battleStatus); // 배틀 게시글 목록 조회
     Slice<Battle> findByPost2IsNull(Pageable pageable); // 배틀 챌린지 게시글 목록 조회
     @Query("""
