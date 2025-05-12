@@ -1,7 +1,7 @@
 package UMC_7th.Closit.domain.battle.dto.BattleDTO;
 
-import UMC_7th.Closit.domain.battle.entity.BattleStatus;
-import UMC_7th.Closit.domain.battle.entity.ChallengeStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

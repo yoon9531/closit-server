@@ -1,8 +1,8 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.BattleSorting;
-import UMC_7th.Closit.domain.battle.entity.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import org.springframework.data.domain.Slice;
 
 public interface BattleQueryService {

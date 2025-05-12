@@ -3,6 +3,8 @@ package UMC_7th.Closit.domain.battle.converter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.*;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Slice;

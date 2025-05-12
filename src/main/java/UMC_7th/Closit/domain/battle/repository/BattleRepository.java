@@ -1,7 +1,7 @@
 package UMC_7th.Closit.domain.battle.repository;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

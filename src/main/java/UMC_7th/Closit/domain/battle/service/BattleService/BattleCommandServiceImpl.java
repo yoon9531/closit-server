@@ -3,6 +3,7 @@ package UMC_7th.Closit.domain.battle.service.BattleService;
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.*;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
