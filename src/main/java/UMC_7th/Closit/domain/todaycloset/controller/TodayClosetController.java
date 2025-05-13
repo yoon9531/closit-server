@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/auth/communities/todayclosets")
+@RequestMapping("api/v1/communities/todayclosets")
 public class TodayClosetController {
     private final TodayClosetService todayClosetService;
     private final TodayClosetQueryService todayClosetQueryService;
