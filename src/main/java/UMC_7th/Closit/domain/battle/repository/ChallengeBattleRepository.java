@@ -12,7 +12,7 @@ public interface ChallengeBattleRepository extends JpaRepository<ChallengeBattle
     @Query("UPDATE ChallengeBattle cb SET cb.challengeStatus = " +
            "CASE WHEN cb.id = :challengeBattleId THEN 'ACCEPTED' ELSE 'REJECTED' END " +
            "WHERE cb.battle = :battle")
-    int updateChallengeStatus(@Param("battle") Battle battle, @Param("challengeBattleId") Long challengeBattleId);
+    void updateChallengeStatus(@Param("battle") Battle battle, @Param("challengeBattleId") Long challengeBattleId);
 
     ChallengeBattle findByIdAndBattleId(Long challengeBattleId, Long battleId);
 }
