@@ -66,6 +66,15 @@ public class BattleController {
         return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
     }
 
+    @GetMapping("/{battleId}/challenge/{challengeBattleId}")
+    @Operation(summary = "챌린지 배틀 미리보기")
+    public ApiResponse<BattleResponseDTO.GetChallengeBattleDTO> getChallengeBattle(@PathVariable("battleId") Long battleId,
+                                                                                      @PathVariable("challengeBattleId") Long challengeBattleId) {
+        ChallengeBattle challengeBattle = battleQueryService.getChallengeBattle(battleId, challengeBattleId);
+
+        return ApiResponse.onSuccess(BattleConverter.getChallengeBattleDTO(challengeBattle));
+    }
+
     @PatchMapping("/{battleId}/challenge/accept")
     @Operation(summary = "배틀 신청 수락",
             description = """

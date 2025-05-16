@@ -159,4 +159,24 @@ public class BattleConverter {
                 .hasNext(challengeBattleList.hasNext())
                 .build();
     }
+
+    public static BattleResponseDTO.GetChallengeBattleDTO getChallengeBattleDTO(ChallengeBattle challengeBattle) {
+        return BattleResponseDTO.GetChallengeBattleDTO.builder()
+                .battleId(challengeBattle.getBattle().getId())
+                .challengeBattleId(challengeBattle.getId())
+                .title(challengeBattle.getBattle().getTitle())
+                .description(challengeBattle.getBattle().getDescription())
+                .firstClositId(challengeBattle.getBattle().getPost1().getUser().getClositId())
+                .firstProfileImage(challengeBattle.getBattle().getPost1().getUser().getProfileImage())
+                .firstPostId(challengeBattle.getBattle().getPost1().getId())
+                .firstPostFrontImage(challengeBattle.getBattle().getPost1().getFrontImage())
+                .firstPostBackImage(challengeBattle.getBattle().getPost1().getBackImage())
+                .secondClositId(challengeBattle.getPost().getUser().getClositId())
+                .secondProfileImage(challengeBattle.getPost().getUser().getProfileImage())
+                .secondPostId(challengeBattle.getPost().getId())
+                .secondPostFrontImage(challengeBattle.getPost().getFrontImage())
+                .secondPostBackImage(challengeBattle.getPost().getBackImage())
+                .challengeStatus(challengeBattle.getChallengeStatus())
+                .build();
+    }
 }

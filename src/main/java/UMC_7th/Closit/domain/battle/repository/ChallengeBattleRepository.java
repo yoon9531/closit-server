@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface ChallengeBattleRepository extends JpaRepository<ChallengeBattle, Long> {
     @Modifying
     @Query("UPDATE ChallengeBattle cb SET cb.challengeStatus = " +
-            "CASE WHEN cb.id = :challengeBattleId THEN 'ACCEPTED' ELSE 'REJECTED' END " +
-            "WHERE cb.battle = :battle")
+           "CASE WHEN cb.id = :challengeBattleId THEN 'ACCEPTED' ELSE 'REJECTED' END " +
+           "WHERE cb.battle = :battle")
     int updateChallengeStatus(@Param("battle") Battle battle, @Param("challengeBattleId") Long challengeBattleId);
+
+    ChallengeBattle findByIdAndBattleId(Long challengeBattleId, Long battleId);
 }
