@@ -59,9 +59,11 @@ public class BattleQueryServiceImpl implements BattleQueryService {
 
     @Override
     public Slice<Battle> getChallengeBattleList(Integer page) { // 배틀 챌린지 게시글 목록 조회 - 최신순
+        User user = securityUtil.getCurrentUser();
+
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return battleRepository.findByPost2IsNull(pageable);
+        return battleRepository.findByPost2IsNullAndPost1UserIdNot(user.getId(), pageable);
     }
 
     @Override
