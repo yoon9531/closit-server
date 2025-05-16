@@ -85,11 +85,11 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @Parameter(
                     name = "sort",
-                    description = "정렬 기준: LASTEST(최신순), VIEW(조회순)",
-                    example = "LASTEST",
-                    schema = @Schema(allowableValues = {"LASTEST", "VIEW"})
+                    description = "정렬 기준: LATEST(최신순), VIEW(조회순)",
+                    example = "LATEST",
+                    schema = @Schema(allowableValues = {"LATEST", "VIEW"})
             )
-            @RequestParam(defaultValue = "LASTEST") String sort
+            @RequestParam(defaultValue = "LATEST") String sort
     ) {
         PostSorting sortType = PostSorting.valueOf(sort);
         Pageable pageable = PageRequest.of(page, size, sortType.getSort());
