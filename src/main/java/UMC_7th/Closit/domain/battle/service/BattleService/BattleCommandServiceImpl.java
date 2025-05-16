@@ -188,7 +188,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
         }
 
-        // 본인의 게시글이 아닐 경우, 배틀 신청 불가능
+        // 본인의 게시글일 경우, 배틀 신청 불가능
         if (!post.getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
