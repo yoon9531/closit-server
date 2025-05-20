@@ -1,6 +1,7 @@
 package UMC_7th.Closit.domain.post.repository;
 
 import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.post.entity.Visibility;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -40,4 +41,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.user.clositId = :clositId AND p.createdAt >= :week ORDER BY p.createdAt DESC")
     Slice<Post> findRecentPostList(@Param("clositId") String clositId, @Param("week") LocalDateTime week, Pageable pageable); // 특정 사용자의 최근 게시글 조회
+
+    @Query("SELECT p FROM Post p WHERE p.visibility = :visibility")
+    Slice<Post> findByVisibility(@Param("visibility") Visibility visibility, Pageable pageable);
+
+    @Query("SELECT p FROM Post p WHERE p.visibility = :visibility AND p.user IN :users")
+    Slice<Post> findByVisibilityAndUserIn(@Param("visibility") Visibility visibility, @Param("users") List<User> users, Pageable pageable);
+
+    @Query("SELECT p FROM Post p WHERE p.visibility = :visibility AND p.user = :user")
+    Slice<Post> findByVisibilityAndUser(@Param("visibility") Visibility visibility, @Param("user") User user, Pageable pageable);
 }
