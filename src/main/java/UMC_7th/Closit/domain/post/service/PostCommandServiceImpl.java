@@ -1,14 +1,8 @@
 package UMC_7th.Closit.domain.post.service;
 
 import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
-import UMC_7th.Closit.domain.post.entity.Hashtag;
-import UMC_7th.Closit.domain.post.entity.ItemTag;
-import UMC_7th.Closit.domain.post.entity.Post;
-import UMC_7th.Closit.domain.post.entity.PostHashtag;
-import UMC_7th.Closit.domain.post.repository.HashTagRepository;
-import UMC_7th.Closit.domain.post.repository.ItemTagRepository;
-import UMC_7th.Closit.domain.post.repository.PostHashTagRepository;
-import UMC_7th.Closit.domain.post.repository.PostRepository;
+import UMC_7th.Closit.domain.post.entity.*;
+import UMC_7th.Closit.domain.post.repository.*;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
@@ -28,9 +22,10 @@ import java.util.stream.Collectors;
 public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
-    private final HashTagRepository hashtagRepository;
-    private final PostHashTagRepository postHashtagRepository;
+    private final HashtagRepository hashtagRepository;
+    private final PostHashtagRepository postHashtagRepository;
     private final ItemTagRepository itemTagRepository;
+    private final PostItemTagRepository postItemTagRepository;
     private final SecurityUtil securityUtil;
 
     @Override
@@ -58,53 +53,71 @@ public class PostCommandServiceImpl implements PostCommandService {
         // 4. 해시태그 처리
         List<PostHashtag> postHashtags = request.getHashtags().stream()
                 .map(hashtagDTO -> {
-                    String tagContent = hashtagDTO.getContent();
                     // 해시태그 길이 검사
-                    if (tagContent.length() > 20) {
+                    String content = hashtagDTO.getContent();
+                    if (content.length() > 20) {
                         throw new GeneralException(ErrorStatus.INVALID_HASHTAG_LENGTH);
                     }
-                    Hashtag hashTag = hashtagRepository.findByContent(tagContent)
-                            .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
-                    return PostHashtag.builder().post(post).hashtag(hashTag).build();
+
+                    Hashtag hashtag = hashtagRepository.findByContent(content)
+                            .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(content).build()));
+
+                    return PostHashtag.builder()
+                            .post(post)
+                            .hashtag(hashtag)
+                            .build();
                 })
                 .collect(Collectors.toList());
+
         postHashtagRepository.saveAll(postHashtags);
 
         // 5. Front ItemTags 처리
-        List<ItemTag> frontItemTags = request.getFrontItemtags().stream()
+        List<PostItemTag> frontItemTags = request.getFrontItemtags().stream()
                 .map(itemTagDTO -> {
+                    // 아이템 태그 길이 검사
                     String content = itemTagDTO.getContent();
                     if (content.length() > 20) {
                         throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
                     }
-                    return ItemTag.builder()
+
+                    ItemTag itemTag = itemTagRepository.findByContent(content)
+                            .orElseGet(() -> itemTagRepository.save(ItemTag.builder().content(content).build()));
+
+                    return PostItemTag.builder()
                             .post(post)
+                            .itemTag(itemTag)
                             .itemTagX(itemTagDTO.getX())
                             .itemTagY(itemTagDTO.getY())
-                            .itemTagContent(content)
                             .tagType("FRONT")
                             .build();
                 })
                 .collect(Collectors.toList());
-        itemTagRepository.saveAll(frontItemTags);
+
+        postItemTagRepository.saveAll(frontItemTags);
 
         // 5. Back ItemTags 처리
-        List<ItemTag> backItemTags = request.getBackItemtags().stream()
+        List<PostItemTag> backItemTags = request.getBackItemtags().stream()
                 .map(itemTagDTO -> {
+                    // 아이템 태그 길이 검사
                     String content = itemTagDTO.getContent();
                     if (content.length() > 20) {
                         throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
                     }
-                    return ItemTag.builder()
+
+                    ItemTag itemTag = itemTagRepository.findByContent(content)
+                            .orElseGet(() -> itemTagRepository.save(ItemTag.builder().content(content).build()));
+
+                    return PostItemTag.builder()
                             .post(post)
+                            .itemTag(itemTag)
                             .itemTagX(itemTagDTO.getX())
                             .itemTagY(itemTagDTO.getY())
-                            .itemTagContent(content)
                             .tagType("BACK")
                             .build();
                 })
                 .collect(Collectors.toList());
-        itemTagRepository.saveAll(backItemTags);
+
+        postItemTagRepository.saveAll(backItemTags);
 
         return post;
     }
@@ -123,34 +136,48 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // 3. 기존 해시태그 삭제 후 새로운 해시태그 추가
         post.getPostHashtagList().clear();  // 리스트를 비움
+
         List<PostHashtag> newPostHashtags = request.getHashtags().stream()
                 .map(hashtagDTO -> {
-                    String tagContent = hashtagDTO.getContent();
                     // 해시태그 길이 검사
-                    if (tagContent.length() > 20) {
+                    String content = hashtagDTO.getContent();
+                    if (content.length() > 20) {
                         throw new GeneralException(ErrorStatus.INVALID_HASHTAG_LENGTH);
                     }
-                    Hashtag hashTag = hashtagRepository.findByContent(tagContent)
-                            .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(tagContent).build()));
-                    return PostHashtag.builder().post(post).hashtag(hashTag).build();
+
+                    Hashtag hashtag = hashtagRepository.findByContent(content)
+                            .orElseGet(() -> hashtagRepository.save(Hashtag.builder().content(content).build()));
+
+                    return PostHashtag.builder()
+                            .post(post)
+                            .hashtag(hashtag)
+                            .build();
                 })
                 .toList();
+
         post.getPostHashtagList().addAll(newPostHashtags); // 새로운 태그 추가
 
         // 4. 기존 아이템 태그 삭제 후 새로운 태그 추가
         post.getItemTagList().clear();
-        List<ItemTag> newItemTags = new ArrayList<>();
+
+        List<PostItemTag> newItemTags = new ArrayList<>();
+
         newItemTags.addAll(request.getFrontItemtags().stream()
                 .map(itemTagDTO -> {
-                        String content = itemTagDTO.getContent();
-                        if (content.length() > 20) {
-                            throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
-                        }
-                        return ItemTag.builder()
+                    // 아이템 태그 길이 검사
+                    String content = itemTagDTO.getContent();
+                    if (content.length() > 20) {
+                        throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
+                    }
+
+                    ItemTag itemTag = itemTagRepository.findByContent(content)
+                            .orElseGet(() -> itemTagRepository.save(ItemTag.builder().content(content).build()));
+
+                    return PostItemTag.builder()
                             .post(post)
+                            .itemTag(itemTag)
                             .itemTagX(itemTagDTO.getX())
                             .itemTagY(itemTagDTO.getY())
-                            .itemTagContent(content)
                             .tagType("FRONT")
                             .build();
                 })
@@ -158,21 +185,26 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         newItemTags.addAll(request.getBackItemtags().stream()
                 .map(itemTagDTO -> {
+                    // 아이템 태그 길이 검사
                     String content = itemTagDTO.getContent();
                     if (content.length() > 20) {
                         throw new GeneralException(ErrorStatus.INVALID_ITEMTAG_LENGTH);
                     }
-                    return ItemTag.builder()
+
+                    ItemTag itemTag = itemTagRepository.findByContent(content)
+                            .orElseGet(() -> itemTagRepository.save(ItemTag.builder().content(content).build()));
+
+                    return PostItemTag.builder()
                             .post(post)
+                            .itemTag(itemTag)
                             .itemTagX(itemTagDTO.getX())
                             .itemTagY(itemTagDTO.getY())
-                            .itemTagContent(content)
                             .tagType("BACK")
                             .build();
                 })
                 .toList());
 
-        post.getItemTagList().addAll(newItemTags);
+        post.getPostItemTagList().addAll(newItemTags);
 
         // 변경된 post 객체를 저장
         return postRepository.save(post);

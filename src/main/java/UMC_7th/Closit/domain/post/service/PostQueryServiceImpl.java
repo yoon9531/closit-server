@@ -5,9 +5,7 @@ import UMC_7th.Closit.domain.follow.repository.FollowRepository;
 import UMC_7th.Closit.domain.highlight.repository.HighlightRepository;
 import UMC_7th.Closit.domain.post.converter.PostConverter;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
-import UMC_7th.Closit.domain.post.entity.Hashtag;
-import UMC_7th.Closit.domain.post.entity.ItemTag;
-import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.post.entity.*;
 import UMC_7th.Closit.domain.post.repository.*;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -31,9 +29,9 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final FollowRepository followRepository;
-    private final HashTagRepository hashtagRepository;
-    private final PostHashTagRepository postHashTagRepository;
-    private final ItemTagRepository itemTagRepository;
+    private final HashtagRepository hashtagRepository;
+    private final PostHashtagRepository postHashTagRepository;
+    private final PostItemTagRepository postItemTagRepository;
     private final SecurityUtil securityUtil;
     private final HighlightRepository highlightRepository;
 
@@ -58,15 +56,13 @@ public class PostQueryServiceImpl implements PostQueryService {
         Boolean isHighlighted = highlightRepository.existsByPost(post);
 
         // 해시태그 조회
-        List<String> hashtags = postHashTagRepository.findByPost(post).stream()
-                .map(postHashtag -> postHashtag.getHashtag().getContent())
-                .collect(Collectors.toList());
+        List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
 
         // 아이템 태그 조회
-        List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
-        List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+        List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+        List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
 
-        // DTO로 변환
+        // DTO 변환
         return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
     }
 
@@ -97,13 +93,11 @@ public class PostQueryServiceImpl implements PostQueryService {
             Boolean isHighlighted = highlightRepository.existsByPost(post);
 
             // 해시태그 조회
-            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
-                    .map(postHashtag -> postHashtag.getHashtag().getContent())
-                    .collect(Collectors.toList());
+            List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
 
             // 아이템 태그 조회
-            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
-            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+            List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
 
             // DTO 변환
             return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
@@ -134,13 +128,11 @@ public class PostQueryServiceImpl implements PostQueryService {
             Boolean isHighlighted = highlightRepository.existsByPost(post);
 
             // 해시태그 조회
-            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
-                    .map(postHashtag -> postHashtag.getHashtag().getContent())
-                    .collect(Collectors.toList());
+            List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
 
             // 아이템 태그 조회
-            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
-            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+            List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
 
             // DTO 변환
             return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
@@ -159,13 +151,11 @@ public class PostQueryServiceImpl implements PostQueryService {
             Boolean isHighlighted = highlightRepository.existsByPost(post);
 
             // 해시태그 조회
-            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
-                    .map(postHashtag -> postHashtag.getHashtag().getContent())
-                    .collect(Collectors.toList());
+            List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
 
             // 아이템 태그 조회
-            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
-            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+            List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
 
             // DTO 변환
             return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);

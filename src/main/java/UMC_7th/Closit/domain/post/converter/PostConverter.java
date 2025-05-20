@@ -1,8 +1,11 @@
 package UMC_7th.Closit.domain.post.converter;
 
+import UMC_7th.Closit.domain.post.dto.HashtagDTO;
+import UMC_7th.Closit.domain.post.dto.ItemTagDTO;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
-import UMC_7th.Closit.domain.post.entity.ItemTag;
 import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.post.entity.PostHashtag;
+import UMC_7th.Closit.domain.post.entity.PostItemTag;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
@@ -11,21 +14,27 @@ import java.util.stream.Collectors;
 public class PostConverter {
 
     public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO (Post post, Boolean isLiked, Boolean isSaved, Boolean isHighlighted,
-                                                                   List<String> hashtags, List<ItemTag> frontTags, List<ItemTag> backTags) {
+                                                                   List<PostHashtag> hashtags, List<PostItemTag> frontTags, List<PostItemTag> backTags) {
 
-        List<PostResponseDTO.ItemTagDTO> frontItemtags = frontTags.stream()
-                .map(tag -> PostResponseDTO.ItemTagDTO.builder()
-                        .x(tag.getItemTagX())
-                        .y(tag.getItemTagY())
-                        .content(tag.getItemTagContent())
+        List<HashtagDTO> hashtagDTOs = hashtags.stream()
+                .map(tag -> HashtagDTO.builder()
+                        .content(tag.getHashtag().getContent())
                         .build())
                 .collect(Collectors.toList());
 
-        List<PostResponseDTO.ItemTagDTO> backItemtags = backTags.stream()
-                .map(tag -> PostResponseDTO.ItemTagDTO.builder()
+        List<ItemTagDTO> frontItemtags = frontTags.stream()
+                .map(tag -> ItemTagDTO.builder()
                         .x(tag.getItemTagX())
                         .y(tag.getItemTagY())
-                        .content(tag.getItemTagContent())
+                        .content(tag.getItemTag().getContent())
+                        .build())
+                .collect(Collectors.toList());
+
+        List<ItemTagDTO> backItemtags = backTags.stream()
+                .map(tag -> ItemTagDTO.builder()
+                        .x(tag.getItemTagX())
+                        .y(tag.getItemTagY())
+                        .content(tag.getItemTag().getContent())
                         .build())
                 .collect(Collectors.toList());
 
@@ -39,7 +48,7 @@ public class PostConverter {
                 .isLiked(isLiked)
                 .isSaved(isSaved)
                 .isHighlighted(isHighlighted)
-                .hashtags(hashtags)
+                .hashtags(hashtagDTOs)
                 .frontItemtags(frontItemtags)
                 .backItemtags(backItemtags)
                 .pointColor(post.getPointColor())
