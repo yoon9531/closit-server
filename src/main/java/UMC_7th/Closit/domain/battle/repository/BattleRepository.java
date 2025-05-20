@@ -23,7 +23,7 @@ public interface BattleRepository extends JpaRepository<Battle,Long> {
     Optional<Battle> findByIdAndPost2IsNotNull(Long battleId);
 
     Slice<Battle> findByPost2IsNotNullAndBattleStatus(Pageable pageable, BattleStatus battleStatus); // 배틀 게시글 목록 조회
-    Slice<Battle> findByPost2IsNull(Pageable pageable); // 배틀 챌린지 게시글 목록 조회
+    Slice<Battle> findByPost2IsNullAndPost1UserIdNot(Long userId, Pageable pageable); // 배틀 챌린지 게시글 목록 조회
     @Query("""
         select b from Battle b
         where b.post2 is not null
