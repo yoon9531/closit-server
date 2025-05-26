@@ -17,11 +17,11 @@ public class PostItemTag extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "item_tag_id")
+    @JoinColumn(name = "item_tag_id", nullable = false)
     private ItemTag itemTag;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Column(nullable = false)

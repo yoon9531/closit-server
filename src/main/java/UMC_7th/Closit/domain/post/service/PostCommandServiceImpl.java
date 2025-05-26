@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +52,9 @@ public class PostCommandServiceImpl implements PostCommandService {
         postRepository.save(post);
 
         // 4. 해시태그 처리
-        List<PostHashtag> postHashtags = request.getHashtags().stream()
+        List<PostHashtag> postHashtags = Optional.ofNullable(request.getHashtags())
+                .orElse(List.of()) // null이면 빈 리스트
+                .stream()
                 .map(hashtagDTO -> {
                     // 해시태그 길이 검사
                     String content = hashtagDTO.getContent();
@@ -72,7 +75,9 @@ public class PostCommandServiceImpl implements PostCommandService {
         postHashtagRepository.saveAll(postHashtags);
 
         // 5. Front ItemTags 처리
-        List<PostItemTag> frontItemTags = request.getFrontItemtags().stream()
+        List<PostItemTag> frontItemTags = Optional.ofNullable(request.getFrontItemtags())
+                .orElse(List.of()) // null이면 빈 리스트
+                .stream()
                 .map(itemTagDTO -> {
                     // 아이템 태그 길이 검사
                     String content = itemTagDTO.getContent();
@@ -96,7 +101,9 @@ public class PostCommandServiceImpl implements PostCommandService {
         postItemTagRepository.saveAll(frontItemTags);
 
         // 5. Back ItemTags 처리
-        List<PostItemTag> backItemTags = request.getBackItemtags().stream()
+        List<PostItemTag> backItemTags = Optional.ofNullable(request.getBackItemtags())
+                .orElse(List.of()) // null이면 빈 리스트
+                .stream()
                 .map(itemTagDTO -> {
                     // 아이템 태그 길이 검사
                     String content = itemTagDTO.getContent();
@@ -158,7 +165,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         post.getPostHashtagList().addAll(newPostHashtags); // 새로운 태그 추가
 
         // 4. 기존 아이템 태그 삭제 후 새로운 태그 추가
-        post.getItemTagList().clear();
+        post.getPostItemTagList().clear();
 
         List<PostItemTag> newItemTags = new ArrayList<>();
 
