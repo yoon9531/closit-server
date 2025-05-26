@@ -113,9 +113,11 @@ public enum ErrorStatus implements BaseErrorCode {
     DUPLICATE_TODAY_CLOSET(HttpStatus.CONFLICT, "TODAYCLOSET4002", "이미 오늘의 옷장에 등록된 게시글입니다."),
     INVALID_TODAY_CLOSET_SORT(HttpStatus.BAD_REQUEST, "TODAYCLOSET4003", "잘못된 정렬 방식입니다."),
 
-
     // 해시태그 관련 관련 에러
     HASHTAG_NOT_FOUND(HttpStatus.NOT_FOUND, "HASHTAG4041", "해시태그가 존재하지 않습니다."),
+
+    // 아이템 태그 관련 관련 에러
+    ITEM_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEMTAG4041", "아이템 태그가 존재하지 않습니다."),
 
     // 알림 관련 에러
     SSE_CONNECT_FAILED (HttpStatus.INTERNAL_SERVER_ERROR, "SSE5001", "SSE 연결에 실패했습니다"),

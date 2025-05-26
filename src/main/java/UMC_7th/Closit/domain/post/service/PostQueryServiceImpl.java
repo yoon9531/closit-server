@@ -30,6 +30,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final BookmarkRepository bookmarkRepository;
     private final FollowRepository followRepository;
     private final HashtagRepository hashtagRepository;
+    private final ItemTagRepository itemTagRepository;
     private final PostHashtagRepository postHashTagRepository;
     private final PostItemTagRepository postItemTagRepository;
     private final SecurityUtil securityUtil;
@@ -115,6 +116,42 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         // 해당 해시태그가 포함된 게시글 조회
         Slice<Post> posts = postRepository.findByHashtagId(foundHashtag.getId(), pageable);
+
+        User currentUser = securityUtil.getCurrentUser();
+        return posts.map(post -> {
+            // 좋아요 여부
+            Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+
+            // 북마크 여부
+            Boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
+
+            // 하이라이트 여부 확인
+            Boolean isHighlighted = highlightRepository.existsByPost(post);
+
+            // 해시태그 조회
+            List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
+
+            // 아이템 태그 조회
+            List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
+
+            // DTO 변환
+            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
+        });
+    }
+
+    @Override
+    public Slice<PostResponseDTO.PostPreviewDTO> getPostListByItemTag(String itemTag, Pageable pageable) {
+        if (itemTag == null || itemTag.isBlank()) {
+            throw new GeneralException(ErrorStatus.ITEM_TAG_NOT_FOUND);
+        }
+
+        // 해당 아이템 태그가 존재하는지 확인
+        ItemTag foundItemTag = itemTagRepository.findByContent(itemTag)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.ITEM_TAG_NOT_FOUND));
+
+        // 해당 아이템 태그가 포함된 게시글 조회
+        Slice<Post> posts = postRepository.findByItemTagId(foundItemTag.getId(), pageable);
 
         User currentUser = securityUtil.getCurrentUser();
         return posts.map(post -> {

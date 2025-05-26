@@ -14,5 +14,8 @@ public interface PostQueryService {
     
     // 해시태그 기반 게시글 검색
     Slice<PostResponseDTO.PostPreviewDTO> getPostListByHashtag(String hashtag, Pageable pageable);
+
+    // 아이템 태그 기반 게시글 검색
+    Slice<PostResponseDTO.PostPreviewDTO> getPostListByItemTag(String itemTag, Pageable pageable);
 }
 
