@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.post.converter.PostConverter;
 import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.post.entity.Visibility;
 import UMC_7th.Closit.domain.post.entity.PostSorting;
 import UMC_7th.Closit.domain.post.service.PostCommandService;
 import UMC_7th.Closit.domain.post.service.PostQueryService;
@@ -85,11 +86,11 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @Parameter(
                     name = "sort",
-                    description = "정렬 기준: LASTEST(최신순), VIEW(조회순)",
-                    example = "LASTEST",
-                    schema = @Schema(allowableValues = {"LASTEST", "VIEW"})
+                    description = "정렬 기준: LATEST(최신순), VIEW(조회순)",
+                    example = "LATEST",
+                    schema = @Schema(allowableValues = {"LATEST", "VIEW"})
             )
-            @RequestParam(defaultValue = "LASTEST") String sort
+            @RequestParam(defaultValue = "LATEST") String sort
     ) {
         PostSorting sortType = PostSorting.valueOf(sort);
         Pageable pageable = PageRequest.of(page, size, sortType.getSort());
@@ -97,6 +98,27 @@ public class PostController {
 
         return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
     }
+
+    @Operation(summary = "공개 범위 기반 게시글 조회")
+    @GetMapping("/visible")
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> getVisiblePostList(
+            @Parameter(
+                    name = "visibility",
+                    description = "공개 범위 필터: PUBLIC(전체공개), FRIEND(친구공개), PRIVATE(나만보기)",
+                    example = "PUBLIC",
+                    schema = @Schema(allowableValues = {"PUBLIC", "FRIEND", "PRIVATE"})
+            )
+            @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Visibility visibilityEnum = Visibility.valueOf(visibility.toUpperCase());
+        Pageable pageable = PageRequest.of(page, size);
+
+        Slice<PostResponseDTO.PostPreviewDTO> posts = postQueryService.getVisiblePostList(visibilityEnum, pageable);
+        return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
+    }
+
 
     @Operation(summary = "해시태그 기반 게시글 검색")
     @GetMapping("/hashtag")

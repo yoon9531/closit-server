@@ -6,6 +6,10 @@ import UMC_7th.Closit.domain.highlight.repository.HighlightRepository;
 import UMC_7th.Closit.domain.post.converter.PostConverter;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.*;
+import UMC_7th.Closit.domain.post.entity.Hashtag;
+import UMC_7th.Closit.domain.post.entity.ItemTag;
+import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.post.entity.Visibility;
 import UMC_7th.Closit.domain.post.repository.*;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -104,6 +108,41 @@ public class PostQueryServiceImpl implements PostQueryService {
             return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
         });
     }
+
+    @Transactional(readOnly = true)
+    public Slice<PostResponseDTO.PostPreviewDTO> getVisiblePostList(Visibility visibility, Pageable pageable) {
+        User currentUser = securityUtil.getCurrentUser();
+
+        List<User> followings = followRepository.findBySender(currentUser).stream()
+                .map(Follow::getReceiver)
+                .collect(Collectors.toList());
+
+        Slice<Post> posts;
+
+        if (visibility == Visibility.PUBLIC) {
+            posts = postRepository.findByVisibility(Visibility.PUBLIC, pageable);
+        } else if (visibility == Visibility.FRIEND) {
+            posts = postRepository.findByVisibilityAndUserIn(Visibility.FRIEND, followings, pageable);
+        } else if (visibility == Visibility.PRIVATE) {
+            posts = postRepository.findByVisibilityAndUser(Visibility.PRIVATE, currentUser, pageable);
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_VISIBILITY);
+        }
+
+        return posts.map(post -> {
+            boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+            boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
+            boolean isHighlighted = highlightRepository.existsByPost(post);
+            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
+                    .map(ph -> ph.getHashtag().getContent())
+                    .toList();
+            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+
+            return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
+        });
+    }
+
 
     public Slice<PostResponseDTO.PostPreviewDTO> getPostListByHashtag(String hashtag, Pageable pageable) {
         if (hashtag == null || hashtag.isBlank()) {

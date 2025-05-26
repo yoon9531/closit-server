@@ -4,6 +4,8 @@ import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.*;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -62,6 +64,15 @@ public class BattleController {
         ChallengeBattle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
 
         return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
+    }
+
+    @GetMapping("/{battleId}/challenge/{challengeBattleId}")
+    @Operation(summary = "챌린지 배틀 미리보기")
+    public ApiResponse<BattleResponseDTO.GetChallengeBattleDTO> getChallengeBattle(@PathVariable("battleId") Long battleId,
+                                                                                      @PathVariable("challengeBattleId") Long challengeBattleId) {
+        ChallengeBattle challengeBattle = battleQueryService.getChallengeBattle(battleId, challengeBattleId);
+
+        return ApiResponse.onSuccess(BattleConverter.getChallengeBattleDTO(challengeBattle));
     }
 
     @PatchMapping("/{battleId}/challenge/accept")
