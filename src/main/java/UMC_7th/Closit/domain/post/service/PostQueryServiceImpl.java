@@ -133,11 +133,9 @@ public class PostQueryServiceImpl implements PostQueryService {
             boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
             boolean isSaved = bookmarkRepository.existsByUserAndPost(currentUser, post);
             boolean isHighlighted = highlightRepository.existsByPost(post);
-            List<String> hashtags = postHashTagRepository.findByPost(post).stream()
-                    .map(ph -> ph.getHashtag().getContent())
-                    .toList();
-            List<ItemTag> frontTags = itemTagRepository.findByPostAndTagType(post, "FRONT");
-            List<ItemTag> backTags = itemTagRepository.findByPostAndTagType(post, "BACK");
+            List<PostHashtag> hashtags = postHashTagRepository.findByPost(post);
+            List<PostItemTag> frontTags = postItemTagRepository.findByPostAndTagType(post, "FRONT");
+            List<PostItemTag> backTags = postItemTagRepository.findByPostAndTagType(post, "BACK");
 
             return PostConverter.toPostPreviewDTO(post, isLiked, isSaved, isHighlighted, hashtags, frontTags, backTags);
         });
