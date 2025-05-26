@@ -1,11 +1,15 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
-import UMC_7th.Closit.domain.battle.entity.BattleSorting;
-import UMC_7th.Closit.domain.battle.entity.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
+import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +24,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BattleQueryServiceImpl implements BattleQueryService {
 
+    private final ChallengeBattleRepository challengeBattleRepository;
     private final BattleRepository battleRepository;
     private final VoteRepository voteRepository;
     private final SecurityUtil securityUtil;
+
+    @Override
+    @Transactional
+    public Battle getBattleDetail(Long battleId) {
+        User user = securityUtil.getCurrentUser();
+
+        Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
+        battleRepository.incrementViewCount(battle.getId());
+
+        calculateVotes(battle, user.getId());
+
+        return battle;
+    }
 
     @Override
     public Slice<Battle> getBattleList(Integer page, BattleSorting battleSorting, BattleStatus battleStatus) { // 배틀 게시글 목록 조회
@@ -41,10 +61,23 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     }
 
     @Override
+    public ChallengeBattle getChallengeBattle(Long battleId, Long challengeBattleId) { // 챌린지 배틀 미리보기
+        battleRepository.findById(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
+        challengeBattleRepository.findById(challengeBattleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
+
+        return challengeBattleRepository.findByIdAndBattleId(challengeBattleId, battleId);
+    }
+
+    @Override
     public Slice<Battle> getChallengeBattleList(Integer page) { // 배틀 챌린지 게시글 목록 조회 - 최신순
+        User user = securityUtil.getCurrentUser();
+
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return battleRepository.findByPost2IsNull(pageable);
+        return battleRepository.findByPost2IsNullAndPost1UserIdNot(user.getId(), pageable);
     }
 
     @Override

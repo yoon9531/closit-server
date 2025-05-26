@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.entity;
+package UMC_7th.Closit.domain.battle.entity.enums;
 
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 @Getter
 public enum BattleSorting {
     LATEST(Sort.by(Sort.Direction.DESC, "createdAt")),
-    TRENDING(Sort.by(Sort.Direction.DESC, "viewCount"));
+    VIEW(Sort.by(Sort.Direction.DESC, "viewCount"));
 
     private final Sort sort;
 

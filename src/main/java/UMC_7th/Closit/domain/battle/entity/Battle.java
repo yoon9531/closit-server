@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.battle.entity;
 
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -25,6 +26,9 @@ public class Battle extends BaseEntity {
     private String title;
 
     @Column
+    private String description;
+
+    @Column
     private LocalDateTime deadline;
 
     @Column
@@ -46,8 +50,7 @@ public class Battle extends BaseEntity {
     private Integer likeCount = 0;
 
     @Column
-    @Builder.Default
-    private Integer viewCount = 0;
+    private int viewCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -119,9 +122,5 @@ public class Battle extends BaseEntity {
         } else {
             this.likeCount--;
         }
-    }
-
-    public void increaseView() { // 배틀 조회수 증가
-        this.viewCount++;
     }
 }

@@ -3,6 +3,8 @@ package UMC_7th.Closit.domain.battle.converter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.*;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Slice;
@@ -16,6 +18,7 @@ public class BattleConverter {
         return Battle.builder()
                 .post1(post)
                 .title(request.getTitle())
+                .description(request.getDescription())
                 .battleStatus(BattleStatus.INACTIVE)
                 .build();
     }
@@ -79,6 +82,26 @@ public class BattleConverter {
                 .build();
     }
 
+    public static BattleResponseDTO.GetBattleDetailDTO getBattleDetail(Battle battle) {
+        return BattleResponseDTO.GetBattleDetailDTO.builder()
+                .battleId(battle.getId())
+                .title(battle.getTitle())
+                .description(battle.getDescription())
+                .deadline(battle.getDeadline())
+                .firstClositId(battle.getPost1().getUser().getClositId())
+                .firstProfileImage(battle.getPost1().getUser().getProfileImage())
+                .firstPostId(battle.getPost1().getId())
+                .firstPostFrontImage(battle.getPost1().getFrontImage())
+                .firstPostBackImage(battle.getPost1().getBackImage())
+                .firstVotingRate(battle.getFirstVotingRate())
+                .secondClositId(battle.getPost2().getUser().getClositId())
+                .secondProfileImage(battle.getPost2().getUser().getProfileImage())
+                .secondPostId(battle.getPost2().getId())
+                .secondPostFrontImage(battle.getPost2().getFrontImage())
+                .secondPostBackImage(battle.getPost2().getBackImage())
+                .secondVotingRate(battle.getSecondVotingRate())
+                .build();
+    }
     public static BattleResponseDTO.BattlePreviewDTO battlePreviewDTO(Battle battle) { // 배틀 게시글 목록 조회
         return BattleResponseDTO.BattlePreviewDTO.builder()
                 .battleId(battle.getId())
@@ -134,6 +157,26 @@ public class BattleConverter {
                 .isFirst(challengeBattleList.isFirst())
                 .isLast(challengeBattleList.isLast())
                 .hasNext(challengeBattleList.hasNext())
+                .build();
+    }
+
+    public static BattleResponseDTO.GetChallengeBattleDTO getChallengeBattleDTO(ChallengeBattle challengeBattle) {
+        return BattleResponseDTO.GetChallengeBattleDTO.builder()
+                .battleId(challengeBattle.getBattle().getId())
+                .challengeBattleId(challengeBattle.getId())
+                .title(challengeBattle.getBattle().getTitle())
+                .description(challengeBattle.getBattle().getDescription())
+                .firstClositId(challengeBattle.getBattle().getPost1().getUser().getClositId())
+                .firstProfileImage(challengeBattle.getBattle().getPost1().getUser().getProfileImage())
+                .firstPostId(challengeBattle.getBattle().getPost1().getId())
+                .firstPostFrontImage(challengeBattle.getBattle().getPost1().getFrontImage())
+                .firstPostBackImage(challengeBattle.getBattle().getPost1().getBackImage())
+                .secondClositId(challengeBattle.getPost().getUser().getClositId())
+                .secondProfileImage(challengeBattle.getPost().getUser().getProfileImage())
+                .secondPostId(challengeBattle.getPost().getId())
+                .secondPostFrontImage(challengeBattle.getPost().getFrontImage())
+                .secondPostBackImage(challengeBattle.getPost().getBackImage())
+                .challengeStatus(challengeBattle.getChallengeStatus())
                 .build();
     }
 }

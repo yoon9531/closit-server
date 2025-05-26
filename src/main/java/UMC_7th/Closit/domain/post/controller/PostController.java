@@ -5,6 +5,7 @@ import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.entity.Visibility;
+import UMC_7th.Closit.domain.post.entity.PostSorting;
 import UMC_7th.Closit.domain.post.service.PostCommandService;
 import UMC_7th.Closit.domain.post.service.PostQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/posts")
+@RequestMapping("/api/v1/posts")
 public class PostController {
 
     private final SecurityUtil securityUtil;
@@ -82,9 +83,17 @@ public class PostController {
     public ApiResponse<PostResponseDTO.PostPreviewListDTO> getPostListByFollowing(
             @RequestParam(name = "follower", defaultValue = "false") boolean follower,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(
+                    name = "sort",
+                    description = "정렬 기준: LATEST(최신순), VIEW(조회순)",
+                    example = "LATEST",
+                    schema = @Schema(allowableValues = {"LATEST", "VIEW"})
+            )
+            @RequestParam(defaultValue = "LATEST") String sort
+    ) {
+        PostSorting sortType = PostSorting.valueOf(sort);
+        Pageable pageable = PageRequest.of(page, size, sortType.getSort());
         Slice<PostResponseDTO.PostPreviewDTO> posts = postQueryService.getPostListByFollowing(follower, pageable);
 
         return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));

@@ -3,6 +3,7 @@ package UMC_7th.Closit.domain.battle.service.BattleService;
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.*;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
@@ -188,7 +189,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
         }
 
-        // 본인의 게시글이 아닐 경우, 배틀 신청 불가능
+        // 본인의 게시글일 경우, 배틀 신청 불가능
         if (!post.getUser().getId().equals(userId)) {
             throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
