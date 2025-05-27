@@ -55,7 +55,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         }
 
         if (!user.getIsActive()) {
-            throw new UserHandler(ErrorStatus.USER_NOT_ACTIVE);
+            throw new GeneralException(ErrorStatus.USER_NOT_ACTIVE);
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
