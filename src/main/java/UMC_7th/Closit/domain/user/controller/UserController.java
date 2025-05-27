@@ -182,5 +182,10 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.userRecentPostListDTO(recentPostList));
     }
 
-
+    @Operation(summary = "사용자 비활성화", description = "특정 사용자를 비활성화합니다.")
+    @PatchMapping("/deactivate")
+    public ApiResponse<String> deactivateUser(@RequestBody @Valid UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
+        userCommandService.deactivateUser(deactivateUserDTO);
+        return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
+    }
 }

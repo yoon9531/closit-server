@@ -61,6 +61,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int countReport;
 
+    @Column(nullable = false)
+    private Boolean isActive = true; // true : 활성화, false : 비활성화
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
@@ -131,5 +134,12 @@ public class User extends BaseEntity {
 
     public void setBirth(@PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.") LocalDate birth) {
         this.birth = birth;
+    }
+
+    public void deactivate() {
+        this.isActive = false;
+    }
+    public void activate() {
+        this.isActive = true;
     }
 }

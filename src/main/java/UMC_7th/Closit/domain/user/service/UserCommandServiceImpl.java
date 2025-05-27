@@ -221,4 +221,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         blockRepository.delete(userBlock);
     }
+
+    @Override
+    public void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
+        User user = userRepository.findByClositId(deactivateUserDTO.getClositId())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        user.deactivate();
+        // JPA dirty checking으로 자동 반영
+    }
 }

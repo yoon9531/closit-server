@@ -24,4 +24,6 @@ public interface UserCommandService {
     boolean isBlockedBy(String targetClositId, String clositId);
 
     void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
+
+    void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO);
 }
