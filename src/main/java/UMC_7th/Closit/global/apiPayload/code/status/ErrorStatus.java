@@ -32,7 +32,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
     PROFILE_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "USER4010", "프로필 이미지가 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "USER4011", "이메일 인증이 완료되지 않았습니다."),
-
+    WITHDRAWAL_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "USER4012", "탈퇴 유예 기간이 만료되었습니다."), // 탈퇴 유예 기간 만료
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),

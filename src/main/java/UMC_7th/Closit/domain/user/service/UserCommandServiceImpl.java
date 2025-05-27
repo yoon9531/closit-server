@@ -89,8 +89,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public void deleteUser() {
-        // 현재 로그인된 사용자 정보 가져오기
-        User currentUser = securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
+        User currentUser = securityUtil.getCurrentUser();
 
         if (currentUser == null) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
@@ -99,7 +98,9 @@ public class UserCommandServiceImpl implements UserCommandService {
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userRepository.delete(persistentUser);
+        persistentUser.setWithdrawn(true);
+        persistentUser.setWithdrawalRequestedAt(java.time.LocalDateTime.now());
+        userRepository.save(persistentUser);
     }
 
     @Override
@@ -223,15 +224,18 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public void cancelWithdrawl () {
+    public void cancelWithdrawal () {
         User currentUser = securityUtil.getCurrentUser();
 
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        if (persistentUser.getWithdrawalRequestedAt().plusDays(7).isBefore(java.time.LocalDateTime.now())) {
+                throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
+        }
         // 즉시 삭제 대신 탈퇴 유예 상태로 변경
         persistentUser.setWithdrawn(true);
-        persistentUser.setWithdrawalRequestedAt(java.time.LocalDateTime.now());
+        persistentUser.setWithdrawalRequestedAt(null);
         userRepository.save(persistentUser);
     }
 }

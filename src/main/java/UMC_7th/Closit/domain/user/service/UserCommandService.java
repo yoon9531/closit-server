@@ -25,5 +25,5 @@ public interface UserCommandService {
 
     void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
 
-    void cancelWithdrawl();
+    void cancelWithdrawal();
 }
