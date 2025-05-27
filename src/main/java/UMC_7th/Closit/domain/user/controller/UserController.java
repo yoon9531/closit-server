@@ -35,13 +35,6 @@ public class UserController {
     @Value("${cloud.aws.s3.path.profileImage}")
     private String profileImagePath;
 
-    @Operation(summary = "사용자 삭제", description = "특정 사용자를 삭제합니다.")
-    @DeleteMapping()
-    public ApiResponse<String> deleteUser() {
-        userCommandService.deleteUser();
-        return ApiResponse.onSuccess("Deletion successful");
-    }
-
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
     @PatchMapping()
     public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
