@@ -221,4 +221,17 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         blockRepository.delete(userBlock);
     }
+
+    @Override
+    public void cancelWithdrawl () {
+        User currentUser = securityUtil.getCurrentUser();
+
+        User persistentUser = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 즉시 삭제 대신 탈퇴 유예 상태로 변경
+        persistentUser.setWithdrawn(true);
+        persistentUser.setWithdrawalRequestedAt(java.time.LocalDateTime.now());
+        userRepository.save(persistentUser);
+    }
 }
