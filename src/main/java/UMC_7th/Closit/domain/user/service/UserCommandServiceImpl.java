@@ -12,6 +12,7 @@ import UMC_7th.Closit.domain.user.entity.Block;
 import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
@@ -231,10 +232,10 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (persistentUser.getWithdrawalRequestedAt().plusDays(7).isBefore(java.time.LocalDateTime.now())) {
-                throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
+            throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
         }
-        // 즉시 삭제 대신 탈퇴 유예 상태로 변경
-        persistentUser.setWithdrawn(true);
+
+        persistentUser.setWithdrawn(false);
         persistentUser.setWithdrawalRequestedAt(null);
         userRepository.save(persistentUser);
     }
