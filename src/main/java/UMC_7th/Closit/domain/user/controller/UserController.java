@@ -115,7 +115,18 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.isBlockedBy(closit_id));
     }
 
-    @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
+    @Operation(summary = "사용자의 팔로워 목록 조회",
+            description = """
+            ## 사용자의 팔로워 목록 조회
+            특정 사용자의 팔로워 목록을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 팔로워 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
@@ -127,7 +138,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserFollowerSliceDTO(followerSlice));
     }
 
-    @Operation(summary = "사용자의 팔로잉 목록 조회", description = "특정 사용자의 팔로잉 목록을 조회합니다.")
+    @Operation(summary = "사용자의 팔로잉 목록 조회",
+            description = """
+            ## 사용자의 팔로잉 목록 조회
+            특정 사용자가 팔로우한 유저 목록(팔로잉 목록)을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 팔로잉 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
@@ -139,7 +161,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserFollowingSliceDTO(followingSlice));
     }
 
-    @Operation(summary = "사용자의 하이라이트 목록 조회", description = "특정 사용자의 하이라이트 목록을 조회합니다.")
+    @Operation(summary = "사용자의 하이라이트 목록 조회",
+            description = """
+            ## 사용자의 하이라이트 목록 조회
+            특정 사용자가 등록한 하이라이트 게시글 목록을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 하이라이트 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
@@ -152,13 +185,24 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserHighlightSliceDTO(highlightSlice));
     }
 
-    @Operation(summary = "사용자의 데일리 미션 완료 여부 조회", description = "특정 사용자가 데일리 미션을 완료했는지 여부를 조회합니다.")
+    @Operation(summary = "사용자의 데일리 미션 완료 여부 조회",
+            description = """
+            ## 사용자의 데일리 미션 완료 여부 조회
+            현재 로그인한 사용자가 금일 데일리 미션을 완료했는지 여부를 반환합니다.
+            """)
     @GetMapping("/mission")
     public ApiResponse<Boolean> getUserMission() {
         return ApiResponse.onSuccess(userQueryService.isMissionDone());
     }
 
-    @Operation(summary = "closit id 중복 여부 조회", description = "특정 closit id가 이미 있는 id인지 조회합니다.")
+    @Operation(summary = "Closit ID 중복 여부 조회",
+            description = """
+            ## Closit ID 중복 여부 조회
+            특정 Closit ID가 이미 존재하는지 여부를 확인합니다.
+
+            ### PathVariable
+            - closit_id: 중복 여부를 확인할 Closit ID
+            """)
     @GetMapping("/isunique/{closit_id}")
     public ApiResponse<Boolean> isUniqueClositId(@PathVariable String closit_id) {
         return ApiResponse.onSuccess(userCommandService.isClositIdUnique(closit_id));
