@@ -133,6 +133,19 @@ public class PostController {
         return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
     }
 
+    @Operation(summary = "아이템 태그 기반 게시글 검색")
+    @GetMapping("/itemtag")
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> getPostListByItemTag(
+            @RequestParam(name = "itemtag", required = false) String itemTag,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Slice<PostResponseDTO.PostPreviewDTO> posts = postQueryService.getPostListByItemTag(itemTag, pageable);
+
+        return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
+    }
+
     @Operation(summary = "게시글 수정")
     @PutMapping("/{post_id}")
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@PathVariable("post_id") Long postId,
