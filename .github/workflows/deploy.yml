@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "refactor/#255-deploy" ]
 
 jobs:
   build-docker-image:
@@ -24,6 +24,17 @@ jobs:
       # 3. Gradle Wrapper 실행 권한 추가
       - name: Add execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
+
+      # Gradle 캐시 설정
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Ensure resources directory exists
         run: mkdir -p src/main/resources
