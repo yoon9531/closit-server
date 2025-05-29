@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "develop", "refactor/#255-deploy" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build-docker-image:
