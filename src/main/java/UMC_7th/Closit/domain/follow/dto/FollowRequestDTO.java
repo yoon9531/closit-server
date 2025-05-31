@@ -11,6 +11,6 @@ public class FollowRequestDTO {
 
         @NotNull(message = "팔로우를 받는 사용자의 id는 필수 입력 값입니다.")
         @ExistUserClositId
-        private String receiver;
+        private String receiverClositId;
     }
 }
