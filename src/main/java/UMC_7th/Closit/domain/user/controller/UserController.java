@@ -35,13 +35,6 @@ public class UserController {
     @Value("${cloud.aws.s3.path.profileImage}")
     private String profileImagePath;
 
-    @Operation(summary = "사용자 삭제", description = "특정 사용자를 삭제합니다.")
-    @DeleteMapping()
-    public ApiResponse<String> deleteUser() {
-        userCommandService.deleteUser();
-        return ApiResponse.onSuccess("Deletion successful");
-    }
-
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
     @PatchMapping()
     public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
@@ -226,5 +219,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.userRecentPostListDTO(recentPostList));
     }
 
+    @Operation(summary = "사용자 탈퇴 취소", description = "탈퇴 유예 기간 내 탈퇴를 취소(계정 복구)합니다.")
+    @PostMapping("/withdrawal/cancel")
+    public ApiResponse<String> cancelWithdrawal() {
+        userCommandService.cancelWithdrawal();
+        return ApiResponse.onSuccess("탈퇴가 취소되어 계정이 복구되었습니다.");
+    }
+
+    @Operation(summary = "사용자 탈퇴 요청", description = "사용자가 탈퇴를 요청하면 7일 유예 상태로 변경됩니다.")
+    @PostMapping("/withdrawal")
+    public ApiResponse<String> requestWithdrawal() {
+        userCommandService.deleteUser();
+        return ApiResponse.onSuccess("탈퇴 요청이 정상적으로 처리되었습니다. 7일 이내에 취소하지 않으면 계정이 완전히 삭제됩니다.");
+    }
 
 }
