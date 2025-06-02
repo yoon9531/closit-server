@@ -29,6 +29,8 @@ public class CommentResponseDTO {
         private String clositId;
         private Long commentId;
         private String content;
+        private boolean isParent;
+        private List<CommentPreviewDTO> replies;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }

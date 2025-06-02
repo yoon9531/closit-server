@@ -12,11 +12,12 @@ import java.util.stream.Collectors;
 
 public class CommentConverter {
 
-    public static Comment toComment(User user, Post post, CommentRequestDTO.CreateCommentRequestDTO request) {
+    public static Comment toComment(User user, Post post, CommentRequestDTO.CreateCommentRequestDTO request, Comment parent) {
         return Comment.builder()
                 .user(user)
                 .post(post)
                 .content(request.getContent())
+                .parent(parent)
                 .build();
     }
 
@@ -33,7 +34,11 @@ public class CommentConverter {
                 .commentId(comment.getId())
                 .clositId(comment.getUser().getClositId())
                 .content(comment.getContent())
+                .isParent(comment.isParent())
                 .createdAt(comment.getCreatedAt())
+                .replies(comment.getChildren().stream()
+                        .map(CommentConverter::commentPreviewDTO)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

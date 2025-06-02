@@ -33,7 +33,17 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         User user = securityUtil.getCurrentUser();
 
-        Comment comment = CommentConverter.toComment(user, post, request);
+        Comment parent = null;
+
+        if (request.getParentId() != null) {
+            parent = commentRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+            if (parent.getParent() != null) {
+                throw new GeneralException(ErrorStatus.REPLY_DEPTH_EXCEEDED);
+            }
+        }
+
+        Comment comment = CommentConverter.toComment(user, post, request, parent);
 
         // 댓글 알림
         notiCommandService.commentNotification(comment);
