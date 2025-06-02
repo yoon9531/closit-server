@@ -41,6 +41,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
             if (parent.getParent() != null) {
                 throw new GeneralException(ErrorStatus.REPLY_DEPTH_EXCEEDED);
             }
+            if (!parent.getPost().getId().equals(postId)) {
+                throw new GeneralException(ErrorStatus.PARENT_COMMENT_NOT_MATCHED);
+            }
         }
 
         Comment comment = CommentConverter.toComment(user, post, request, parent);

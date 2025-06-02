@@ -72,6 +72,7 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_NOT_FOUND (HttpStatus.NOT_FOUND, "COMMENT4041", "댓글이 존재하지 않습니다."),
     COMMENT_NOT_MINE (HttpStatus.BAD_REQUEST, "COMMENT4001", "해당 댓글은 다른 사용자의 댓글입니다"),
     REPLY_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "COMMENT4002", "대댓글은 한 단계까지만 허용됩니다."),
+    PARENT_COMMENT_NOT_MATCHED(HttpStatus.BAD_REQUEST, "COMMENT4003", "부모 댓글이 해당 게시글의 댓글이 아닙니다."),
 
     // 배틀 관련 에러
     BATTLE_NOT_CHALLENGE (HttpStatus.BAD_REQUEST, "BATTLE4001", "동일한 게시글로 배틀을 신청할 수 없습니다."),
