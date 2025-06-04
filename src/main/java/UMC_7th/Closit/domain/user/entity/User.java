@@ -4,7 +4,6 @@ import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.follow.entity.Follow;
-import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.notification.entity.Notification;
 import UMC_7th.Closit.domain.post.entity.Bookmark;
 import UMC_7th.Closit.domain.post.entity.Comment;
@@ -17,6 +16,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +60,12 @@ public class User extends BaseEntity {
     // The count of report, default value is 0
     @Column(nullable = false)
     private int countReport;
+
+    @Column(name = "withdrawal_requested_at")
+    private LocalDateTime withdrawalRequestedAt;
+
+    @Column(name = "is_withdrawn", nullable = false)
+    private Boolean isWithdrawn = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
@@ -124,12 +130,19 @@ public class User extends BaseEntity {
         this.countReport++;
     }
 
-
     public void updatePassword(String encode) {
         this.password = encode;
     }
 
     public void setBirth(@PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.") LocalDate birth) {
         this.birth = birth;
+    }
+
+    public void setWithdrawalRequestedAt(LocalDateTime withdrawalRequestedAt) {
+        this.withdrawalRequestedAt = withdrawalRequestedAt;
+    }
+
+    public void setWithdrawn(Boolean withdrawn) {
+        isWithdrawn = withdrawn;
     }
 }

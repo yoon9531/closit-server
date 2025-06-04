@@ -1,7 +1,9 @@
 package UMC_7th.Closit.domain.post.entity;
 
+import lombok.Getter;
 import org.springframework.data.domain.Sort;
 
+@Getter
 public enum PostSorting {
     LATEST(Sort.by(Sort.Direction.DESC, "createdAt")),
     VIEW(Sort.by(Sort.Direction.DESC, "view"));
@@ -10,10 +12,6 @@ public enum PostSorting {
 
     PostSorting(Sort sort) {
         this.sort = sort;
-    }
-
-    public Sort getSort() {
-        return sort;
     }
 }
 

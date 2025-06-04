@@ -12,6 +12,6 @@ public class HighlightRequestDTO {
 
         @NotNull(message = "게시글 id는 필수 입력 값입니다.")
         @ExistPost
-        private Long post;
+        private Long postId;
     }
 }

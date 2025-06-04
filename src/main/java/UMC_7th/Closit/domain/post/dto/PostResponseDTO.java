@@ -50,7 +50,7 @@ public class PostResponseDTO {
         private Boolean isLiked;
         private Boolean isSaved;
         private Boolean isHighlighted;
-        private List<String> hashtags;
+        private List<HashtagDTO> hashtags;
         private List<ItemTagDTO> frontItemtags;
         private List<ItemTagDTO> backItemtags;
         private String pointColor;
@@ -58,18 +58,6 @@ public class PostResponseDTO {
         private boolean isMission;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
-    }
-
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class ItemTagDTO {
-        private Double x; // X 좌표
-        private Double y; // Y 좌표
-        @Size(max = 20, message = "해시태그는 20자 이내여야 합니다.")
-        private String content; // 태그 내용
     }
 
     @Builder
