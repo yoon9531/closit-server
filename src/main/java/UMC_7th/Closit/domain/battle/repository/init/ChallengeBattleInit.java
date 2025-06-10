@@ -39,35 +39,35 @@ public class ChallengeBattleInit implements ApplicationRunner {
     }
 
     private void saveChallengeBattle() {
-        Post post1 = postRepository.findById(1L)
+        Post post1 = postRepository.findById(2L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        Post post2 = postRepository.findById(2L)
+        Post post2 = postRepository.findById(3L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        Battle battle1 = battleRepository.findById(1L)
+        Battle battle1 = battleRepository.findById(2L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        Battle battle2 = battleRepository.findById(2L)
+        Battle battle2 = battleRepository.findById(3L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
 
         List<ChallengeBattle> challengeBattles = new ArrayList<>();
 
         ChallengeBattle challengeBattle1 = ChallengeBattle.builder()
-                .battle(battle1)
-                .post(post1)
+                .battle(battle2)
+                .post(post2)
                 .challengeStatus(ChallengeStatus.PENDING)
                 .build();
 
         ChallengeBattle challengeBattle2 = ChallengeBattle.builder()
-                .battle(battle2)
-                .post(post2)
+                .battle(battle1)
+                .post(post1)
                 .challengeStatus(ChallengeStatus.REJECTED)
                 .build();
 
         ChallengeBattle challengeBattle3 = ChallengeBattle.builder()
-                .battle(battle2)
+                .battle(battle1)
                 .post(post2)
                 .challengeStatus(ChallengeStatus.ACCEPTED)
                 .build();
