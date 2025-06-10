@@ -64,8 +64,19 @@ public class PostInit implements ApplicationRunner {
                 .view(5)
                 .build();
 
+        Post post3 = Post.builder()
+                .user(user1)
+                .frontImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/post/front/60c0b9af-3fad-48e0-b46e-889dd264eac0.jpg")
+                .backImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/post/back/579aa421-4f0f-4eae-bc4c-d3cf3570f8df.jpg")
+                .pointColor("#ddffff")
+                .isMission(false)
+                .visibility(Visibility.PUBLIC)
+                .view(3)
+                .build();
+
         posts.add(post1);
         posts.add(post2);
+        posts.add(post3);
 
         postRepository.saveAll(posts);
     }
