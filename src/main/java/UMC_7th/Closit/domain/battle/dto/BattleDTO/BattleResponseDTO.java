@@ -1,7 +1,7 @@
 package UMC_7th.Closit.domain.battle.dto.BattleDTO;
 
-import UMC_7th.Closit.domain.battle.entity.BattleStatus;
-import UMC_7th.Closit.domain.battle.entity.ChallengeStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -128,5 +128,51 @@ public class BattleResponseDTO {
         private boolean isFirst;
         private boolean isLast;
         private boolean hasNext;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetBattleDetailDTO {
+        private Long battleId;
+        private String title;
+        private String description;
+        @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime deadline;
+        private String firstClositId;
+        private String firstProfileImage;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
+        private double firstVotingRate;
+        private String secondClositId;
+        private String secondProfileImage;
+        private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
+        private double secondVotingRate;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetChallengeBattleDTO {
+        private Long battleId;
+        private Long challengeBattleId;
+        private String title;
+        private String description;
+        private String firstClositId;
+        private String firstProfileImage;
+        private Long firstPostId;
+        private String firstPostFrontImage;
+        private String firstPostBackImage;
+        private String secondClositId;
+        private String secondProfileImage;
+        private Long secondPostId;
+        private String secondPostFrontImage;
+        private String secondPostBackImage;
+        private ChallengeStatus challengeStatus;
     }
 }

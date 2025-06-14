@@ -9,13 +9,15 @@ import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "[배틀 게시판 좋아요]", description = "배틀 게시판 좋아요 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/auth/communities/battle")
+@RequestMapping("api/v1/communities/battle")
 public class BattleLikeController {
 
     private final BattleLikeCommandService battleLikeCommandService;
@@ -26,10 +28,10 @@ public class BattleLikeController {
             description = """
             ## 배틀 게시글 좋아요 추가
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             """)
-    @PostMapping("/{battle_id}/likes")
-    public ApiResponse<BattleLikeResponseDTO.CreateBattleLikeResultDTO> createBattleLike(@PathVariable("battle_id") Long battleId) {
+    @PostMapping("/{battleId}/likes")
+    public ApiResponse<BattleLikeResponseDTO.CreateBattleLikeResultDTO> createBattleLike(@PathVariable("battleId") Long battleId) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
@@ -42,12 +44,12 @@ public class BattleLikeController {
             description = """
             ## 배틀 게시글 좋아요 목록 조회
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             ### Parameters
             page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
             """)
-    @GetMapping("/{battle_id}/likes")
-    public ApiResponse<BattleLikeResponseDTO.BattleLikePreviewListDTO> getBattleLike(@PathVariable("battle_id") Long battleId,
+    @GetMapping("/{battleId}/likes")
+    public ApiResponse<BattleLikeResponseDTO.BattleLikePreviewListDTO> getBattleLike(@PathVariable("battleId") Long battleId,
                                                                                      @RequestParam(name = "page") Integer page) {
 
         Slice<BattleLike> battleLikeList = battleLikeQueryService.getBattleLikeList(battleId, page);
@@ -59,10 +61,10 @@ public class BattleLikeController {
             description = """
             ## 배틀 게시글 내 특정 좋아요 취소
             ### PathVariable
-            battle_id [배틀 ID]
+            battleId [배틀 ID]
             """)
-    @DeleteMapping("{battle_id}/likes")
-    public ApiResponse<String> deleteBattleLike(@PathVariable("battle_id") Long battleId) {
+    @DeleteMapping("/{battleId}/likes")
+    public ApiResponse<String> deleteBattleLike(@PathVariable("battleId") Long battleId) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();

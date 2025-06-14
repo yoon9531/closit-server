@@ -32,7 +32,7 @@ public class HighlightCommandServiceImpl implements HighlightCommandService {
         // 현재 로그인된 사용자 정보 가져오기
         User user = securityUtil.getCurrentUser();
 
-        Post post = postRepository.findById(request.getPost())
+        Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         
         // 자신이 작성한 게시글이어야 함

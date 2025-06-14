@@ -33,7 +33,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     public Follow createFollow(FollowRequestDTO.CreateFollowDTO request) {
         // 현재 로그인된 사용자 정보를 sender로 가져오기
         String senderClositId = securityUtil.getCurrentUser().getClositId();
-        String receiverClositId = request.getReceiver();
+        String receiverClositId = request.getReceiverClositId();
 
         // 자기 자신은 팔로우 할 수 없음
         if (receiverClositId.equals(senderClositId)) {

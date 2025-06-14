@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/posts/{post_id}/comments")
+@RequestMapping("/api/v1/posts/{post_id}/comments")
 public class CommentController {
 
     private final CommentCommandService commentCommandService;

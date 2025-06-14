@@ -2,8 +2,13 @@ package UMC_7th.Closit.domain.user.repository;
 
 import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +24,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName (String name);
 
     Optional<User> findByClositId (String clositId);
+
+    void deleteByClositId(String clositId);
+
+    @Modifying
+    @Query("UPDATE User u SET u.countReport = u.countReport + 1 WHERE u.id = :id")
+    void incrementReportCount(@Param("id") Long id);
+
+    List<User> findByIsWithdrawnTrueAndWithdrawalRequestedAtBefore(LocalDateTime dateTime);
 }
