@@ -144,29 +144,29 @@ public class PostController {
         return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
     }
 
-    @Operation(summary = "아이템 태그 기반 게시글 검색",
-            description = """
-            ## 아이템 태그 기반 게시글 검색
-            특정 아이템 태그가 포함된 게시글 목록을 페이징하여 조회합니다.
-
-            ### Request Parameters
-            - itemtag (선택): 검색할 아이템 태그 (예: 청바지, 후드티 등)
-            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
-            - size (기본값: 10): 페이지당 항목 수
-            - sorting (필수): 정렬 기준 (LATEST: 최신순, VIEW: 조회수순)
-            """)
-    @GetMapping("/itemtag")
-    public ApiResponse<PostResponseDTO.PostPreviewListDTO> getPostListByItemTag(
-            @RequestParam(name = "itemtag", required = false) String itemTag,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(name ="sorting") PostSorting sorting) {
-
-        Pageable pageable = PageRequest.of(page, size, sorting.getSort());
-        Slice<PostResponseDTO.PostPreviewDTO> posts = postQueryService.getPostListByItemTag(itemTag, pageable);
-
-        return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
-    }
+//    @Operation(summary = "아이템 태그 기반 게시글 검색",
+//            description = """
+//            ## 아이템 태그 기반 게시글 검색
+//            특정 아이템 태그가 포함된 게시글 목록을 페이징하여 조회합니다.
+//
+//            ### Request Parameters
+//            - itemtag (선택): 검색할 아이템 태그 (예: 청바지, 후드티 등)
+//            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+//            - size (기본값: 10): 페이지당 항목 수
+//            - sorting (필수): 정렬 기준 (LATEST: 최신순, VIEW: 조회수순)
+//            """)
+//    @GetMapping("/itemtag")
+//    public ApiResponse<PostResponseDTO.PostPreviewListDTO> getPostListByItemTag(
+//            @RequestParam(name = "itemtag", required = false) String itemTag,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(name ="sorting") PostSorting sorting) {
+//
+//        Pageable pageable = PageRequest.of(page, size, sorting.getSort());
+//        Slice<PostResponseDTO.PostPreviewDTO> posts = postQueryService.getPostListByItemTag(itemTag, pageable);
+//
+//        return ApiResponse.onSuccess(PostConverter.toPostPreviewListDTO(posts));
+//    }
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/{post_id}")
