@@ -26,4 +26,6 @@ public interface UserCommandService {
     void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO);
 
     void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO);
+
+    void cancelWithdrawal();
 }

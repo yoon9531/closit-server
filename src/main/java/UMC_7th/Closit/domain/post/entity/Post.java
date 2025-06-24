@@ -76,5 +76,5 @@ public class Post extends BaseEntity {
     private List<PostHashtag> postHashtagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemTag> itemTagList = new ArrayList<>();
+    private List<PostItemTag> postItemTagList = new ArrayList<>();
 }

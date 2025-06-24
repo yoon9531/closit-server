@@ -33,7 +33,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ALREADY_BLOCKED(HttpStatus.CONFLICT, "USER4010", "이미 차단한 사용자입니다."), // 이미 차단한 사용자
     PROFILE_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "USER4010", "프로필 이미지가 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "USER4011", "이메일 인증이 완료되지 않았습니다."),
-
+    WITHDRAWAL_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "USER4012", "탈퇴 유예 기간이 만료되었습니다."), // 탈퇴 유예 기간 만료
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),
@@ -115,9 +115,11 @@ public enum ErrorStatus implements BaseErrorCode {
     DUPLICATE_TODAY_CLOSET(HttpStatus.CONFLICT, "TODAYCLOSET4002", "이미 오늘의 옷장에 등록된 게시글입니다."),
     INVALID_TODAY_CLOSET_SORT(HttpStatus.BAD_REQUEST, "TODAYCLOSET4003", "잘못된 정렬 방식입니다."),
 
-
     // 해시태그 관련 관련 에러
     HASHTAG_NOT_FOUND(HttpStatus.NOT_FOUND, "HASHTAG4041", "해시태그가 존재하지 않습니다."),
+
+    // 아이템 태그 관련 관련 에러
+    ITEM_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEMTAG4041", "아이템 태그가 존재하지 않습니다."),
 
     // 알림 관련 에러
     SSE_CONNECT_FAILED (HttpStatus.INTERNAL_SERVER_ERROR, "SSE5001", "SSE 연결에 실패했습니다"),

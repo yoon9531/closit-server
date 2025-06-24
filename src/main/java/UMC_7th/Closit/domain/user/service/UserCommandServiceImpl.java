@@ -12,6 +12,7 @@ import UMC_7th.Closit.domain.user.entity.Block;
 import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
@@ -91,8 +92,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public void deleteUser() {
-        // 현재 로그인된 사용자 정보 가져오기
-        User currentUser = securityUtil.getCurrentUser(); // 로그인한 사용자 (username 또는 userId 기반)
+        User currentUser = securityUtil.getCurrentUser();
 
         if (currentUser == null) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
@@ -101,7 +101,9 @@ public class UserCommandServiceImpl implements UserCommandService {
         User persistentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userRepository.delete(persistentUser);
+        persistentUser.setWithdrawn(true);
+        persistentUser.setWithdrawalRequestedAt(java.time.LocalDateTime.now());
+        userRepository.save(persistentUser);
     }
 
     @Override
@@ -199,6 +201,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
+    // Target이 requester(나)를 차단했는지 확인
     public boolean isBlockedBy(String targetClositId, String requesterClositId) {
         User targetUser = userRepository.findByClositId(targetClositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -226,6 +229,22 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
 
         blockRepository.delete(userBlock);
+    }
+
+    @Override
+    public void cancelWithdrawal () {
+        User currentUser = securityUtil.getCurrentUser();
+
+        User persistentUser = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        if (persistentUser.getWithdrawalRequestedAt().plusDays(7).isBefore(java.time.LocalDateTime.now())) {
+            throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
+        }
+
+        persistentUser.setWithdrawn(false);
+        persistentUser.setWithdrawalRequestedAt(null);
+        userRepository.save(persistentUser);
     }
 
     @Override

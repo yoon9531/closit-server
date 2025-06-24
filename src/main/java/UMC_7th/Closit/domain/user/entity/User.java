@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,12 @@ public class User extends BaseEntity {
     // The count of report, default value is 0
     @Column(nullable = false)
     private int countReport;
+
+    @Column(name = "withdrawal_requested_at")
+    private LocalDateTime withdrawalRequestedAt;
+
+    @Column(name = "is_withdrawn", nullable = false)
+    private Boolean isWithdrawn = false;
 
     @Column(nullable = false)
     private Boolean isActive = true; // true : 활성화, false : 비활성화
@@ -141,5 +148,13 @@ public class User extends BaseEntity {
     }
     public void activate() {
         this.isActive = true;
+    }
+
+    public void setWithdrawalRequestedAt(LocalDateTime withdrawalRequestedAt) {
+        this.withdrawalRequestedAt = withdrawalRequestedAt;
+    }
+
+    public void setWithdrawn(Boolean withdrawn) {
+        isWithdrawn = withdrawn;
     }
 }

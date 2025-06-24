@@ -35,13 +35,6 @@ public class UserController {
     @Value("${cloud.aws.s3.path.profileImage}")
     private String profileImagePath;
 
-    @Operation(summary = "사용자 삭제", description = "특정 사용자를 삭제합니다.")
-    @DeleteMapping()
-    public ApiResponse<String> deleteUser() {
-        userCommandService.deleteUser();
-        return ApiResponse.onSuccess("Deletion successful");
-    }
-
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
     @PatchMapping()
     public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
@@ -115,7 +108,18 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.isBlockedBy(closit_id));
     }
 
-    @Operation(summary = "사용자의 팔로워 목록 조회", description = "특정 사용자의 팔로워 목록을 조회합니다.")
+    @Operation(summary = "사용자의 팔로워 목록 조회",
+            description = """
+            ## 사용자의 팔로워 목록 조회
+            특정 사용자의 팔로워 목록을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 팔로워 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
@@ -127,7 +131,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserFollowerSliceDTO(followerSlice));
     }
 
-    @Operation(summary = "사용자의 팔로잉 목록 조회", description = "특정 사용자의 팔로잉 목록을 조회합니다.")
+    @Operation(summary = "사용자의 팔로잉 목록 조회",
+            description = """
+            ## 사용자의 팔로잉 목록 조회
+            특정 사용자가 팔로우한 유저 목록(팔로잉 목록)을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 팔로잉 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
@@ -139,7 +154,18 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserFollowingSliceDTO(followingSlice));
     }
 
-    @Operation(summary = "사용자의 하이라이트 목록 조회", description = "특정 사용자의 하이라이트 목록을 조회합니다.")
+    @Operation(summary = "사용자의 하이라이트 목록 조회",
+            description = """
+            ## 사용자의 하이라이트 목록 조회
+            특정 사용자가 등록한 하이라이트 게시글 목록을 페이징하여 조회합니다.
+
+            ### PathVariable
+            - closit_id: 하이라이트 목록을 조회할 사용자의 Closit ID
+
+            ### Request Parameters
+            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+            - size (기본값: 10): 페이지당 항목 수
+            """)
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
@@ -152,13 +178,24 @@ public class UserController {
         return ApiResponse.onSuccess(UserConverter.toUserHighlightSliceDTO(highlightSlice));
     }
 
-    @Operation(summary = "사용자의 데일리 미션 완료 여부 조회", description = "특정 사용자가 데일리 미션을 완료했는지 여부를 조회합니다.")
+    @Operation(summary = "사용자의 데일리 미션 완료 여부 조회",
+            description = """
+            ## 사용자의 데일리 미션 완료 여부 조회
+            현재 로그인한 사용자가 금일 데일리 미션을 완료했는지 여부를 반환합니다.
+            """)
     @GetMapping("/mission")
     public ApiResponse<Boolean> getUserMission() {
         return ApiResponse.onSuccess(userQueryService.isMissionDone());
     }
 
-    @Operation(summary = "closit id 중복 여부 조회", description = "특정 closit id가 이미 있는 id인지 조회합니다.")
+    @Operation(summary = "Closit ID 중복 여부 조회",
+            description = """
+            ## Closit ID 중복 여부 조회
+            특정 Closit ID가 이미 존재하는지 여부를 확인합니다.
+
+            ### PathVariable
+            - closit_id: 중복 여부를 확인할 Closit ID
+            """)
     @GetMapping("/isunique/{closit_id}")
     public ApiResponse<Boolean> isUniqueClositId(@PathVariable String closit_id) {
         return ApiResponse.onSuccess(userCommandService.isClositIdUnique(closit_id));
@@ -180,6 +217,20 @@ public class UserController {
         Slice<Post> recentPostList = userQueryService.getRecentPostList(closit_id, page);
 
         return ApiResponse.onSuccess(UserConverter.userRecentPostListDTO(recentPostList));
+    }
+
+    @Operation(summary = "사용자 탈퇴 취소", description = "탈퇴 유예 기간 내 탈퇴를 취소(계정 복구)합니다.")
+    @PostMapping("/withdrawal/cancel")
+    public ApiResponse<String> cancelWithdrawal() {
+        userCommandService.cancelWithdrawal();
+        return ApiResponse.onSuccess("탈퇴가 취소되어 계정이 복구되었습니다.");
+    }
+
+    @Operation(summary = "사용자 탈퇴 요청", description = "사용자가 탈퇴를 요청하면 7일 유예 상태로 변경됩니다.")
+    @PostMapping("/withdrawal")
+    public ApiResponse<String> requestWithdrawal() {
+        userCommandService.deleteUser();
+        return ApiResponse.onSuccess("탈퇴 요청이 정상적으로 처리되었습니다. 7일 이내에 취소하지 않으면 계정이 완전히 삭제됩니다.");
     }
 
     @Operation(summary = "사용자 비활성화", description = "특정 사용자를 비활성화합니다.")
