@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.repository.init;
+package UMC_7th.Closit.domain.battle.init;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(3)
+@Order(7)
 @DummyDataInit
 public class ChallengeBattleInit implements ApplicationRunner {
 

@@ -4,7 +4,6 @@ import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.follow.entity.Follow;
-import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.notification.entity.Notification;
 import UMC_7th.Closit.domain.post.entity.Bookmark;
 import UMC_7th.Closit.domain.post.entity.Comment;

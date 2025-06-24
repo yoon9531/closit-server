@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.repository.init;
+package UMC_7th.Closit.domain.battle.init;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(2)
+@Order(6)
 @DummyDataInit
 public class BattleInit implements ApplicationRunner {
 
