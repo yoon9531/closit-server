@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.notification.firebase.controller;
 
+import UMC_7th.Closit.domain.notification.firebase.dto.FcmMessageRequest;
 import UMC_7th.Closit.domain.notification.firebase.dto.FcmTokenRequest;
 import UMC_7th.Closit.domain.notification.firebase.service.FcmTokenService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
@@ -27,5 +28,12 @@ public class FirebaseController {
     public ApiResponse<String> getToken(@RequestBody @Valid FcmTokenRequest request) {
         fcmTokenService.getFcmToken(request);
         return ApiResponse.onSuccess("FCM Token registered successfully.");
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/fcm-test")
+    @Operation(summary = "FCM 알림 테스트")
+    public ApiResponse<String> testFcmToken(@RequestBody @Valid FcmMessageRequest request) {
+        return null;
     }
 }
