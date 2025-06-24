@@ -66,6 +66,7 @@ public class User extends BaseEntity {
     private LocalDateTime withdrawalRequestedAt;
 
     @Column(name = "is_withdrawn", nullable = false)
+    @Builder.Default
     private Boolean isWithdrawn = false;
 
     @Column(nullable = false)
