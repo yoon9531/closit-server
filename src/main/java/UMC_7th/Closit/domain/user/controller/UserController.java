@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/users")
+@RequestMapping("/api/v1/users")
 @Slf4j
 public class UserController {
 
