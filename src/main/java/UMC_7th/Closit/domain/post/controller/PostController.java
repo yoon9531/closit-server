@@ -1,6 +1,5 @@
 package UMC_7th.Closit.domain.post.controller;
 
-import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
 import UMC_7th.Closit.domain.post.converter.PostConverter;
 import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
 import UMC_7th.Closit.domain.post.dto.PostResponseDTO;
