@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static UMC_7th.Closit.domain.user.entity.Role.ADMIN;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -197,13 +199,17 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    // Target이 requester(나)를 차단했는지 확인
     public boolean isBlockedBy(String targetClositId, String requesterClositId) {
         User targetUser = userRepository.findByClositId(targetClositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         User requesterUser = userRepository.findByClositId(requesterClositId).orElseThrow(
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // targetClositId와 requesterClositId가 존재하는 지 확인
+        if (targetUser == null || requesterUser == null) {
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
+        }
 
         return blockRepository.existsByBlockerIdAndBlockedId(targetClositId, requesterClositId);
     }
@@ -224,8 +230,15 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
+        User currentUser = securityUtil.getCurrentUser();
         User user = userRepository.findByClositId(deactivateUserDTO.getClositId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 관리자 계정만 비활성화 가능
+        if (currentUser.getRole() != ADMIN) {
+            throw new UserHandler(ErrorStatus.USER_NOT_AUTHORIZED);
+        }
+
         user.deactivate();
     }
 }
