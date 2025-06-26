@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.follow.entity.Follow;
+import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.notification.entity.Notification;
 import UMC_7th.Closit.domain.notification.firebase.domain.FcmToken;
 import UMC_7th.Closit.domain.post.entity.Bookmark;
@@ -66,7 +67,11 @@ public class User extends BaseEntity {
     private LocalDateTime withdrawalRequestedAt;
 
     @Column(name = "is_withdrawn", nullable = false)
+    @Builder.Default
     private Boolean isWithdrawn = false;
+
+    @Column(nullable = false)
+    private Boolean isActive = true; // true : 활성화, false : 비활성화
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
@@ -134,12 +139,20 @@ public class User extends BaseEntity {
         this.countReport++;
     }
 
+
     public void updatePassword(String encode) {
         this.password = encode;
     }
 
     public void setBirth(@PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.") LocalDate birth) {
         this.birth = birth;
+    }
+
+    public void deactivate() {
+        this.isActive = false;
+    }
+    public void activate() {
+        this.isActive = true;
     }
 
     public void setWithdrawalRequestedAt(LocalDateTime withdrawalRequestedAt) {

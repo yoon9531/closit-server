@@ -68,4 +68,13 @@ public class UserRequestDTO {
         @ExistUserClositId
         private String blockedClositId;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DeactivateUserDTO {
+        @NotBlank(message = "비활성화할 clositId는 필수 입력 값입니다.")
+        @ExistUserClositId
+        private String clositId;
+    }
 }

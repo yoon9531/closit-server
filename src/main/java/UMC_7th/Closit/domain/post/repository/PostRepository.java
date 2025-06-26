@@ -24,10 +24,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE p.user IN :users AND pht.hashtag.id = :hashtagId ORDER BY p.createdAt DESC")
     Slice<Post> findByUsersAndHashtagId(List<User> users, Long hashtagId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE pht.hashtag.id = :hashtagId ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE pht.hashtag.id = :hashtagId")
     Slice<Post> findByHashtagId(Long hashtagId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.postItemTagList pit WHERE pit.itemTag.id = :itemTagId ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p JOIN p.postItemTagList pit WHERE pit.itemTag.id = :itemTagId")
     Slice<Post> findByItemTagId(@Param("itemTagId") Long itemTagId, Pageable pageable);
 
     Slice<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);

@@ -14,4 +14,3 @@ public enum PostSorting {
         this.sort = sort;
     }
 }
-

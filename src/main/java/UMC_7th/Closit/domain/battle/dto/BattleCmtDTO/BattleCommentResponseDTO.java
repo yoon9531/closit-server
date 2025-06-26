@@ -34,6 +34,7 @@ public class BattleCommentResponseDTO {
         private String clositId;
         private String thumbnail;
         private String content;
+        private List<BattleCommentPreviewDTO> childrenBattleComments;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }

@@ -26,6 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4005","이미 존재하는 이메일입니다"), // 리소스 충돌
     USER_NOT_FOUND (HttpStatus.NOT_FOUND, "USER4006", "사용자가 존재하지 않습니다."), // 존재하지 않는 사용자
     USER_NOT_BLOCKED(HttpStatus.NOT_FOUND, "USER4007", "사용자가 차단되지 않았습니다."), // 차단되지 않은 사용자
+    USER_NOT_ACTIVE(HttpStatus.FORBIDDEN, "USER4008", "사용자가 비활성화 상태입니다."), // 비활성화된 사용자
     CLOSIT_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4007", "이미 존재하는 ClositId입니다."), // 리소스 충돌
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4008", "비밀번호가 유효하지 않습니다."), // 비밀번호 유효성 검사 실패
     NO_CHANGE_DETECTED(HttpStatus.BAD_REQUEST, "USER4009", "변경된 내용이 없습니다."), // 변경된 내용이 없음
@@ -95,6 +96,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 배틀 댓글 관련 에러
     BATTLE_COMMENT_NOT_FOUND (HttpStatus.NOT_FOUND, "BATTLECOMMENT4041", "배틀 댓글이 존재하지 않습니다."),
+    BATTLE_COMMENT_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "BATTLECOMMENT4001", "배틀 대댓글은 한 단계까지만 허용됩니다."),
 
     // 하이라이트 관련 에러
     HIGHLIGHT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "HIGHLIGHT4001", "이미 존재하는 하이라이트 입니다."),

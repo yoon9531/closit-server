@@ -38,6 +38,9 @@ public class BattleCommentConverter {
                 .clositId(battleComment.getUser().getClositId())
                 .thumbnail(battleComment.getUser().getProfileImage())
                 .content(battleComment.getContent())
+                .childrenBattleComments(battleComment.getChildrenBattleComments().stream()
+                        .map(BattleCommentConverter::battleCommentPreviewDTO)
+                        .collect(Collectors.toList()))
                 .createdAt(battleComment.getCreatedAt())
                 .build();
     }

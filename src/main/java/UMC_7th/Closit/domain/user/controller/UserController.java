@@ -233,4 +233,10 @@ public class UserController {
         return ApiResponse.onSuccess("탈퇴 요청이 정상적으로 처리되었습니다. 7일 이내에 취소하지 않으면 계정이 완전히 삭제됩니다.");
     }
 
+    @Operation(summary = "사용자 비활성화", description = "특정 사용자를 비활성화합니다.")
+    @PatchMapping("/deactivate")
+    public ApiResponse<String> deactivateUser(@RequestBody @Valid UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
+        userCommandService.deactivateUser(deactivateUserDTO);
+        return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
+    }
 }
