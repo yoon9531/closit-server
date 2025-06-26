@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BattleCommentRepository extends JpaRepository<BattleComment, Long> {
-    @EntityGraph(attributePaths = "childrenBattleComments")
+    @EntityGraph(attributePaths = {
+            "childrenBattleComments",
+            "childrenBattleComments.user"
+    })
     Slice<BattleComment> findByBattleIdAndParentBattleCommentIsNullOrderByCreatedAtAsc(Long battleId, Pageable pageable);
 }
