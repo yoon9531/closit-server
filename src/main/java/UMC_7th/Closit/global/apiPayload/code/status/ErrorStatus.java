@@ -96,6 +96,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 배틀 댓글 관련 에러
     BATTLE_COMMENT_NOT_FOUND (HttpStatus.NOT_FOUND, "BATTLECOMMENT4041", "배틀 댓글이 존재하지 않습니다."),
+    BATTLE_COMMENT_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "BATTLECOMMENT4001", "배틀 대댓글은 한 단계까지만 허용됩니다."),
 
     // 하이라이트 관련 에러
     HIGHLIGHT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "HIGHLIGHT4001", "이미 존재하는 하이라이트 입니다."),
