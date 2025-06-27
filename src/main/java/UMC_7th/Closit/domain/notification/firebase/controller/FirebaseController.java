@@ -5,11 +5,13 @@ import UMC_7th.Closit.domain.notification.firebase.dto.FcmTokenRequest;
 import UMC_7th.Closit.domain.notification.firebase.service.FcmTokenService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "[FCM]", description = "FCM 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1")
@@ -32,8 +34,15 @@ public class FirebaseController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/fcm-test")
-    @Operation(summary = "FCM 알림 테스트")
+    @Operation(summary = "FCM 알림 테스트",
+            description = """
+            ## FCM 알림 테스트를 위한 api
+            ### RequestBody
+            title [알림 제목]
+            body [알림 내용]
+            """)
     public ApiResponse<String> testFcmToken(@RequestBody @Valid FcmMessageRequest request) {
-        return null;
+        fcmTokenService.sendFcmNotification(request);
+        return ApiResponse.onSuccess("FCM Push Alarm Successfully.");
     }
 }
