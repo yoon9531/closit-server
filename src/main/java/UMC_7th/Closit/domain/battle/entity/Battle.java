@@ -68,6 +68,10 @@ public class Battle extends BaseEntity {
     @Builder.Default
     private List<Vote> voteList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<ChallengeBattle> challengeBattleList = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id1")
     private Post post1;
