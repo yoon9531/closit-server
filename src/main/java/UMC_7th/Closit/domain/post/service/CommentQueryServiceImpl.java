@@ -29,7 +29,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
 
         Pageable pageable = PageRequest.of(page, 10);
 
-        return commentRepository.findAllByPostId(postId, pageable);
+        return commentRepository.findAllByPostIdAndParentIsNull(postId, pageable);
     }
 }
 

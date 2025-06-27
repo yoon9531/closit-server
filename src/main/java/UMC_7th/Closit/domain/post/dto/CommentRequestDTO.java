@@ -9,5 +9,7 @@ public class CommentRequestDTO {
     public static class CreateCommentRequestDTO{
         @NotBlank
         private String content;
+
+        private Long parentId;
     }
 }

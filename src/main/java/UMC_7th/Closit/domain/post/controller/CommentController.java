@@ -30,7 +30,12 @@ public class CommentController {
             ### PathVariable
             post_id [게시글 ID] \n
             ### RequestBody
-            content [댓글 내용]
+            - `content` (String): 댓글 내용 (필수)
+            - `parentId` (Long, optional): 대댓글의 경우 부모 댓글 ID를 입력하세요.
+            - `parentId`가 `null`일시 → 일반 댓글(부모 댓글)로 처리됩니다.
+            - `parentId`가 존재할 경우:
+            - 해당 ID는 반드시 같은 게시글의 댓글이어야 합니다.
+            - 부모 댓글의 대댓글까지만 허용되며, 대댓글의 대댓글은 작성할 수 없습니다.
             """)
     public ApiResponse<CommentResponseDTO.CreateCommentResultDTO> createComment(
             @RequestBody @Valid CommentRequestDTO.CreateCommentRequestDTO request,
