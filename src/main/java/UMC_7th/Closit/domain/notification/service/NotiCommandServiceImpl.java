@@ -90,13 +90,13 @@ public class NotiCommandServiceImpl implements NotiCommandService {
 
     @Override
     public Notification sendNotification(NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
-        User user = userRepository.findById(request.getReceiverId())
+        User receiver = userRepository.findById(request.getReceiverId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        User sender = userRepository.findById(request.getSenderId())
+        User sender = userRepository.findById(securityUtil.getCurrentUser().getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        Notification notification = NotificationConverter.toNotification(user, sender, request);
+        Notification notification = NotificationConverter.toNotification(receiver, sender, request);
 
         // 저장 후 전송
         notificationRepository.save(notification);
@@ -116,13 +116,13 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     @Override
     public void likeNotification(Likes likes) { // 좋아요 알림
         User receiver = likes.getPost().getUser(); // 게시글 작성자
-        User sender = likes.getUser();
-        String content = likes.getUser().getName() + "님이 좋아요를 눌렀습니다.";
+        User sender = securityUtil.getCurrentUser();
+        String content = sender.getName() + "님이 좋아요를 눌렀습니다.";
         String url = URL + "/posts/" + likes.getPost().getId() + "/likes";
 
         // 좋아요를 누른 사용자가 본인이 아닐 경우, 알림 전송
         if (!receiver.getId().equals(likes.getUser().getId())) {
-            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.LIKE);
+            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, content, url, NotificationType.LIKE);
             sendNotification(request);
         }
     }
@@ -130,13 +130,13 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     @Override
     public void commentNotification(Comment comment) { // 댓글 알림
         User receiver = comment.getPost().getUser(); // 게시글 작성자 ID
-        User sender = comment.getUser();
-        String content = comment.getUser().getName() + "님이 댓글을 작성했습니다.";
+        User sender = securityUtil.getCurrentUser();
+        String content = sender.getName() + "님이 댓글을 작성했습니다.";
         String url = URL + "/posts/" + comment.getPost().getId() + "/comments";
 
         // 댓글을 작성한 사용자가 본인이 아닐 경우, 알림 전송
         if (!receiver.getId().equals(comment.getUser().getId())) {
-            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.COMMENT);
+            NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, content, url, NotificationType.COMMENT);
             sendNotification(request);
         }
     }
@@ -144,11 +144,11 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     @Override
     public void followNotification(Follow follow) { // 팔로우 알림
         User receiver = follow.getReceiver(); // 팔로워 알림 받는 사용자
-        User sender = follow.getSender();
-        String content = follow.getSender().getName() + "님이 회원님을 팔로우하기 시작했습니다.";
+        User sender = securityUtil.getCurrentUser();
+        String content = sender.getName() + "님이 회원님을 팔로우하기 시작했습니다.";
         String url = URL + "/users/" + sender.getClositId();
 
-        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.FOLLOW);
+        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, content, url, NotificationType.FOLLOW);
 
         sendNotification(request);
     }
@@ -177,11 +177,11 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     @Override
     public void challengeBattleNotification(ChallengeBattle challengeBattle) {
         User receiver = challengeBattle.getBattle().getPost1().getUser();
-        User sender = challengeBattle.getPost().getUser();
-        String content = challengeBattle.getPost().getUser().getName() + "님이 배틀을 신청하셨습니다.";
+        User sender = securityUtil.getCurrentUser();
+        String content = sender.getName() + "님이 배틀을 신청하셨습니다.";
         String url = URL + "/communities/battle/challenge/upload/" + challengeBattle.getBattle().getId();
 
-        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, sender, content, url, NotificationType.CHALLENGE_BATTLE);
+        NotificationRequestDTO.SendNotiRequestDTO request = NotificationConverter.sendNotiRequest(receiver, content, url, NotificationType.CHALLENGE_BATTLE);
 
         sendNotification(request);
     }

@@ -12,20 +12,21 @@ import java.util.stream.Collectors;
 
 public class NotificationConverter {
 
-    public static Notification toNotification(User user, User sender, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
+    public static Notification toNotification(User receiver, User sender, NotificationRequestDTO.SendNotiRequestDTO request) { // 알림 전송
         return Notification.builder()
-                .user(user)
-                .sender(sender)
+                .user(receiver)
+                .senderId(sender.getId())
+                .senderImageUrl(sender.getProfileImage())
                 .content(request.getContent())
                 .url(request.getUrl())
                 .type(request.getType())
+                .isRead(false)
                 .build();
     }
 
-    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest(User receiver, User sender, String content, String url, NotificationType notificationType) {
+    public static NotificationRequestDTO.SendNotiRequestDTO sendNotiRequest(User receiver, String content, String url, NotificationType notificationType) {
         return NotificationRequestDTO.SendNotiRequestDTO.builder()
                 .receiverId(receiver.getId())
-                .senderId(sender.getId())
                 .content(content)
                 .url(url)
                 .type(notificationType)
@@ -46,9 +47,8 @@ public class NotificationConverter {
     public static NotificationResponseDTO.NotiPreviewDTO getNotiPreviewDTO(Notification notification) { // 알림 단건 조회
         return NotificationResponseDTO.NotiPreviewDTO.builder()
                 .notificationId(notification.getId())
-                .clositId(notification.getUser().getClositId())
-                .userName(notification.getUser().getName())
-                .imageUrl(notification.getSender().getProfileImage())
+                .userName(notification.getSenderName())
+                .imageUrl(notification.getSenderImageUrl())
                 .content(notification.getContent())
                 .url(notification.getUrl())
                 .type(notification.getType())

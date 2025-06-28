@@ -17,14 +17,6 @@ public class Notification extends BaseEntity {
     @Column(name = "notification_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -37,6 +29,19 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private NotificationType type;
+
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
+
+    @Column(nullable = false)
+    private String senderName;
+
+    @Column
+    private String senderImageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public void markAsRead() { // 알림 단건 조회 - 읽음 처리
         isRead = true;

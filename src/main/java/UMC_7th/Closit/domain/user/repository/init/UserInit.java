@@ -43,6 +43,7 @@ public class UserInit implements ApplicationRunner {
                 .isWithdrawn(false)
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
+                .isActive(true)
                 .countReport(0)
                 .build();
 
@@ -56,6 +57,7 @@ public class UserInit implements ApplicationRunner {
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
                 .countReport(0)
+                .isActive(true)
                 .build();
 
         User user3 = User.builder()
@@ -68,6 +70,7 @@ public class UserInit implements ApplicationRunner {
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
                 .countReport(0)
+                .isActive(true)
                 .build();
 
         users.add(user1);

@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.post.dto.PostRequestDTO;
 import UMC_7th.Closit.domain.post.entity.*;
 import UMC_7th.Closit.domain.post.repository.*;
 import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostCommandServiceImpl implements PostCommandService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
@@ -32,12 +34,13 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public Post createPost(PostRequestDTO.CreatePostDTO request) {
         // 1. User 조회
-        User currentUser = securityUtil.getCurrentUser();
+        User user = userRepository.findById(securityUtil.getCurrentUser().getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 사용자가 오늘 작성한 게시글이 있는지 확인
         LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
-        boolean isMission = postRepository.findAllByUserIdAndCreatedAtBetween(currentUser.getId(), startOfDay, now).isEmpty();
+        boolean isMission = postRepository.findAllByUserIdAndCreatedAtBetween(user.getId(), startOfDay, now).isEmpty();
 
         // 3. Post 생성 및 저장
         Post post = Post.builder()
@@ -45,7 +48,7 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .backImage(request.getBackImage())
                 .pointColor(request.getPointColor())
                 .visibility(request.getVisibility())
-                .user(currentUser)
+                .user(user)
                 .isMission(isMission)
                 .build();
 

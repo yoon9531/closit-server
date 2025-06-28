@@ -18,11 +18,12 @@ public class UserWithdrawalScheduler {
     private final UserRepository userRepository;
 
     // 매일 새벽 3시에 실행 (cron: 초 분 시 일 월 요일)
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void deleteExpiredWithdrawnUsers() {
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        List<User> expiredUsers = userRepository.findByIsWithdrawnTrueAndWithdrawalRequestedAtBefore(sevenDaysAgo);
+        LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
+
+        List<User> expiredUsers = userRepository.findByIsWithdrawnTrueAndWithdrawalRequestedAtBefore(oneMinuteAgo);
         if (!expiredUsers.isEmpty()) {
             // 확인용 로그
             log.info("[UserWithdrawalScheduler] {}명의 탈퇴 유예 만료 계정 삭제", expiredUsers.size());
