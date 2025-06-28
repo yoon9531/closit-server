@@ -44,7 +44,7 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     private final EmitterRepository emitterRepository;
     private final SecurityUtil securityUtil;
 
-    @Value("${notification.url}")
+    @Value("${server.domain}")
     private String URL;
 
     @Override

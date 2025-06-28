@@ -51,7 +51,8 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public LikeResponseDTO.LikeStatusDTO unlikePost(Long postId) {
         // 현재 로그인된 사용자 정보 가져오기
-        User user = securityUtil.getCurrentUser();
+        User user = userRepository.findById(securityUtil.getCurrentUser().getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));

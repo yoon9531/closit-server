@@ -30,13 +30,13 @@ public class Notification extends BaseEntity {
     @Column(nullable = false, length = 20)
     private NotificationType type;
 
-    @Column(name = "sender_id", nullable = false)
+    @Column(name = "sender_id")
     private Long senderId;
 
-    @Column(nullable = false)
+    @Column(name = "sender_name")
     private String senderName;
 
-    @Column
+    @Column(name = "sender_image_url")
     private String senderImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
