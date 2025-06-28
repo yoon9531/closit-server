@@ -16,6 +16,7 @@ public class NotificationConverter {
         return Notification.builder()
                 .user(receiver)
                 .senderId(sender.getId())
+                .senderName(sender.getName())
                 .senderImageUrl(sender.getProfileImage())
                 .content(request.getContent())
                 .url(request.getUrl())
@@ -47,7 +48,7 @@ public class NotificationConverter {
     public static NotificationResponseDTO.NotiPreviewDTO getNotiPreviewDTO(Notification notification) { // 알림 단건 조회
         return NotificationResponseDTO.NotiPreviewDTO.builder()
                 .notificationId(notification.getId())
-                .userName(notification.getSenderName())
+                .receiverClositId(notification.getUser().getClositId())
                 .imageUrl(notification.getSenderImageUrl())
                 .content(notification.getContent())
                 .url(notification.getUrl())

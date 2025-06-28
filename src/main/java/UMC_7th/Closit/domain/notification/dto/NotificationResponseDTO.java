@@ -32,8 +32,7 @@ public class NotificationResponseDTO {
     @AllArgsConstructor
     public static class NotiPreviewDTO { // 알림 단건 조회
         private Long notificationId;
-        private String clositId;
-        private String userName;
+        private String receiverClositId;
         private String imageUrl;
         private String content;
         private String url;
