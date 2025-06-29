@@ -70,6 +70,7 @@ public class User extends BaseEntity {
     private Boolean isWithdrawn = false;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isActive = true; // true : 활성화, false : 비활성화
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -111,6 +112,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Notification> notificationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Notification> sentNotificationList = new ArrayList<>();
 
     public User updateRole(Role newRole) {
         this.role = newRole;
