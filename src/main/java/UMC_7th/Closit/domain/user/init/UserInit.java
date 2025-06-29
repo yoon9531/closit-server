@@ -38,7 +38,7 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy1")
                 .clositId("dummy1")
                 .email("dummy1@gmail.com")
-                .password("12345678")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
                 .isActive(true)
@@ -51,7 +51,7 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy2")
                 .clositId("dummy2")
                 .email("dummy2@gmail.com")
-                .password("12345678")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
                 .isActive(true)
@@ -64,7 +64,7 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy3")
                 .clositId("dummy3")
                 .email("dummy3@gmail.com")
-                .password("12345678")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
                 .isActive(true)
@@ -77,7 +77,7 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy4")
                 .clositId("dummy4")
                 .email("dummy4@gmail.com")
-                .password("12345678")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
                 .isActive(true)
@@ -90,7 +90,7 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy5")
                 .clositId("dummy5")
                 .email("dummy5@gmail.com")
-                .password("12345678")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
                 .isActive(true)
