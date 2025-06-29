@@ -112,7 +112,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        Post post = postRepository.findById(request.getPostId())
+        postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         validateVoteBattle(battle, userId, request);
@@ -120,9 +120,9 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Vote vote = BattleConverter.toVote(user, request);
 
         if (battle.getPost1().getId().equals(vote.getVotedPostId())) { // 첫 번째 게시글에 투표
-            battle.incrementFirstVotingCnt();
+            battleRepository.incrementFirstVotingCnt(battleId);
         } else if (battle.getPost2().getId().equals(vote.getVotedPostId())) { // 두 번째 게시글에 투표
-            battle.incrementSecondVotingCnt();
+            battleRepository.incrementSecondVotingCnt(battleId);
         }
 
         Integer firstVotingCnt = battle.getFirstVotingCnt();

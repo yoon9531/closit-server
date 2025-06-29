@@ -32,12 +32,10 @@ public class Battle extends BaseEntity {
     private LocalDateTime deadline;
 
     @Column
-    @Builder.Default
-    private Integer firstVotingCnt = 0;
+    private Integer firstVotingCnt;
 
     @Column
-    @Builder.Default
-    private Integer secondVotingCnt = 0;
+    private Integer secondVotingCnt;
 
     @Transient
     private double firstVotingRate;
@@ -91,14 +89,6 @@ public class Battle extends BaseEntity {
 
     public boolean availableVote () {
         return LocalDateTime.now().isAfter(deadline);
-    }
-
-    public void incrementFirstVotingCnt() { // 첫 번째 게시글 투표
-        this.firstVotingCnt++;
-    }
-
-    public void incrementSecondVotingCnt() { // 두 번째 게시글 투표
-        this.secondVotingCnt++;
     }
 
     public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회

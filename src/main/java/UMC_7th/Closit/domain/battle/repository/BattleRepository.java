@@ -28,6 +28,18 @@ public interface BattleRepository extends JpaRepository<Battle,Long> {
 
     @Modifying
     @Query("UPDATE Battle b " +
+            "SET b.firstVotingCnt = b.firstVotingCnt + 1 " +
+            "WHERE b.id = :id")
+    void incrementFirstVotingCnt(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Battle b " +
+            "SET b.secondVotingCnt = b.secondVotingCnt + 1 " +
+            "WHERE b.id = :id")
+    void incrementSecondVotingCnt(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Battle b " +
            "SET b.viewCount = b.viewCount + 1 " +
            "WHERE b.id = :id")
     void incrementViewCount(@Param("id") Long id);
