@@ -124,7 +124,10 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         } else if (battle.getPost2().getId().equals(vote.getVotedPostId())) { // 두 번째 게시글에 투표
             battleRepository.incrementSecondVotingCnt(battleId);
         }
-        battle.updateVotingCnt(battle.getFirstVotingCnt(), battle.getSecondVotingCnt());
+        Battle updatedBattle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+
+        battle.updateVotingCnt(updatedBattle.getFirstVotingCnt(), updatedBattle.getSecondVotingCnt());
 
         vote.voteBattle(user, battle, request.getPostId());
 

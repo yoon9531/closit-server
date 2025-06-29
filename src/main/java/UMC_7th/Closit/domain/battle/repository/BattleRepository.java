@@ -23,7 +23,8 @@ public interface BattleRepository extends JpaRepository<Battle,Long> {
     @Modifying
     @Query("UPDATE Battle b " +
             "SET b.likeCount = b.likeCount - 1 " +
-            "WHERE b.id = :id")
+            "WHERE b.id = :id " +
+            "AND b.likeCount > 0")
     void decrementLikeCount(@Param("id") Long id);
 
     @Modifying
