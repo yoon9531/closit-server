@@ -115,7 +115,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Notification> sendNotificationList = new ArrayList<>();
+    private List<Notification> sentNotificationList = new ArrayList<>();
 
     public User updateRole(Role newRole) {
         this.role = newRole;
