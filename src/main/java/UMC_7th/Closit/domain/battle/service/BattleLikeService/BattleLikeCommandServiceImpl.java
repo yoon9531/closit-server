@@ -37,21 +37,19 @@ public class BattleLikeCommandServiceImpl implements BattleLikeCommandService {
             throw new GeneralException(ErrorStatus.BATTLE_LIKES_ALREADY_EXIST);
         }
 
-        battle.increaseLikeCount();
-
+        battleRepository.incrementLikeCount(battleId);
         return battleLikeRepository.save(battleLike);
     }
 
     @Override
     public void deleteBattleLike (Long userId, Long battleId) { // 배틀 좋아요 삭제
-        Battle battle = battleRepository.findById(battleId)
+        battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
         BattleLike battleLike = battleLikeRepository.findByUserIdAndBattleId(userId, battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_LIKES_NOT_FOUND));
 
-        battle.decreaseLikeCount();
-
+        battleRepository.decrementLikeCount(battleId);
         battleLikeRepository.delete(battleLike);
     }
 }

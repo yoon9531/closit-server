@@ -46,8 +46,7 @@ public class Battle extends BaseEntity {
     private double secondVotingRate;
 
     @Column
-    @Builder.Default
-    private Integer likeCount = 0;
+    private Integer likeCount;
 
     @Column
     private int viewCount;
@@ -110,17 +109,5 @@ public class Battle extends BaseEntity {
     public void updateVotingRate (double firstVotingRate, double secondVotingRate) {
         this.firstVotingRate = firstVotingRate;
         this.secondVotingRate = secondVotingRate;
-    }
-
-    public void increaseLikeCount() { // 배틀 좋아요 생성
-        this.likeCount++;
-    }
-
-    public void decreaseLikeCount() { // 배틀 좋아요 삭제
-        if (this.likeCount == null) {
-            this.likeCount = 0;
-        } else {
-            this.likeCount--;
-        }
     }
 }
