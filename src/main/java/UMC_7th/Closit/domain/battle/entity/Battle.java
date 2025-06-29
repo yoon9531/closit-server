@@ -37,12 +37,6 @@ public class Battle extends BaseEntity {
     @Column
     private Integer secondVotingCnt;
 
-    @Transient
-    private double firstVotingRate;
-
-    @Transient
-    private double secondVotingRate;
-
     @Column
     private Integer likeCount;
 
@@ -94,10 +88,5 @@ public class Battle extends BaseEntity {
     public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회
         this.firstVotingCnt = firstVotingCnt;
         this.secondVotingCnt = secondVotingCnt;
-    }
-
-    public void updateVotingRate (double firstVotingRate, double secondVotingRate) {
-        this.firstVotingRate = firstVotingRate;
-        this.secondVotingRate = secondVotingRate;
     }
 }
