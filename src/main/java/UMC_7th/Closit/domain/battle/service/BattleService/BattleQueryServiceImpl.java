@@ -97,7 +97,7 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     private void calculateVotes(Battle battle, Long userId) {
         boolean isVoted = voteRepository.existsByBattleIdAndUserId(battle.getId(), userId);
         if (!isVoted) { // 투표하지 않았으면 해당 배틀 투표 수 null로 표시
-            battle.updateVotingCnt(null, null);
+            battle.updateVotingCnt(0, 0);
         } else { // 투표했을 경우
             battle.updateVotingCnt(battle.getFirstVotingCnt(), battle.getSecondVotingCnt());
         }

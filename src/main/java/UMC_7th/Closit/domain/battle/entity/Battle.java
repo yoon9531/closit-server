@@ -32,16 +32,16 @@ public class Battle extends BaseEntity {
     private LocalDateTime deadline;
 
     @Column
-    private Integer firstVotingCnt;
+    private int firstVotingCnt = 0;
 
     @Column
-    private Integer secondVotingCnt;
+    private int secondVotingCnt = 0;
 
     @Column
-    private Integer likeCount;
+    private int likeCount = 0;
 
     @Column
-    private int viewCount;
+    private int viewCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -85,7 +85,7 @@ public class Battle extends BaseEntity {
         return LocalDateTime.now().isAfter(deadline);
     }
 
-    public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회
+    public void updateVotingCnt(int firstVotingCnt, int secondVotingCnt) { // 배틀 게시글 목록 조회
         this.firstVotingCnt = firstVotingCnt;
         this.secondVotingCnt = secondVotingCnt;
     }
