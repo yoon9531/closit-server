@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.post.entity.PostHashtag;
 import UMC_7th.Closit.domain.post.repository.HashtagRepository;
 import UMC_7th.Closit.domain.post.repository.PostHashtagRepository;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.util.DummyDataInit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,14 @@ public class PostHashtagInit implements ApplicationRunner {
     private void savePostHashtags() {
         List<Post> posts = postRepository.findAll();
         List<Hashtag> hashtags = hashtagRepository.findAll();
+
+        // 최소 개수 확인
+        if (posts.size() < 5) {
+            throw new GeneralException(ErrorStatus._BAD_REQUEST);
+        }
+        if (hashtags.size() < 5) {
+            throw new GeneralException(ErrorStatus._BAD_REQUEST);
+        }
 
         List<PostHashtag> postHashtags = new ArrayList<>();
 

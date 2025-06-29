@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.post.entity.PostItemTag;
 import UMC_7th.Closit.domain.post.repository.ItemTagRepository;
 import UMC_7th.Closit.domain.post.repository.PostItemTagRepository;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.util.DummyDataInit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,14 @@ public class PostItemTagInit implements ApplicationRunner {
     private void savePostItemTags() {
         List<Post> posts = postRepository.findAll();
         List<ItemTag> itemTags = itemTagRepository.findAll();
+
+        // 최소 개수 확인
+        if (posts.size() < 5) {
+            throw new GeneralException(ErrorStatus._BAD_REQUEST);
+        }
+        if (itemTags.size() < 5) {
+            throw new GeneralException(ErrorStatus._BAD_REQUEST);
+        }
 
         List<PostItemTag> postItemTags = new ArrayList<>();
 
