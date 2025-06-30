@@ -32,25 +32,16 @@ public class Battle extends BaseEntity {
     private LocalDateTime deadline;
 
     @Column
-    @Builder.Default
-    private Integer firstVotingCnt = 0;
+    private int firstVotingCnt = 0;
 
     @Column
-    @Builder.Default
-    private Integer secondVotingCnt = 0;
-
-    @Transient
-    private double firstVotingRate;
-
-    @Transient
-    private double secondVotingRate;
+    private int secondVotingCnt = 0;
 
     @Column
-    @Builder.Default
-    private Integer likeCount = 0;
+    private int likeCount = 0;
 
     @Column
-    private int viewCount;
+    private int viewCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -94,33 +85,8 @@ public class Battle extends BaseEntity {
         return LocalDateTime.now().isAfter(deadline);
     }
 
-    public void incrementFirstVotingCnt() { // 첫 번째 게시글 투표
-        this.firstVotingCnt++;
-    }
-
-    public void incrementSecondVotingCnt() { // 두 번째 게시글 투표
-        this.secondVotingCnt++;
-    }
-
-    public void updateVotingCnt(Integer firstVotingCnt, Integer secondVotingCnt) { // 배틀 게시글 목록 조회
+    public void updateVotingCnt(int firstVotingCnt, int secondVotingCnt) { // 배틀 게시글 목록 조회
         this.firstVotingCnt = firstVotingCnt;
         this.secondVotingCnt = secondVotingCnt;
-    }
-
-    public void updateVotingRate (double firstVotingRate, double secondVotingRate) {
-        this.firstVotingRate = firstVotingRate;
-        this.secondVotingRate = secondVotingRate;
-    }
-
-    public void increaseLikeCount() { // 배틀 좋아요 생성
-        this.likeCount++;
-    }
-
-    public void decreaseLikeCount() { // 배틀 좋아요 삭제
-        if (this.likeCount == null) {
-            this.likeCount = 0;
-        } else {
-            this.likeCount--;
-        }
     }
 }

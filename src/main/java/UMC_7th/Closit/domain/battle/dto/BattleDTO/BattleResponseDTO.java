@@ -63,9 +63,9 @@ public class BattleResponseDTO {
     public static class VoteBattleResultDTO { // 배틀 투표
         private Long battleId;
         private String firstClositId;
-        private double firstVotingRate;
+        private int firstVotingCnt;
         private String secondClositId;
-        private double secondVotingRate;
+        private int secondVotingCnt;
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         private LocalDateTime createdAt;
     }
@@ -83,13 +83,13 @@ public class BattleResponseDTO {
         private Long firstPostId;
         private String firstPostFrontImage;
         private String firstPostBackImage;
-        private double firstVotingRate;
+        private int firstVotingCnt;
         private String secondClositId;
         private String secondProfileImage;
         private Long secondPostId;
         private String secondPostFrontImage;
         private String secondPostBackImage;
-        private double secondVotingRate;
+        private int secondVotingCnt;
     }
 
     @Builder
@@ -145,13 +145,13 @@ public class BattleResponseDTO {
         private Long firstPostId;
         private String firstPostFrontImage;
         private String firstPostBackImage;
-        private double firstVotingRate;
+        private int firstVotingCnt;
         private String secondClositId;
         private String secondProfileImage;
         private Long secondPostId;
         private String secondPostFrontImage;
         private String secondPostBackImage;
-        private double secondVotingRate;
+        private int secondVotingCnt;
     }
 
     @Builder
