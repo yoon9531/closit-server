@@ -14,11 +14,8 @@ public class ViewBlockCacheService {
 
     public boolean shouldIncreaseView(Long userId, Long postId) {
         String key = generateKey(userId, postId);
-        if (viewCache.getIfPresent(key) != null) {
-            return false; // 이미 본 적 있음 → 증가 안 함
-        }
-        viewCache.put(key, true);
-        return true; // 처음 본 경우 → 증가 가능
+        Boolean previous = viewCache.asMap().putIfAbsent(key, true);
+        return previous == null; // 이전 값이 없으면 첫 조회
     }
 
     private String generateKey(Long userId, Long postId) {
