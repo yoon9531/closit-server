@@ -21,6 +21,7 @@ public class LikeResponseDTO {
     @Getter
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class LikedUserDTO {
         private String clositId;
         private String name;
@@ -30,6 +31,7 @@ public class LikeResponseDTO {
     @Getter
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class LikedUserListDTO {
         private List<LikedUserDTO> data;
         private boolean hasNext;
