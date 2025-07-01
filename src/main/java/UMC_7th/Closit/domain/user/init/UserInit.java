@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.user.repository.init;
+package UMC_7th.Closit.domain.user.init;
 
 import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -38,9 +38,10 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy1")
                 .clositId("dummy1")
                 .email("dummy1@gmail.com")
-                .password("123456")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
+                .isActive(true)
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
                 .countReport(0)
@@ -50,9 +51,10 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy2")
                 .clositId("dummy2")
                 .email("dummy2@gmail.com")
-                .password("123456")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
+                .isActive(true)
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
                 .countReport(0)
@@ -62,9 +64,36 @@ public class UserInit implements ApplicationRunner {
                 .name("dummy3")
                 .clositId("dummy3")
                 .email("dummy3@gmail.com")
-                .password("123456")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
                 .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
                 .isWithdrawn(false)
+                .isActive(true)
+                .birth(LocalDate.EPOCH)
+                .role(Role.USER)
+                .countReport(0)
+                .build();
+
+        User user4 = User.builder()
+                .name("dummy4")
+                .clositId("dummy4")
+                .email("dummy4@gmail.com")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
+                .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
+                .isWithdrawn(false)
+                .isActive(true)
+                .birth(LocalDate.EPOCH)
+                .role(Role.USER)
+                .countReport(0)
+                .build();
+
+        User user5 = User.builder()
+                .name("dummy5")
+                .clositId("dummy5")
+                .email("dummy5@gmail.com")
+                .password("$2a$10$m2o4cOjvdoSEj0WrlKXiGOxyeGGdNH93Vga./LW0QPWvhQjzD1Ci2") // 12345678의 해시값
+                .profileImage("https://closit-bucket.s3.ap-northeast-2.amazonaws.com/default-user-profile.png")
+                .isWithdrawn(false)
+                .isActive(true)
                 .birth(LocalDate.EPOCH)
                 .role(Role.USER)
                 .countReport(0)
@@ -73,6 +102,8 @@ public class UserInit implements ApplicationRunner {
         users.add(user1);
         users.add(user2);
         users.add(user3);
+        users.add(user4);
+        users.add(user5);
 
         userRepository.saveAll(users);
     }
