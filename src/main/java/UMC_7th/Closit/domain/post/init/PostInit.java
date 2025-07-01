@@ -19,7 +19,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(3)
+@Order(4)
 @DummyDataInit
 public class PostInit implements ApplicationRunner {
 

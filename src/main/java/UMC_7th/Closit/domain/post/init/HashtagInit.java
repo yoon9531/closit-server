@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(1)
+@Order(2)
 @DummyDataInit
 public class HashtagInit implements ApplicationRunner {
 

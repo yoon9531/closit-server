@@ -4,7 +4,6 @@ import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.highlight.repository.HighlightRepository;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
-import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.util.DummyDataInit;
@@ -19,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(8)
+@Order(9)
 @DummyDataInit
 public class HighlightInit implements ApplicationRunner {
 

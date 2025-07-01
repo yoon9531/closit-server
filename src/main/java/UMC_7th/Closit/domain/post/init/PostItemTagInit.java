@@ -20,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(5)
+@Order(6)
 @DummyDataInit
 public class PostItemTagInit implements ApplicationRunner {
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(6)
+@Order(7)
 @DummyDataInit
 public class BattleInit implements ApplicationRunner {
 

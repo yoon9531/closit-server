@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(7)
+@Order(8)
 @DummyDataInit
 public class ChallengeBattleInit implements ApplicationRunner {
 

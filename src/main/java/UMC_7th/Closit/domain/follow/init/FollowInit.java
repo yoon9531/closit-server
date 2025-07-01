@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(9)
+@Order(1)
 @DummyDataInit
 public class FollowInit implements ApplicationRunner {
 
