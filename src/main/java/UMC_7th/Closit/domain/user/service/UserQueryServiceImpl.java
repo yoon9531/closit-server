@@ -115,4 +115,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         return isblockedDTO;
     }
+
+    @Override
+    public Slice<User> searchUsersByClositId(String query, Pageable pageable) {
+        return userRepository.searchByClositId(query, pageable);
+    }
 }

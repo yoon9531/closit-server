@@ -25,4 +25,6 @@ public interface UserQueryService {
     Slice<User> getBlockedUserList(Pageable pageable);
 
     UserResponseDTO.IsBlockedDTO isBlockedBy(String targetClositId);
+
+    Slice<User> searchUsersByClositId(String query, Pageable pageable);
 }

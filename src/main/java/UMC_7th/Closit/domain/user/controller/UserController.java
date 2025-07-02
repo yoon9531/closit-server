@@ -239,4 +239,24 @@ public class UserController {
         userCommandService.deactivateUser(deactivateUserDTO);
         return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
     }
+
+    @Operation(summary = "사용자 검색",
+            description = """
+        ## 사용자 Closit ID 검색
+        사용자의 Closit ID를 기준으로 부분 일치하는 계정을 페이징하여 조회합니다.
+        
+        ### Request Parameters
+        - keyword (string): 검색할 사용자 Closit ID 문자열 (부분 일치)
+        - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+        - size (기본값: 10): 페이지당 항목 수
+        """)
+    @GetMapping("/search")
+    public ApiResponse<UserResponseDTO.UserSearchListDTO> searchUsers(
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Slice<User> userSlice = userQueryService.searchUsersByClositId(keyword, PageRequest.of(page, size));
+        return ApiResponse.onSuccess(UserConverter.toUserSearchListDTO(userSlice));
+    }
 }
