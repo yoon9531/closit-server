@@ -118,6 +118,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public Slice<User> searchUsersByClositId(String query, Pageable pageable) {
+        if (query == null || query.trim().isEmpty()) {
+            return userRepository.findAll(pageable);
+        }
         return userRepository.searchByClositId(query, pageable);
     }
 }

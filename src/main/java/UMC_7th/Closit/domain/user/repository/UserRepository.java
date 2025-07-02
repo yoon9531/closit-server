@@ -35,6 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByIsWithdrawnTrueAndWithdrawalRequestedAtBefore(LocalDateTime dateTime);
 
-    @Query("SELECT u FROM User u WHERE u.clositId LIKE %:query%")
-    Slice<User> searchByClositId(String query, Pageable pageable);
+    @Query("SELECT u FROM User u WHERE LOWER(u.clositId) LIKE LOWER(CONCAT('%', :query, '%'))")
+    Slice<User> searchByClositId(@Param("query") String query, Pageable pageable);
 }

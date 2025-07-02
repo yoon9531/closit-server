@@ -14,17 +14,20 @@ import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Slf4j
+@Validated
 public class UserController {
 
     private final SecurityUtil securityUtil;
@@ -252,7 +255,7 @@ public class UserController {
         """)
     @GetMapping("/search")
     public ApiResponse<UserResponseDTO.UserSearchListDTO> searchUsers(
-            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "keyword") @Size(min = 1, max = 50, message = "검색어는 1자 이상 50자 이하여야 합니다") String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
