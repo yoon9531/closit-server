@@ -49,9 +49,9 @@ public class SecurityConfig {
                                          "/api/auth/login",
                                          "/api/auth/refresh",
                                          "/api/auth/users/isunique/**",
-                                         "/api/auth/email-tokens/**",
                                          "/api/auth/find-id",
                                          "/api/auth/reset-password",
+                                         "/api/v1/email-tokens/**",
                                          "/email-verification-success.html",
                                          "/email-verification-failed.html",
                                          "/api/auth/oauth/**").permitAll()
