@@ -13,6 +13,8 @@ import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,4 +65,14 @@ public class LikeServiceImpl implements LikeService {
         return LikeConverter.toLikeStatusDTO(post, user, false);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LikeResponseDTO.LikedUserListDTO getLikedUsers(Long postId, Pageable pageable) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        Slice<Likes> likesSlice = likeRepository.findByPost(post, pageable);
+
+        return LikeConverter.toLikedUserListDTO(likesSlice);
+    }
 }
