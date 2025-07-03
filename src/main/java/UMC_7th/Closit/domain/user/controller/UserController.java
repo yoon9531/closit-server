@@ -14,17 +14,20 @@ import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Slf4j
+@Validated
 public class UserController {
 
     private final SecurityUtil securityUtil;
@@ -238,5 +241,25 @@ public class UserController {
     public ApiResponse<String> deactivateUser(@RequestBody @Valid UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
         userCommandService.deactivateUser(deactivateUserDTO);
         return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
+    }
+
+    @Operation(summary = "사용자 검색",
+            description = """
+        ## 사용자 Closit ID 검색
+        사용자의 Closit ID를 기준으로 부분 일치하는 계정을 페이징하여 조회합니다.
+        
+        ### Request Parameters
+        - keyword (string): 검색할 사용자 Closit ID 문자열 (부분 일치)
+        - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+        - size (기본값: 10): 페이지당 항목 수
+        """)
+    @GetMapping("/search")
+    public ApiResponse<UserResponseDTO.UserSearchListDTO> searchUsers(
+            @RequestParam(name = "keyword") @Size(min = 1, max = 50, message = "검색어는 1자 이상 50자 이하여야 합니다") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Slice<User> userSlice = userQueryService.searchUsersByClositId(keyword, PageRequest.of(page, size));
+        return ApiResponse.onSuccess(UserConverter.toUserSearchListDTO(userSlice));
     }
 }

@@ -127,4 +127,20 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.UserSearchListDTO toUserSearchListDTO(Slice<User> userSlice) {
+        List<UserResponseDTO.UserSearchDTO> userSearchDTOs = userSlice.getContent().stream()
+                .map(user -> UserResponseDTO.UserSearchDTO.builder()
+                        .clositId(user.getClositId())
+                        .name(user.getName())
+                        .profileImage(user.getProfileImage())
+                        .build())
+                .collect(Collectors.toList());
+
+        return UserResponseDTO.UserSearchListDTO.builder()
+                .searchedUsers(userSearchDTOs)
+                .hasNext(userSlice.hasNext())
+                .pageNumber(userSlice.getNumber())
+                .size(userSlice.getSize())
+                .build();
+    }
 }

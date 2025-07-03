@@ -195,4 +195,24 @@ public class UserResponseDTO {
         private boolean isBlocked;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserSearchListDTO {
+        private List<UserSearchDTO> searchedUsers;
+        private boolean hasNext;
+        private int pageNumber; // 페이지 번호
+        private int size; // 페이지 당 조회 개수
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserSearchDTO {
+        private String clositId;
+        private String name;
+        private String profileImage;
+    }
 }
