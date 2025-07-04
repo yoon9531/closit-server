@@ -175,7 +175,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         Claims claims = jwtTokenProvider.getClaims(accessToken);
         String email = claims.getSubject();
 
-
         RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
