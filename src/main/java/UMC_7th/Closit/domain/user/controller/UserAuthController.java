@@ -38,6 +38,11 @@ public class UserAuthController {
         return ApiResponse.onSuccess(jwtResponse);
     }
 
+    @PostMapping("/logout")
+    public ApiResponse<String> logout() {
+
+    }
+
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 API")
     @PostMapping("/oauth/{socialLoginType}")
     public ApiResponse<JwtResponse> socialLogin(@PathVariable SocialLoginType socialLoginType, @RequestBody OAuthLoginRequestDTO socialLoginRequestDTO) {
@@ -78,4 +83,6 @@ public class UserAuthController {
 
         return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+
 }

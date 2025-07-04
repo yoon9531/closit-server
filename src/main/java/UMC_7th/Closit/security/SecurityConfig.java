@@ -2,6 +2,7 @@ package UMC_7th.Closit.security;
 
 import UMC_7th.Closit.security.jwt.JwtAccessDeniedHandler;
 import UMC_7th.Closit.security.jwt.JwtAuthenticationEntryPoint;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,8 +40,15 @@ public class SecurityConfig {
                 // 폼 기반 로그인 설정
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
                         .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true))
+                        .invalidateHttpSession(true)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            HttpSession session = request.getSession();
+                            session.invalidate();
+                        })
+                        .permitAll()
+                )
                 // 경로 접속 권한 설정
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         // Swagger, login, register, refresh 허용

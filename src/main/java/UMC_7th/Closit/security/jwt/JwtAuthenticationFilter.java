@@ -48,17 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         String header = request.getHeader("Authorization");
 
-//        log.info("🔍 [JwtAuthenticationFilter] - Incoming Request: {}", request.getRequestURI());
-//        log.info("🔍 [JwtAuthenticationFilter] - Authorization Header: {}", header);
-//        log.info("🔍 [JwtAuthenticationFilter] - Extracted Token: {}", token);
-
-
         if (token != null && jwtTokenProvider.validateToken(token)) {
             Claims claims = jwtTokenProvider.getClaims(token);
             String email = claims.getSubject();
             String roleString = claims.get("role", String.class);
-            Date issuedAt = claims.getIssuedAt();
-            Date expiration = claims.getExpiration();
 
             Role role = Role.valueOf(roleString); // String->Role 반환
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
