@@ -45,9 +45,7 @@ public class UserAuthController {
 
     @PostMapping("/logout")
     public ApiResponse<String> logout(HttpServletRequest request) {
-        log.info("Logout entry");
         String accessToken = jwtTokenProvider.resolveToken(request);
-        log.info("Access Token: {}", accessToken);
         if (accessToken == null) {
             throw new UserHandler(ErrorStatus._UNAUTHORIZED);
         }

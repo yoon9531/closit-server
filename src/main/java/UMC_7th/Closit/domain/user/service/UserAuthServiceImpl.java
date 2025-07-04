@@ -6,11 +6,9 @@ import UMC_7th.Closit.domain.user.dto.JwtResponse;
 import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.OAuthLoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
-import UMC_7th.Closit.domain.user.entity.OAuthUserInfo;
-import UMC_7th.Closit.domain.user.entity.RefreshToken;
-import UMC_7th.Closit.domain.user.entity.Role;
-import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.entity.*;
 import UMC_7th.Closit.domain.user.repository.RefreshTokenRepository;
+import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
@@ -25,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -39,6 +38,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final GoogleOAuthService googleOAuthService;
+    private final TokenBlackListRepository tokenBlackListRepository;
 
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
@@ -173,21 +173,19 @@ public class UserAuthServiceImpl implements UserAuthService {
     public void logout (String accessToken) {
         jwtTokenProvider.validateToken(accessToken);
         Claims claims = jwtTokenProvider.getClaims(accessToken);
-        String username = claims.getSubject();
+        String email = claims.getSubject();
 
-        log.info("Logging out user: {}", username);
-        // Refresh Token 삭제
-        RefreshToken refreshToken = refreshTokenRepository.findByUsername(username)
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        TokenBlackList blackedToken = TokenBlackList.builder()
+                .accessToken(accessToken)
+                .clositId(refreshToken.getUsername())
+                .build();
+
+        tokenBlackListRepository.save(blackedToken);
         refreshTokenRepository.delete(refreshToken);
-
-        // Access Token은 서버에서 관리하지 않으므로 별도의 처리는 필요 없음
-        log.info("User {} has been logged out successfully.", username);
-
-        // 로그아웃 후 클라이언트 측에서 Access Token을 삭제하도록 안내
-        // 예: 클라이언트에서 Access Token을 삭제하는 로직을 구현해야 함
-        log.info("Access Token for user {} has been invalidated.", username);
     }
 
     // Register User info for social login

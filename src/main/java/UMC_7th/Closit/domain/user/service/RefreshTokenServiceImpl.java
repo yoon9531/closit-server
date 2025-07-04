@@ -35,7 +35,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void deleteRefreshToken(String username) {
-
         refreshTokenRepository.deleteByUsername(username);
     }
 }
