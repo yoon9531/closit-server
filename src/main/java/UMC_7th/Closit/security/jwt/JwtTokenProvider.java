@@ -70,8 +70,6 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Claims claims = getClaims(token);
-
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     // .setAllowedClockSkewSeconds(60) // Clock Skew 적용 (1분 오차 허용)
@@ -99,10 +97,6 @@ public class JwtTokenProvider {
 
     }
 
-    public String getUserName(String token) {
-        Claims claims = getClaims(token);
-        return claims.getSubject();
-    }
 }
 
 

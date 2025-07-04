@@ -144,7 +144,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO) {
-        // Client에서 전달된 idToken을 통해 유저 정보 가져오기
+        // Client에서 전달된 idToken을 통해 유저 정보 가져옴
         String idToken = oauthLoginRequestDTO.getIdToken();
         OAuthUserInfo userInfo;
 
@@ -171,7 +171,6 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public void logout (String accessToken) {
-        jwtTokenProvider.validateToken(accessToken);
         Claims claims = jwtTokenProvider.getClaims(accessToken);
         String email = claims.getSubject();
 

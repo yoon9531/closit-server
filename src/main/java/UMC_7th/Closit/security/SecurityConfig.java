@@ -2,7 +2,6 @@ package UMC_7th.Closit.security;
 
 import UMC_7th.Closit.security.jwt.JwtAccessDeniedHandler;
 import UMC_7th.Closit.security.jwt.JwtAuthenticationEntryPoint;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
