@@ -77,7 +77,7 @@ public class UserController {
     @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
     @GetMapping("/{closit_id}")
     @CheckBlocked(targetIdParam = "closit_id")
-    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable String closit_id) {
+    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable("closit_id") String closit_id) {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
     }
 
@@ -126,7 +126,7 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
-            @PathVariable String closit_id,
+            @PathVariable("closit_id") String closit_id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -149,7 +149,7 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
-            @PathVariable String closit_id,
+            @PathVariable("closit_id") String closit_id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -172,7 +172,7 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
-            @PathVariable String closit_id,
+            @PathVariable("closit_id") String closit_id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -200,7 +200,7 @@ public class UserController {
             - closit_id: 중복 여부를 확인할 Closit ID
             """)
     @GetMapping("/isunique/{closit_id}")
-    public ApiResponse<Boolean> isUniqueClositId(@PathVariable String closit_id) {
+    public ApiResponse<Boolean> isUniqueClositId(@PathVariable("closit_id") String closit_id) {
         return ApiResponse.onSuccess(userCommandService.isClositIdUnique(closit_id));
     }
 

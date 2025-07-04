@@ -6,11 +6,9 @@ import UMC_7th.Closit.domain.user.dto.JwtResponse;
 import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.OAuthLoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
-import UMC_7th.Closit.domain.user.entity.OAuthUserInfo;
-import UMC_7th.Closit.domain.user.entity.RefreshToken;
-import UMC_7th.Closit.domain.user.entity.Role;
-import UMC_7th.Closit.domain.user.entity.User;
+import UMC_7th.Closit.domain.user.entity.*;
 import UMC_7th.Closit.domain.user.repository.RefreshTokenRepository;
+import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
@@ -25,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -39,6 +38,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final GoogleOAuthService googleOAuthService;
+    private final TokenBlackListRepository tokenBlackListRepository;
 
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
@@ -79,7 +79,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public JwtResponse refresh(String refreshToken) {
         // Refresh Token 유효성 검사
         jwtTokenProvider.validateToken(refreshToken);
-        Claims claims = getClaims(refreshToken);
+        Claims claims = jwtTokenProvider.getClaims(refreshToken);
         String email = claims.getSubject();
 
         User user = userRepository.findByEmail(email)
@@ -144,7 +144,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO) {
-        // Client에서 전달된 idToken을 통해 유저 정보 가져오기
+        // Client에서 전달된 idToken을 통해 유저 정보 가져옴
         String idToken = oauthLoginRequestDTO.getIdToken();
         OAuthUserInfo userInfo;
 
@@ -169,9 +169,21 @@ public class UserAuthServiceImpl implements UserAuthService {
         return new JwtResponse(user.getClositId(), accessToken, refreshToken);
     }
 
-    // Get Claims from Token
-    private Claims getClaims(String token) {
-        return jwtTokenProvider.getClaims(token);
+    @Override
+    public void logout (String accessToken) {
+        Claims claims = jwtTokenProvider.getClaims(accessToken);
+        String email = claims.getSubject();
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        TokenBlackList blackedToken = TokenBlackList.builder()
+                .accessToken(accessToken)
+                .clositId(refreshToken.getUsername())
+                .build();
+
+        tokenBlackListRepository.save(blackedToken);
+        refreshTokenRepository.delete(refreshToken);
     }
 
     // Register User info for social login
