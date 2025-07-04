@@ -79,7 +79,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public JwtResponse refresh(String refreshToken) {
         // Refresh Token 유효성 검사
         jwtTokenProvider.validateToken(refreshToken);
-        Claims claims = getClaims(refreshToken);
+        Claims claims = jwtTokenProvider.getClaims(refreshToken);
         String email = claims.getSubject();
 
         User user = userRepository.findByEmail(email)
@@ -169,9 +169,25 @@ public class UserAuthServiceImpl implements UserAuthService {
         return new JwtResponse(user.getClositId(), accessToken, refreshToken);
     }
 
-    // Get Claims from Token
-    private Claims getClaims(String token) {
-        return jwtTokenProvider.getClaims(token);
+    @Override
+    public void logout (String accessToken) {
+        jwtTokenProvider.validateToken(accessToken);
+        Claims claims = jwtTokenProvider.getClaims(accessToken);
+        String username = claims.getSubject();
+
+        log.info("Logging out user: {}", username);
+        // Refresh Token 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        refreshTokenRepository.delete(refreshToken);
+
+        // Access Token은 서버에서 관리하지 않으므로 별도의 처리는 필요 없음
+        log.info("User {} has been logged out successfully.", username);
+
+        // 로그아웃 후 클라이언트 측에서 Access Token을 삭제하도록 안내
+        // 예: 클라이언트에서 Access Token을 삭제하는 로직을 구현해야 함
+        log.info("Access Token for user {} has been invalidated.", username);
     }
 
     // Register User info for social login

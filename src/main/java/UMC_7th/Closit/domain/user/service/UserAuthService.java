@@ -20,4 +20,6 @@ public interface UserAuthService {
     void resetPassword(String email, String newPassword);
   
     JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO);
+
+    void logout (String accessToken);
 }

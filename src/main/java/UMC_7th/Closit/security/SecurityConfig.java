@@ -34,21 +34,11 @@ public class SecurityConfig {
                 .exceptionHandling((exceptionHandling) -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler) // 인증은 되었지만 권한이 부족할 때
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)) // 인증에 실패했을 때
-                // disable session management
+                // Session management 비활성화
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 폼 기반 로그인 설정
                 .formLogin(AbstractHttpConfigurer::disable)
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            HttpSession session = request.getSession();
-                            session.invalidate();
-                        })
-                        .permitAll()
-                )
                 // 경로 접속 권한 설정
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         // Swagger, login, register, refresh 허용

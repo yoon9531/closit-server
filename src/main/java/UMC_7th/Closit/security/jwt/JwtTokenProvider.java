@@ -6,6 +6,7 @@ import UMC_7th.Closit.global.apiPayload.exception.handler.JwtHandler;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -89,6 +90,19 @@ public class JwtTokenProvider {
         }
     }
 
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+
+    }
+
+    public String getUserName(String token) {
+        Claims claims = getClaims(token);
+        return claims.getSubject();
+    }
 }
 
 
