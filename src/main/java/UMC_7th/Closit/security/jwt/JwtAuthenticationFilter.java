@@ -3,7 +3,6 @@ package UMC_7th.Closit.security.jwt;
 import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
-import UMC_7th.Closit.security.blacklist.TokenBlackListRepository; // 🔹 블랙리스트 레포 추가
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailService customUserDetailsService;
-    private final TokenBlackListRepository tokenBlackListRepository; // 🔹 추가
+    private final TokenBlackListRepository tokenBlackListRepository;
 
     @Override
     protected void doFilterInternal(
@@ -56,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 🔹 2. 토큰 유효성 검사
+            // 2. 토큰 유효성 검사
             if (jwtTokenProvider.validateToken(token)) {
                 Claims claims = jwtTokenProvider.getClaims(token);
                 String email = claims.getSubject();
