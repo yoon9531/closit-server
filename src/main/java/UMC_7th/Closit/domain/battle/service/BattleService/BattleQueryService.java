@@ -12,5 +12,5 @@ public interface BattleQueryService {
     ChallengeBattle getChallengeBattle(Long battleId, Long challengeBattleId); // 챌린지 배틀 미리보기
     Slice<Battle> getChallengeBattleList(Integer page); // 배틀 챌린지 게시글 목록 조회 - 최신순
     Slice<Battle> getMyVotedBattleList(Integer page); // 내가 투표한 게시글 - 최신순
-    int updateBattleView(Long battleId); // 배틀 조회수 증가
+    void updateBattleView(Long battleId); // 배틀 조회수 증가
 }

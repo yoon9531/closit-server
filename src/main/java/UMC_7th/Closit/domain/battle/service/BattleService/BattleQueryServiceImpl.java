@@ -94,8 +94,8 @@ public class BattleQueryServiceImpl implements BattleQueryService {
 
     @Override
     @Transactional
-    public int updateBattleView(Long battleId) {
-        return battleRepository.incrementViewCount(battleId);
+    public void updateBattleView(Long battleId) {
+        battleRepository.incrementViewCount(battleId);
     }
 
     private void updateVotingCntByUser(Battle battle, Long userId) {
