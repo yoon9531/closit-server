@@ -98,10 +98,10 @@ public class UserController {
     @Operation(summary = "사용자 차단 목록 조회", description = "특정 사용자의 차단 목록을 조회합니다.")
     @GetMapping("/blocks")
     public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Slice<User> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
+        Slice<String> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserBlockListDTO(blockedUserSlice));
     }
 
@@ -127,8 +127,8 @@ public class UserController {
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
             @PathVariable("closit_id") String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<User> followerSlice = userQueryService.getFollowerList(closit_id, PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserFollowerSliceDTO(followerSlice));
@@ -150,8 +150,8 @@ public class UserController {
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
             @PathVariable("closit_id") String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<User> followingSlice = userQueryService.getFollowingList(closit_id, PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserFollowingSliceDTO(followingSlice));
@@ -173,8 +173,8 @@ public class UserController {
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
             @PathVariable("closit_id") String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<Highlight> highlightSlice = userQueryService.getHighlightList(closit_id, PageRequest.of(page, size));
 

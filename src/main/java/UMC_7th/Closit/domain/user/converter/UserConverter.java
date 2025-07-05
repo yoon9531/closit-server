@@ -109,13 +109,11 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<User> blockedUserSlice) {
+    public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<String> blockedUserSlice) {
         List<UserResponseDTO.UserBlockDTO> blockedUserList =
                 blockedUserSlice.getContent().stream()
-                        .map(user -> UserResponseDTO.UserBlockDTO.builder()
-                                .clositId(user.getClositId())
-                                .name(user.getName())
-                                .profileImage(user.getProfileImage())
+                        .map(clositId -> UserResponseDTO.UserBlockDTO.builder()
+                                .clositId(clositId)
                                 .build())
                         .collect(Collectors.toList());
 
