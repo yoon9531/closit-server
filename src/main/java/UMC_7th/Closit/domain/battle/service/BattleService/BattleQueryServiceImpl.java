@@ -37,8 +37,6 @@ public class BattleQueryServiceImpl implements BattleQueryService {
         Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
 
-        battleRepository.incrementViewCount(battle.getId());
-
         updateVotingCntByUser(battle, user.getId());
 
         return battle;
@@ -92,6 +90,12 @@ public class BattleQueryServiceImpl implements BattleQueryService {
         });
 
         return votedBattleList;
+    }
+
+    @Override
+    @Transactional
+    public int updateBattleView(Long battleId) {
+        return battleRepository.incrementViewCount(battleId);
     }
 
     private void updateVotingCntByUser(Battle battle, Long userId) {

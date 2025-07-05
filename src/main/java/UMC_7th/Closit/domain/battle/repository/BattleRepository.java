@@ -43,7 +43,7 @@ public interface BattleRepository extends JpaRepository<Battle,Long> {
     @Query("UPDATE Battle b " +
            "SET b.viewCount = b.viewCount + 1 " +
            "WHERE b.id = :id")
-    void incrementViewCount(@Param("id") Long id);
+    int incrementViewCount(@Param("id") Long id);
 
     Optional<Battle> findByIdAndPost2IsNotNull(Long battleId);
 
