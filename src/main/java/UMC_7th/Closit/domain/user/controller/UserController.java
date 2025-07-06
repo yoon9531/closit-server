@@ -256,8 +256,8 @@ public class UserController {
     @GetMapping("/search")
     public ApiResponse<UserResponseDTO.UserSearchListDTO> searchUsers(
             @RequestParam(name = "keyword") @Size(min = 1, max = 50, message = "검색어는 1자 이상 50자 이하여야 합니다") String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         Slice<User> userSlice = userQueryService.searchUsersByClositId(keyword, PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserSearchListDTO(userSlice));
