@@ -28,6 +28,7 @@ public class CommentResponseDTO {
     public static class CommentPreviewDTO { // 댓글 조회
         private String clositId;
         private Long commentId;
+        private Long parentCommentId;
         private String content;
         private boolean isParent;
         private List<CommentPreviewDTO> replies;
