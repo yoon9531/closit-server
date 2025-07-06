@@ -183,8 +183,6 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class UserBlockDTO {
         private String clositId;
-        private String name;
-        private String profileImage;
     }
 
     @Builder
