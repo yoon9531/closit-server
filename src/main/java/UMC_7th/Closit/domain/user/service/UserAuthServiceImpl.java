@@ -7,7 +7,6 @@ import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.OAuthLoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.*;
-import UMC_7th.Closit.domain.user.repository.RefreshTokenRepository;
 import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -36,9 +35,9 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailTokenService emailTokenService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final GoogleOAuthService googleOAuthService;
     private final TokenBlackListRepository tokenBlackListRepository;
+    private final RefreshTokenService refreshTokenService;
 
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
@@ -61,7 +60,10 @@ public class UserAuthServiceImpl implements UserAuthService {
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
 
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+//        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+
+        // Redis에 Refresh Token 저장
+        refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
 
         return new JwtResponse(user.getClositId(),accessToken, refreshToken);
     }
@@ -85,11 +87,17 @@ public class UserAuthServiceImpl implements UserAuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        RefreshToken savedToken = refreshTokenRepository.findByUsername(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+//        RefreshToken savedToken = refreshTokenRepository.findByUsername(email)
+//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+//
+//        // 저장된 Refresh Token과 비교 (공백 제거)
+//        if (!savedToken.getRefreshToken().trim().equals(refreshToken.trim())) {
+//            throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);
+//        }
 
-        // 저장된 Refresh Token과 비교 (공백 제거)
-        if (!savedToken.getRefreshToken().trim().equals(refreshToken.trim())) {
+        String savedToken = refreshTokenService.findRefreshTokenByUsername(email);
+
+        if (!savedToken.trim().equals(refreshToken.trim())) {
             throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);
         }
 
@@ -99,9 +107,11 @@ public class UserAuthServiceImpl implements UserAuthService {
         String newAccessToken = jwtTokenProvider.createAccessToken(email, role);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(email, role);
 
+//        savedToken.updateRefreshToken(newRefreshToken);
+//        refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
+
         // Refresh Token 업데이트
-        savedToken.updateRefreshToken(newRefreshToken);
-        refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
+        refreshTokenService.saveRefreshToken(email, newRefreshToken);
 
         return new JwtResponse(user.getClositId(), newAccessToken, newRefreshToken);
     }
@@ -148,7 +158,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         String idToken = oauthLoginRequestDTO.getIdToken();
         OAuthUserInfo userInfo;
 
-
         if (socialLoginType == SocialLoginType.GOOGLE) { // GOOGLE
             userInfo = googleOAuthService.getUserInfo(idToken);
         } else {
@@ -159,12 +168,14 @@ public class UserAuthServiceImpl implements UserAuthService {
         User user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> registerNewUser(userInfo));
 
-
         // 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
 
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+//        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+
+        // Redis에 Refresh Token 저장
+        refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
 
         return new JwtResponse(user.getClositId(), accessToken, refreshToken);
     }
@@ -174,16 +185,20 @@ public class UserAuthServiceImpl implements UserAuthService {
         Claims claims = jwtTokenProvider.getClaims(accessToken);
         String email = claims.getSubject();
 
-        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+//        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
+//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        String savedToken = refreshTokenService.findRefreshTokenByUsername(email);
 
         TokenBlackList blackedToken = TokenBlackList.builder()
                 .accessToken(accessToken)
-                .clositId(refreshToken.getUsername())
+                .clositId(email)
                 .build();
 
         tokenBlackListRepository.save(blackedToken);
-        refreshTokenRepository.delete(refreshToken);
+//        refreshTokenRepository.delete(refreshToken);
+
+        refreshTokenService.deleteRefreshToken(email);
     }
 
     // Register User info for social login

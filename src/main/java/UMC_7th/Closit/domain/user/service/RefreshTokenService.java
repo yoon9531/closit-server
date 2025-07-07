@@ -7,7 +7,10 @@ import java.sql.Ref;
 import java.util.Optional;
 
 public interface RefreshTokenService {
-    RefreshToken saveRefreshToken(String username, String refreshToken);
-    RefreshToken findRefreshTokenByUsername(String username);
+
+    void saveRefreshToken(String username, String refreshToken);
+
+    String findRefreshTokenByUsername(String username);
+
     void deleteRefreshToken(String username);
 }

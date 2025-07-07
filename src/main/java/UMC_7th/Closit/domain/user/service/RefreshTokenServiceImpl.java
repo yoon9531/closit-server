@@ -14,27 +14,42 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
-    private final RefreshTokenRepository refreshTokenRepository;
+
+    // private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRedisService refreshTokenRedisService;
+
+    private static final long EXPIRATION_DAYS = 14L;
 
     @Override
-    public RefreshToken saveRefreshToken(String username, String refreshToken) {
-        RefreshToken token = RefreshToken.builder()
-                .username(username)
-                .refreshToken(refreshToken)
-                .build();
+    public void saveRefreshToken(String username, String refreshToken) {
+//        RefreshToken token = RefreshToken.builder()
+//                .username(username)
+//                .refreshToken(refreshToken)
+//                .build();
+//
+//        return refreshTokenRepository.save(token);
 
-        return refreshTokenRepository.save(token);
+        refreshTokenRedisService.save(username, refreshToken, EXPIRATION_DAYS);
     }
 
     @Override
-    public RefreshToken findRefreshTokenByUsername(String username) {
+    public String findRefreshTokenByUsername(String username) {
+//        return refreshTokenRepository.findByUsername(username)
+//                .orElseThrow(()-> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        return refreshTokenRepository.findByUsername(username)
-                .orElseThrow(()-> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        String token = refreshTokenRedisService.get(username);
+
+        if (token == null) {
+            throw new IllegalStateException("해당 사용자의 리프레시 토큰이 존재하지 않습니다.");
+        }
+
+        return token;
     }
 
     @Override
     public void deleteRefreshToken(String username) {
-        refreshTokenRepository.deleteByUsername(username);
+//        refreshTokenRepository.deleteByUsername(username);
+
+        refreshTokenRedisService.delete(username);
     }
 }
