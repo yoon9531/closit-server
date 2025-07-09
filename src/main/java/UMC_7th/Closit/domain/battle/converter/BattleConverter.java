@@ -106,6 +106,7 @@ public class BattleConverter {
         return BattleResponseDTO.BattlePreviewDTO.builder()
                 .battleId(battle.getId())
                 .isLiked(!battle.getBattleLikesList().isEmpty())
+                .likeCount(battle.getLikeCount())
                 .title(battle.getTitle())
                 .firstClositId(battle.getPost1().getUser().getClositId())
                 .firstProfileImage(battle.getPost1().getUser().getProfileImage())
