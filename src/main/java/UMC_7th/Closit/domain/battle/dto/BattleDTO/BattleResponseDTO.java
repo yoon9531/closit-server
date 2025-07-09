@@ -77,6 +77,7 @@ public class BattleResponseDTO {
     public static class BattlePreviewDTO { // 배틀 게시글 목록, 내가 투표한 게시글 목록 조회
         private Long battleId;
         private boolean isLiked;
+        private int likeCount;
         private String title;
         private String firstClositId;
         private String firstProfileImage;

@@ -43,6 +43,9 @@ public class LikeServiceImpl implements LikeService {
         Likes likes = Likes.createLikes(user, post);
         likeRepository.save(likes);
 
+        // 좋아요 수 증가
+        postRepository.incrementLikeCount(postId);
+
         // 좋아요 알림
         notiCommandService.likeNotification(likes);
 
