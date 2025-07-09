@@ -22,7 +22,7 @@ public class TodayClosetResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class TodayClosetPreviewDTO {
-        private Long clositId;
+        private String clositId;
         private Long todayClosetId;
         private Long postId;
         private int likes;
