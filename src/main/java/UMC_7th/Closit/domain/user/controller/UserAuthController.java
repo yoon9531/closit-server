@@ -26,7 +26,6 @@ public class UserAuthController {
 
     private final UserCommandService userCommandService;
     private final UserAuthService userAuthService;
-    private final EmailTokenService emailTokenService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")

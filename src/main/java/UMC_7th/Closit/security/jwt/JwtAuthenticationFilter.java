@@ -1,8 +1,8 @@
 package UMC_7th.Closit.security.jwt;
 
 import UMC_7th.Closit.domain.user.entity.Role;
-import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
+import UMC_7th.Closit.domain.user.service.TokenBlackListService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailService customUserDetailsService;
-    private final TokenBlackListRepository tokenBlackListRepository;
+//    private final TokenBlackListRepository tokenBlackListRepository;
+    private final TokenBlackListService tokenBlackListService;
 
     @Override
     protected void doFilterInternal(
@@ -46,7 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null) {
             // 1. 블랙리스트 체크
-            if (tokenBlackListRepository.existsByAccessToken(token)) {
+//            if (tokenBlackListRepository.existsByAccessToken(token)) {
+//                log.warn("로그아웃/블랙리스트 처리된 토큰 접근: {}", token);
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.setContentType("application/json;charset=UTF-8");
+//                response.getWriter().write("{\"error\": \"블랙리스트(로그아웃)된 토큰입니다.\"}");
+//                return;
+//            }
+            if (tokenBlackListService.isTokenBlacklisted(token)) {
                 log.warn("로그아웃/블랙리스트 처리된 토큰 접근: {}", token);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json;charset=UTF-8");
