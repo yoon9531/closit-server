@@ -12,8 +12,8 @@ public class TokenBlackListServiceImpl implements TokenBlackListService {
     private static final long EXPIRATION_HOURS = 7L;
 
     @Override
-    public void blacklistToken(String accessToken, String clositId) {
-        tokenBlackListRedisService.save(accessToken, clositId, EXPIRATION_HOURS);
+    public void blacklistToken(String accessToken, String email) {
+        tokenBlackListRedisService.save(accessToken, email, EXPIRATION_HOURS);
     }
 
     @Override

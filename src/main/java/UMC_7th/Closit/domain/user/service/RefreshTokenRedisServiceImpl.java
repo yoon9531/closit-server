@@ -14,18 +14,18 @@ public class RefreshTokenRedisServiceImpl implements RefreshTokenRedisService {
     private static final String PREFIX = "refreshToken:";
 
     @Override
-    public void save(String username, String refreshToken, long expirationDays) {
-        String key = PREFIX + username;
+    public void save(String email, String refreshToken, long expirationDays) {
+        String key = PREFIX + email;
         redisTemplate.opsForValue().set(key, refreshToken, Duration.ofDays(expirationDays));
     }
 
     @Override
-    public String get(String username) {
-        return (String) redisTemplate.opsForValue().get(PREFIX + username);
+    public String get(String email) {
+        return (String) redisTemplate.opsForValue().get(PREFIX + email);
     }
 
     @Override
-    public void delete(String username) {
-        redisTemplate.delete(PREFIX + username);
+    public void delete(String email) {
+        redisTemplate.delete(PREFIX + email);
     }
 }

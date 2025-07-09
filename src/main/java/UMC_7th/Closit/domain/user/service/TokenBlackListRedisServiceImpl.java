@@ -14,9 +14,9 @@ public class TokenBlackListRedisServiceImpl implements TokenBlackListRedisServic
     private static final String PREFIX = "blacklistToken:";
 
     @Override
-    public void save(String accessToken, String clositId, long expirationHours) {
+    public void save(String accessToken, String email, long expirationHours) {
         String key = PREFIX + accessToken;
-        redisTemplate.opsForValue().set(key, clositId, Duration.ofHours(expirationHours));
+        redisTemplate.opsForValue().set(key, email, Duration.ofHours(expirationHours));
     }
 
     @Override

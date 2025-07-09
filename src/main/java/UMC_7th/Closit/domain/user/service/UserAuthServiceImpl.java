@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -96,7 +95,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 //            throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);
 //        }
 
-        String savedToken = refreshTokenService.findRefreshTokenByUsername(email);
+        String savedToken = refreshTokenService.findRefreshTokenByEmail(email);
 
         if (!savedToken.trim().equals(refreshToken.trim())) {
             throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);

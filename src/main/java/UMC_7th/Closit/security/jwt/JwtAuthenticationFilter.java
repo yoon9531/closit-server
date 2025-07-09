@@ -1,7 +1,6 @@
 package UMC_7th.Closit.security.jwt;
 
 import UMC_7th.Closit.domain.user.entity.Role;
-import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.service.CustomUserDetailService;
 import UMC_7th.Closit.domain.user.service.TokenBlackListService;
 import io.jsonwebtoken.Claims;
