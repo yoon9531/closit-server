@@ -38,6 +38,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final GoogleOAuthService googleOAuthService;
     private final TokenBlackListRepository tokenBlackListRepository;
     private final RefreshTokenService refreshTokenService;
+    private final TokenBlackListService tokenBlackListService;
 
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
@@ -188,17 +189,21 @@ public class UserAuthServiceImpl implements UserAuthService {
 //        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
 //                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        String savedToken = refreshTokenService.findRefreshTokenByUsername(email);
+//        String savedToken = refreshTokenService.findRefreshTokenByUsername(email);
 
-        TokenBlackList blackedToken = TokenBlackList.builder()
-                .accessToken(accessToken)
-                .clositId(email)
-                .build();
-
-        tokenBlackListRepository.save(blackedToken);
+//        TokenBlackList blackedToken = TokenBlackList.builder()
+//                .accessToken(accessToken)
+//                .clositId(email)
+//                .build();
+//
+//        tokenBlackListRepository.save(blackedToken);
 //        refreshTokenRepository.delete(refreshToken);
 
+        // 저장된 리프레시 토큰 삭제
         refreshTokenService.deleteRefreshToken(email);
+
+        // 블랙리스트에 access token 저장
+        tokenBlackListService.blacklistToken(accessToken, email);
     }
 
     // Register User info for social login
