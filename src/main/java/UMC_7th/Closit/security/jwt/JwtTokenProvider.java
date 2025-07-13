@@ -38,11 +38,11 @@ public class JwtTokenProvider {
         this.jwtParser = createJwtParser();
     }
 
-    public String createToken(String email, Role role, long validity) {
+    public String createToken(String clositId, Role role, long validity) {
         Instant now = Instant.now();
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(clositId)
                 .claim(ROLE_CLAIM, role)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusMillis(validity)))
@@ -50,12 +50,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createAccessToken(String email, Role role) {
-        return createToken(email, role, accessTokenValidity);
+    public String createAccessToken(String clositId, Role role) {
+        return createToken(clositId, role, accessTokenValidity);
     }
 
-    public String createRefreshToken(String email, Role role) {
-        return createToken(email, role, refreshTokenValidity);
+    public String createRefreshToken(String clositId, Role role) {
+        return createToken(clositId, role, refreshTokenValidity);
     }
 
     public Claims getClaims(String token) {
