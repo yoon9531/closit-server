@@ -39,6 +39,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
     private final S3Service s3Service;
+    private final UserUtil userUtil;
 
     @Value("${cloud.aws.s3.default-profile-image}")
     private String defaultProfileImage;
@@ -107,7 +108,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public User registerProfileImage (String imageUrl) {
-
         User currentUser = securityUtil.getCurrentUser();
 
         // 사용자가 프로필 이미지를 삭제하려는 경우
@@ -159,7 +159,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         String blockedClositId = blockUserDTO.getBlockedClositId();
 
         User blocker = securityUtil.getCurrentUser();
-        User blocked = getUserByClositId(blockedClositId);
+        User blocked = userUtil.getUserByClositIdOrThrow(blockedClositId);
 
         validateBlockOperation(blocker, blocked);
         removeFollowRelationships(blocked, blocker);
@@ -187,7 +187,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         String blockedClositId = blockUserDTO.getBlockedClositId();
 
         User blocker = securityUtil.getCurrentUser();
-        User blocked = getUserByClositId(blockedClositId);
+        User blocked = userUtil.getUserByClositIdOrThrow(blockedClositId);
 
         Block userBlock = blockRepository.findByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
@@ -198,9 +198,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public void cancelWithdrawal () {
         User currentUser = securityUtil.getCurrentUser();
-
-        User persistentUser = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User persistentUser = userUtil.getUserByClositIdOrThrow(currentUser.getClositId());
 
         if (persistentUser.getWithdrawalRequestedAt().plusDays(7).isBefore(java.time.LocalDateTime.now())) {
             throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
@@ -214,7 +212,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
         User currentUser = securityUtil.getCurrentUser();
-        User user = getUserByClositId(deactivateUserDTO.getClositId());
+        User user = userUtil.getUserByClositIdOrThrow(deactivateUserDTO.getClositId());
 
         // 관리자 계정만 비활성화 가능
         if (currentUser.getRole() != ADMIN) {
@@ -224,11 +222,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         user.deactivate();
     }
 
-    private User getUserByClositId(String clositId) {
-        User user = userRepository.findByClositId(clositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        return user;
-    }
+    // Helper Methods
 
     private void removeFollowRelationships(User blocked, User blocker) {
         Follow followBlockedtoBlocker = followRepository.findBySenderAndReceiver(blocked, blocker);

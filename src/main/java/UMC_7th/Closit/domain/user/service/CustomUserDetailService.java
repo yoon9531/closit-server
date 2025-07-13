@@ -18,11 +18,11 @@ import java.util.List;
 public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserUtil userUtil;
 
     @Override
-    public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+    public UserDetails loadUserByUsername (String clositId) throws UsernameNotFoundException {
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

@@ -72,10 +72,8 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
-                    // .setAllowedClockSkewSeconds(60) // Clock Skew 적용 (1분 오차 허용)
                     .build()
                     .parseClaimsJws(token);
-
             return true;
         } catch (ExpiredJwtException e) {
             throw new UserHandler(ErrorStatus.EXPIRED_TOKEN);

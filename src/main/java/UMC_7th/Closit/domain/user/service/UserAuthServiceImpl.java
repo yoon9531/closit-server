@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -39,53 +37,50 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final GoogleOAuthService googleOAuthService;
     private final TokenBlackListRepository tokenBlackListRepository;
+    private final UserUtil userUtil;
 
     // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
     private String profileImage;
 
-    // login
     @Override
     public JwtResponse login(LoginRequestDTO loginRequestDto) {
-        User user = userRepository.findByClositId(loginRequestDto.getClositId())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(loginRequestDto.getClositId());
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new GeneralException(ErrorStatus.PASSWORD_NOT_CORRESPOND);
+            throw new UserHandler(ErrorStatus.PASSWORD_NOT_CORRESPOND);
         }
 
         if (!user.getIsActive()) {
-            throw new GeneralException(ErrorStatus.USER_NOT_ACTIVE);
+            throw new UserHandler(ErrorStatus.USER_NOT_ACTIVE);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getClositId(), user.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getClositId(), user.getRole());
 
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+        refreshTokenRepository.save(new RefreshToken(user.getClositId(), refreshToken));
 
         return new JwtResponse(user.getClositId(),accessToken, refreshToken);
     }
 
     @Override
-    public UserResponseDTO.UserInfoDTO updateUserRole (Long userId, Role newRole) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
+    public UserResponseDTO.UserInfoDTO updateUserRole (String clositId, Role newRole) {
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
         User updatedUser = user.updateRole(newRole);
+
         return UserConverter.toUserInfoDTO(updatedUser);
     }
 
     @Override
     public JwtResponse refresh(String refreshToken) {
-        // Refresh Token 유효성 검사
         jwtTokenProvider.validateToken(refreshToken);
         Claims claims = jwtTokenProvider.getClaims(refreshToken);
-        String email = claims.getSubject();
+        String clositId = claims.getSubject();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        log.info("User email from claims: {}", clositId);
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
-        RefreshToken savedToken = refreshTokenRepository.findByUsername(email)
+        RefreshToken savedToken = refreshTokenRepository.findByUsername(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 저장된 Refresh Token과 비교 (공백 제거)
@@ -96,12 +91,12 @@ public class UserAuthServiceImpl implements UserAuthService {
         Role role = user.getRole();
 
         // 새로운 Access Token, Refresh Token 생성
-        String newAccessToken = jwtTokenProvider.createAccessToken(email, role);
-        String newRefreshToken = jwtTokenProvider.createRefreshToken(email, role);
+        String newAccessToken = jwtTokenProvider.createAccessToken(clositId, role);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(clositId, role);
 
         // Refresh Token 업데이트
         savedToken.updateRefreshToken(newRefreshToken);
-        refreshTokenRepository.save(new RefreshToken(email, newRefreshToken));
+        refreshTokenRepository.save(new RefreshToken(clositId, newRefreshToken));
 
         return new JwtResponse(user.getClositId(), newAccessToken, newRefreshToken);
     }
@@ -131,8 +126,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         }
 
         // 사용자 조회
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByEmailOrThrow(email);
 
         // 비밀번호 변경
         String encodedPassword = passwordEncoder.encode(newPassword);

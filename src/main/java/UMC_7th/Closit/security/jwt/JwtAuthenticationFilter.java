@@ -57,11 +57,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 2. 토큰 유효성 검사
             if (jwtTokenProvider.validateToken(token)) {
                 Claims claims = jwtTokenProvider.getClaims(token);
-                String email = claims.getSubject();
+                String clositId = claims.getSubject();
                 String roleString = claims.get("role", String.class);
 
                 Role role = Role.valueOf(roleString);
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(clositId);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,

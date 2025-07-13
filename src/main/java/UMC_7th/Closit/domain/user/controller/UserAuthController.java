@@ -70,10 +70,10 @@ public class UserAuthController {
         return ApiResponse.onSuccess(jwtResponse);
     }
 
-    @PatchMapping("/{user_id}/role")
+    @PatchMapping("/{closit_id}/role")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<UserResponseDTO.UserInfoDTO> changeRole(@PathVariable Long user_id, @RequestParam Role newRole) {
-        UserResponseDTO.UserInfoDTO userInfoDTO = userAuthService.updateUserRole(user_id, newRole);
+    public ApiResponse<UserResponseDTO.UserInfoDTO> changeRole(@PathVariable("closit_id") String clositId, @RequestParam Role newRole) {
+        UserResponseDTO.UserInfoDTO userInfoDTO = userAuthService.updateUserRole(clositId, newRole);
 
         return ApiResponse.onSuccess(userInfoDTO);
     }
