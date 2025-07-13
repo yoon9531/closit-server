@@ -38,7 +38,7 @@ public class GoogleOAuthService {
             GoogleIdToken idToken = verifier.verify(idTokenString);
 
             if (idToken == null) {
-                log.info("Invalid ID token.", idTokenString);
+                log.debug("Invalid ID token.", idTokenString);
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
@@ -46,13 +46,13 @@ public class GoogleOAuthService {
 
             // Issuer 체크
             if (!"accounts.google.com".equals(payload.getIssuer()) && !"https://accounts.google.com".equals(payload.getIssuer())) {
-                log.info("Check Issuer");
+                log.debug("Check Issuer");
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 
             // aud (Audience) 검증
             if (!googleClientId.equals(payload.getAudience())) {
-                log.info("Check Audience");
+                log.debug("Check Audience");
                 throw new UserHandler(ErrorStatus.INVALID_TOKEN);
             }
 

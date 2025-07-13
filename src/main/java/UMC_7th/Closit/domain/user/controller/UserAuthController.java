@@ -46,19 +46,18 @@ public class UserAuthController {
     @PostMapping("/logout")
     public ApiResponse<String> logout(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-        if (accessToken == null) {
-            throw new UserHandler(ErrorStatus._UNAUTHORIZED);
-        }
+        if (accessToken == null) throw new UserHandler(ErrorStatus._UNAUTHORIZED);
 
         userAuthService.logout(accessToken);
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 API")
-    @PostMapping("/oauth/{socialLoginType}")
-    public ApiResponse<JwtResponse> socialLogin(@PathVariable SocialLoginType socialLoginType, @RequestBody OAuthLoginRequestDTO socialLoginRequestDTO) {
-        JwtResponse jwtResponse = userAuthService.socialLogin(socialLoginType, socialLoginRequestDTO);
-
+    @PostMapping("/oauth/{provider}/login")
+    public ApiResponse<JwtResponse> socialLogin(
+            @PathVariable("provider") SocialLoginType provider,
+            @RequestBody @Valid OAuthLoginRequestDTO dto) {
+        JwtResponse jwtResponse = userAuthService.socialLogin(provider, dto);
         return ApiResponse.onSuccess(jwtResponse);
     }
 
@@ -68,14 +67,6 @@ public class UserAuthController {
         JwtResponse jwtResponse = userAuthService.refresh(refreshToken);
 
         return ApiResponse.onSuccess(jwtResponse);
-    }
-
-    @PatchMapping("/{closit_id}/role")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<UserResponseDTO.UserInfoDTO> changeRole(@PathVariable("closit_id") String clositId, @RequestParam Role newRole) {
-        UserResponseDTO.UserInfoDTO userInfoDTO = userAuthService.updateUserRole(clositId, newRole);
-
-        return ApiResponse.onSuccess(userInfoDTO);
     }
 
     @Operation(summary = "Closit ID 찾기", description = "이메일 인증을 완료한 사용자에 한해 Closit ID를 조회합니다.")
@@ -94,5 +85,11 @@ public class UserAuthController {
         return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
 
+    @PatchMapping("/{clositId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<UserResponseDTO.UserInfoDTO> changeRole(@PathVariable("clositId") String clositId, @RequestParam Role newRole) {
+        UserResponseDTO.UserInfoDTO userInfoDTO = userAuthService.updateUserRole(clositId, newRole);
 
+        return ApiResponse.onSuccess(userInfoDTO);
+    }
 }
