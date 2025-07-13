@@ -17,11 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
 
-    private final UserUtil userUtil;
+    private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername (String clositId) throws UsernameNotFoundException {
-        User user = userUtil.getUserByClositIdOrThrow(clositId);
+    public UserDetails loadUserByUsername(String clositId) throws UsernameNotFoundException {
+        User user = userRepository.findByClositId(clositId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
