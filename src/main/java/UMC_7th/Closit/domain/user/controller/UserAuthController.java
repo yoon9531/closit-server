@@ -65,7 +65,6 @@ public class UserAuthController {
     @PostMapping("/refresh")
     public ApiResponse<JwtResponse> refresh(@RequestBody RefreshRequestDTO refreshRequestDTO) {
         String refreshToken = refreshRequestDTO.getRefreshToken();
-
         JwtResponse jwtResponse = userAuthService.refresh(refreshToken);
 
         return ApiResponse.onSuccess(jwtResponse);

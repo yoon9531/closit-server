@@ -53,8 +53,6 @@ public class PostController {
                     4. 성공 후, 게시글 업로드 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
                     """)
     public ApiResponse<PostResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid PostRequestDTO.GetPresignedUrlDTO request) {
-        User user = securityUtil.getCurrentUser();
-
         String frontImageUrl = s3Service.getPresignedUrl(postFrontPath, request.getFrontImageUrl());
         String backImageUrl = s3Service.getPresignedUrl(postBackPath, request.getBackImageUrl());
 

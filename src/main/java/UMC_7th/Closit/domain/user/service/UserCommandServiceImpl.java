@@ -109,14 +109,12 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public User registerProfileImage (String imageUrl) {
 
-        // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
 
         // 사용자가 프로필 이미지를 삭제하려는 경우
         if (imageUrl == null || imageUrl.isEmpty()) {
-            log.info("file is null or empty");
             s3Service.deleteFile(currentUser.getProfileImage());
-            currentUser.updateProfileImage(null);
+            currentUser.updateProfileImage(defaultProfileImage);
             return currentUser;
         }
 
@@ -140,26 +138,15 @@ public class UserCommandServiceImpl implements UserCommandService {
     public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
 
         User currentUser = securityUtil.getCurrentUser();
-        Boolean isChanged = false;
 
-        if (updateUserDTO.getName() != null) {
-            currentUser.setName(updateUserDTO.getName());
-            isChanged = true;
-        }
-
-        if (!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), currentUser.getPassword())) {
+        if (!passwordEncoder.matches(updateUserDTO.getPassword(), currentUser.getPassword())) {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
-        } else {
-            if (updateUserDTO.getPassword() != null) {
-                currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
-                isChanged = true;
-            }
         }
 
-        if (updateUserDTO.getBirth() != null) {
-            currentUser.setBirth(updateUserDTO.getBirth());
-            isChanged = true;
-        }
+        boolean isChanged = false;
+        if (updateUserDTO.getName() != null) { currentUser.setName(updateUserDTO.getName()); isChanged = true; }
+        if (updateUserDTO.getPassword() != null) { currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword())); isChanged = true; }
+        if (updateUserDTO.getBirth() != null) { currentUser.setBirth(updateUserDTO.getBirth()); isChanged = true; }
 
         if (!isChanged) {
             throw new UserHandler(ErrorStatus.NO_CHANGE_DETECTED);
