@@ -135,7 +135,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
-
         User currentUser = securityUtil.getCurrentUser();
 
         if (!passwordEncoder.matches(updateUserDTO.getPassword(), currentUser.getPassword())) {
@@ -143,9 +142,19 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
         boolean isChanged = false;
-        if (updateUserDTO.getName() != null) { currentUser.setName(updateUserDTO.getName()); isChanged = true; }
-        if (updateUserDTO.getPassword() != null) { currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword())); isChanged = true; }
-        if (updateUserDTO.getBirth() != null) { currentUser.setBirth(updateUserDTO.getBirth()); isChanged = true; }
+
+        if (updateUserDTO.getName() != null) {
+            currentUser.setName(updateUserDTO.getName());
+            isChanged = true;
+        }
+        if (updateUserDTO.getPassword() != null) {
+            currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+            isChanged = true;
+        }
+        if (updateUserDTO.getBirth() != null) {
+            currentUser.setBirth(updateUserDTO.getBirth());
+            isChanged = true;
+        }
 
         if (!isChanged) {
             throw new UserHandler(ErrorStatus.NO_CHANGE_DETECTED);

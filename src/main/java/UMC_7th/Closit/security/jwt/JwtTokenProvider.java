@@ -114,7 +114,7 @@ public class JwtTokenProvider {
             throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
         } else if (e instanceof UnsupportedJwtException) {
             throw new JwtHandler(ErrorStatus.UNSUPPORTED_TOKEN);
-        }else {
+        } else {
             throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
         }
     }
