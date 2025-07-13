@@ -20,30 +20,32 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String ROLE_CLAIM = "role";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final Key key;
     private final Long accessTokenValidity;
     private final Long refreshTokenValidity;
+    private final JwtParser jwtParser;
 
     public JwtTokenProvider(@Value("${jwt.secret-key}") String secretKey,
                             @Value("${jwt.expiration.access}") String accessTokenValidity,
                             @Value("${jwt.expiration.refresh}") String refreshTokenValidity) {
-        String base64Secret = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Secret));
+        this.key = createSigningKey(secretKey);
         this.accessTokenValidity = Long.parseLong(accessTokenValidity);
         this.refreshTokenValidity = Long.parseLong(refreshTokenValidity);
+        this.jwtParser = createJwtParser();
     }
 
     public String createToken(String email, Role role, long validity) {
         Instant now = Instant.now();
-        Date issuedAt = Date.from(now);
-        Date expiration = Date.from(now.plusMillis(validity));
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", role)
-                .setIssuedAt(issuedAt)
-                .setExpiration(expiration)
+                .claim(ROLE_CLAIM, role)
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusMillis(validity)))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -58,11 +60,7 @@ public class JwtTokenProvider {
 
     public Claims getClaims(String token) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            return parseToken(token);
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
@@ -70,29 +68,55 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
+            parseToken(token);
             return true;
         } catch (ExpiredJwtException e) {
             throw new UserHandler(ErrorStatus.EXPIRED_TOKEN);
-        } catch (MalformedJwtException e) {
-            throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
-        } catch (UnsupportedJwtException e) {
-            throw new JwtHandler(ErrorStatus.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
             throw new JwtHandler(ErrorStatus.EMPTY_TOKEN);
+        } catch (JwtException e) {
+            handleJwtException(e);
+            return false;
         }
     }
 
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        return extractTokenFromBearer(bearerToken);
+    }
+
+    // Helper methods
+    private String extractTokenFromBearer(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX.length());
         }
         return null;
+    }
 
+    private Claims parseToken(String token) {
+        return jwtParser.parseClaimsJws(token).getBody();
+    }
+
+    private Key createSigningKey(String secretKey) {
+        String base64Secret = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(base64Secret));
+    }
+
+    private JwtParser createJwtParser() {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build();
+    }
+
+    private void handleJwtException(JwtException e) {
+        if (e instanceof MalformedJwtException) {
+            throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
+        } else if (e instanceof UnsupportedJwtException) {
+            throw new JwtHandler(ErrorStatus.UNSUPPORTED_TOKEN);
+        }else {
+            throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
+        }
     }
 
 }

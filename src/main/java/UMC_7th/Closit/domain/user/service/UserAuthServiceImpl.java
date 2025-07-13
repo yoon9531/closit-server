@@ -12,10 +12,12 @@ import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
+import UMC_7th.Closit.global.apiPayload.exception.handler.JwtHandler;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.common.SocialLoginType;
 import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +41,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final TokenBlackListRepository tokenBlackListRepository;
     private final UserUtil userUtil;
 
-    // profile image 주소
     @Value("${cloud.aws.s3.default-profile-image}")
-    private String profileImage;
+    private String defaultProfileImage;
 
     @Override
     public JwtResponse login(LoginRequestDTO loginRequestDto) {
@@ -55,12 +56,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new UserHandler(ErrorStatus.USER_NOT_ACTIVE);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user.getClositId(), user.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken(user.getClositId(), user.getRole());
-
-        refreshTokenRepository.save(new RefreshToken(user.getClositId(), refreshToken));
-
-        return new JwtResponse(user.getClositId(),accessToken, refreshToken);
+        return userUtil.issueJwtTokens(user);
     }
 
     @Override
@@ -77,42 +73,26 @@ public class UserAuthServiceImpl implements UserAuthService {
         Claims claims = jwtTokenProvider.getClaims(refreshToken);
         String clositId = claims.getSubject();
 
-        log.info("User email from claims: {}", clositId);
         User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         RefreshToken savedToken = refreshTokenRepository.findByUsername(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 저장된 Refresh Token과 비교 (공백 제거)
         if (!savedToken.getRefreshToken().trim().equals(refreshToken.trim())) {
-            throw new GeneralException(ErrorStatus.INVALID_REFRESH_TOKEN);
+            throw new JwtHandler(ErrorStatus.INVALID_REFRESH_TOKEN);
         }
 
-        Role role = user.getRole();
-
-        // 새로운 Access Token, Refresh Token 생성
-        String newAccessToken = jwtTokenProvider.createAccessToken(clositId, role);
-        String newRefreshToken = jwtTokenProvider.createRefreshToken(clositId, role);
-
-        // Refresh Token 업데이트
-        savedToken.updateRefreshToken(newRefreshToken);
-        refreshTokenRepository.save(new RefreshToken(clositId, newRefreshToken));
-
-        return new JwtResponse(user.getClositId(), newAccessToken, newRefreshToken);
+        return userUtil.issueJwtTokens(user);
     }
 
     @Override
     public String findClositIdByEmail(String email) {
-        // 이메일 인증 여부 확인
         if (!emailTokenService.isEmailVerified(email)) {
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
         }
 
-        // 사용자 조회
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByEmailOrThrow(email);
 
-        // 인증 토큰 사용 처리
         emailTokenService.markTokenAsUsed(email);
 
         return user.getClositId();
@@ -120,15 +100,12 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public void resetPassword(String email, String newPassword) {
-        // 이메일 인증 여부 확인
         if (!emailTokenService.isEmailVerified(email)) {
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
         }
 
-        // 사용자 조회
         User user = userUtil.getUserByEmailOrThrow(email);
 
-        // 비밀번호 변경
         String encodedPassword = passwordEncoder.encode(newPassword);
         user.updatePassword(encodedPassword);
 
@@ -138,10 +115,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO) {
-        // Client에서 전달된 idToken을 통해 유저 정보 가져옴
         String idToken = oauthLoginRequestDTO.getIdToken();
         OAuthUserInfo userInfo;
-
 
         if (socialLoginType == SocialLoginType.GOOGLE) { // GOOGLE
             userInfo = googleOAuthService.getUserInfo(idToken);
@@ -149,28 +124,25 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new GeneralException(ErrorStatus.NOT_SUPPORTED_SOCIAL_LOGIN);
         }
 
-        // 이미 가입된 유저인지 확인
         User user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> registerNewUser(userInfo));
 
-
-        // 토큰 생성
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
-
-        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
-
-        return new JwtResponse(user.getClositId(), accessToken, refreshToken);
+        return userUtil.issueJwtTokens(user);
     }
 
     @Override
     public void logout (String accessToken) {
         Claims claims = jwtTokenProvider.getClaims(accessToken);
-        String email = claims.getSubject();
+        String clositId = claims.getSubject();
 
-        RefreshToken refreshToken = refreshTokenRepository.findByUsername(email)
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(clositId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        blacklistAndRemoveRefreshToken(accessToken, refreshToken);
+    }
+
+    // Helper Methods
+    private void blacklistAndRemoveRefreshToken(String accessToken, RefreshToken refreshToken) {
         TokenBlackList blackedToken = TokenBlackList.builder()
                 .accessToken(accessToken)
                 .clositId(refreshToken.getUsername())
@@ -180,7 +152,6 @@ public class UserAuthServiceImpl implements UserAuthService {
         refreshTokenRepository.delete(refreshToken);
     }
 
-    // Register User info for social login
     private User registerNewUser(OAuthUserInfo userInfo) {
         String email = userInfo.getEmail();
         String name = userInfo.getName();
@@ -189,19 +160,18 @@ public class UserAuthServiceImpl implements UserAuthService {
             throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
         }
 
-        // closit id 임의 생성
-        String clositId = generateUniqueClositId(userInfo);
+        String clositId = userUtil.generateUniqueClositId(userInfo);
 
-        // Dummy password => 일반 로그인 사용 X
+        // 더미 비밀번호 생성
         String dummyPassword = UUID.randomUUID().toString();
-        String encodedPassword = passwordEncoder.encode(dummyPassword); // null 방지용;
+        String encodedPassword = passwordEncoder.encode(dummyPassword);
 
 
         User newUser = User.builder()
                 .email(email)
                 .name(name)
-                .profileImage(profileImage)
-                .password(encodedPassword) // Dummy password
+                .profileImage(defaultProfileImage)
+                .password(encodedPassword)
                 .provider(userInfo.getProvider().toString())
                 .clositId(clositId)
                 .role(Role.USER)
@@ -211,18 +181,4 @@ public class UserAuthServiceImpl implements UserAuthService {
         return userRepository.save(newUser);
     }
 
-    private String generateUniqueClositId(OAuthUserInfo userInfo) {
-        String base = userInfo.getName().replaceAll("\\s+", "").toLowerCase();
-        String suffix;
-        String randomClositId;
-
-        log.info("base : {}", base);
-        do {
-            suffix = UUID.randomUUID().toString().substring(0, 6);
-            randomClositId = base + "_" + suffix;
-        } while(userRepository.existsByClositId(randomClositId));
-
-        log.info("randomClositId : {}", randomClositId);
-        return randomClositId;
-    }
 }
