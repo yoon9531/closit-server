@@ -2,6 +2,7 @@ package UMC_7th.Closit.domain.battle.service.BattleLikeService;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleLikeRepository;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -27,7 +28,7 @@ public class BattleLikeQueryServiceImpl implements BattleLikeQueryService {
         Pageable pageable = PageRequest.of(page, 10);
 
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         Slice<BattleLike> battleLikeList = battleLikeRepository.findAllByBattleId(battleId, pageable);
 

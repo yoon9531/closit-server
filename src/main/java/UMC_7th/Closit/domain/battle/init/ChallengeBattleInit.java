@@ -3,6 +3,7 @@ package UMC_7th.Closit.domain.battle.init;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.post.entity.Post;
@@ -46,10 +47,10 @@ public class ChallengeBattleInit implements ApplicationRunner {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         Battle battle1 = battleRepository.findById(2L)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         Battle battle2 = battleRepository.findById(3L)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
 
         List<ChallengeBattle> challengeBattles = new ArrayList<>();

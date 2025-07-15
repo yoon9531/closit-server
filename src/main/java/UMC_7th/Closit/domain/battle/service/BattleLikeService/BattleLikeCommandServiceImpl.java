@@ -3,6 +3,7 @@ package UMC_7th.Closit.domain.battle.service.BattleLikeService;
 import UMC_7th.Closit.domain.battle.converter.BattleLikeConverter;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleLikeRepository;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -27,14 +28,14 @@ public class BattleLikeCommandServiceImpl implements BattleLikeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         BattleLike battleLike = BattleLikeConverter.toBattleLike(user, battle);
 
         // 배틀 좋아요 중복 생성 방지
         boolean battleLikeExist = battleLikeRepository.existsBattleLikeByBattleIdAndUserId(battleId, userId);
         if (battleLikeExist) {
-            throw new GeneralException(ErrorStatus.BATTLE_LIKES_ALREADY_EXIST);
+            throw new GeneralException(BattleErrorStatus.BATTLE_LIKES_ALREADY_EXIST);
         }
 
         battleRepository.incrementLikeCount(battleId);
@@ -44,10 +45,10 @@ public class BattleLikeCommandServiceImpl implements BattleLikeCommandService {
     @Override
     public void deleteBattleLike (Long userId, Long battleId) { // 배틀 좋아요 삭제
         battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         BattleLike battleLike = battleLikeRepository.findByUserIdAndBattleId(userId, battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_LIKES_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_LIKES_NOT_FOUND));
 
         battleRepository.decrementLikeCount(battleId);
         battleLikeRepository.delete(battleLike);
