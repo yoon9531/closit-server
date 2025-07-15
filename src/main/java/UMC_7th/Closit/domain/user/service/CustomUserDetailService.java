@@ -20,9 +20,8 @@ public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+    public UserDetails loadUserByUsername(String clositId) throws UsernameNotFoundException {
+        User user = userRepository.findByClositId(clositId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
