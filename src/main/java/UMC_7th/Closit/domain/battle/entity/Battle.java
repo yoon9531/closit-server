@@ -12,9 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Battle extends BaseEntity {
 
     @Id
@@ -22,41 +20,38 @@ public class Battle extends BaseEntity {
     @Column(name = "battle_id")
     private Long id;
 
-    @Column
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column
+    @Column(name = "description")
     private String description;
 
     @Column
     private LocalDateTime deadline;
 
-    @Column
+    @Column(name = "first_voting_cnt")
     private int firstVotingCnt = 0;
 
-    @Column
+    @Column(name = "second_voting_cnt")
     private int secondVotingCnt = 0;
 
-    @Column
+    @Column(name = "like_count")
     private int likeCount = 0;
 
-    @Column
+    @Column(name = "view_count")
     private int viewCount = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "battle_status", nullable = false)
     private BattleStatus battleStatus;
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<BattleLike> battleLikesList = new ArrayList<>();
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<BattleComment> battleCommentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Vote> voteList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,6 +61,31 @@ public class Battle extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id2")
     private Post post2;
+
+    @Builder
+    public Battle(
+            String title,
+            String description,
+            LocalDateTime deadline,
+            int firstVotingCnt,
+            int secondVotingCnt,
+            int likeCount,
+            int viewCount,
+            BattleStatus battleStatus,
+            Post post1,
+            Post post2
+    ) {
+        this.title = title;
+        this.description = description;
+        this.deadline = deadline;
+        this.firstVotingCnt = firstVotingCnt;
+        this.secondVotingCnt = secondVotingCnt;
+        this.likeCount = likeCount;
+        this.viewCount = viewCount;
+        this.battleStatus = battleStatus;
+        this.post1 = post1;
+        this.post2 = post2;
+    }
 
     public void challengeBattle() { // 배틀 신청
         this.battleStatus = BattleStatus.PENDING;
