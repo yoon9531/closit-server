@@ -9,7 +9,6 @@ import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
 import UMC_7th.Closit.domain.user.entity.User;
-import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
