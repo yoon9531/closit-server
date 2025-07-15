@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.battle.converter.BattleCommentConverter;
 import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleCommentRepository;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.user.entity.User;
@@ -29,18 +30,18 @@ public class BattleCmtCommandServiceImpl implements BattleCmtCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         BattleComment parentBattleComment = null;
 
         // 대댓글일 경우
         if (request.getParentCommentId() != null) {
             parentBattleComment = battleCommentRepository.findById(request.getParentCommentId())
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_COMMENT_NOT_FOUND));
+                    .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_COMMENT_NOT_FOUND));
 
             // 대댓글의 대댓글을 달려고 할 경우
             if (parentBattleComment.getParentBattleComment() != null) {
-                throw new GeneralException(ErrorStatus.BATTLE_COMMENT_DEPTH_EXCEEDED);
+                throw new GeneralException(BattleErrorStatus.BATTLE_COMMENT_DEPTH_EXCEEDED);
             }
         }
         BattleComment battleComment = BattleCommentConverter.toBattleComment(user, battle, parentBattleComment, request);
@@ -52,10 +53,10 @@ public class BattleCmtCommandServiceImpl implements BattleCmtCommandService {
     @Transactional
     public void deleteBattleComment(Long userId, Long battleId, Long battleCommentId) { // 배틀 댓글 삭제
         battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         BattleComment battleComment = battleCommentRepository.findById(battleCommentId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_COMMENT_NOT_FOUND));
 
         battleCommentRepository.delete(battleComment);
     }

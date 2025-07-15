@@ -4,6 +4,7 @@ import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
@@ -35,7 +36,7 @@ public class BattleQueryServiceImpl implements BattleQueryService {
         User user = securityUtil.getCurrentUser();
 
         Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         battleRepository.incrementViewCount(battle.getId());
 
@@ -62,10 +63,10 @@ public class BattleQueryServiceImpl implements BattleQueryService {
     @Override
     public ChallengeBattle getChallengeBattle(Long battleId, Long challengeBattleId) { // 챌린지 배틀 미리보기
         battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         challengeBattleRepository.findById(challengeBattleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
         return challengeBattleRepository.findByIdAndBattleId(challengeBattleId, battleId);
     }
