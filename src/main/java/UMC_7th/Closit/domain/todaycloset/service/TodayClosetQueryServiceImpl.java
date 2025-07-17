@@ -36,22 +36,27 @@ public class TodayClosetQueryServiceImpl implements TodayClosetQueryService {
     public Slice<TodayCloset> getTodayClosetList(Integer page, String sort) {
         Pageable pageable = PageRequest.of(page, 10);
 
+        // 현재 시점 기준 24시간 내
+        LocalDateTime start = LocalDateTime.now().minusHours(24);
+        LocalDateTime end = LocalDateTime.now();
+
         if (sort.equals("view")) {
-            return todayClosetRepository.findAllOrderByPostView(pageable);
+            return todayClosetRepository.findTodayClosetsOrderByPostView(start, end, pageable);
         } else if (sort.equals("latest")) {
-            return todayClosetRepository.findAllOrderByCreatedAt(pageable);
+            return todayClosetRepository.findTodayClosetsByCreatedAtBetween(start, end, pageable);
         } else {
             throw new GeneralException(ErrorStatus.INVALID_TODAY_CLOSET_SORT);
         }
     }
+
 
     @Override
     public List<TodayClosetResponseDTO.TodayClosetCandidateDTO> getTodayClosetCandidates() {
         User currentUser = securityUtil.getCurrentUser();
 
         // 오늘 날짜의 시작과 끝
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime start = LocalDateTime.now().minusHours(24);
+        LocalDateTime end = LocalDateTime.now();
 
         // 오늘 하루 동안 작성된 게시글 전체 조회
         List<Post> todaysPosts = postRepository.findAllByUserIdAndCreatedAtBetween(currentUser.getId(), start, end);
