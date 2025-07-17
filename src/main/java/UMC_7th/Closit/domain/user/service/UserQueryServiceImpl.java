@@ -34,19 +34,18 @@ public class UserQueryServiceImpl implements UserQueryService {
     private final PostRepository postRepository;
     private final SecurityUtil securityUtil;
     private final BlockRepository userBlockRepository;
+    private final UserUtil userUtil;
 
     @Override
     public Slice<Highlight> getHighlightList(String clositId, Pageable pageable) {
-        User user = userRepository.findByClositId(clositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         return highlightRepository.findAllByUser(user, pageable);
     }
 
     @Override
     public Slice<User> getFollowerList(String clositId, Pageable pageable) {
-        User user = userRepository.findByClositId(clositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         Slice<Follow> followers = followRepository.findByReceiver(user, pageable);
         return followers.map(Follow::getSender);
@@ -54,8 +53,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public Slice<User> getFollowingList(String clositId, Pageable pageable) {
-        User user = userRepository.findByClositId(clositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         Slice<Follow> followings = followRepository.findBySender(user, pageable);
         return followings.map(Follow::getReceiver);
@@ -63,8 +61,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public UserResponseDTO.UpdateUserInfoDTO getUserInfo(String clositId) {
-        User user = userRepository.findByClositId(clositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(clositId);
 
         long followerCount = followRepository.countByReceiver(user);
         long followingCount = followRepository.countBySender(user);
@@ -98,20 +95,20 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public Slice<String> getBlockedUserList(Pageable pageable) {
         User currentUser = securityUtil.getCurrentUser();
+
         return userBlockRepository.findBlockedUsersByBlocker(currentUser.getClositId(), pageable);
     }
 
     @Override
     public UserResponseDTO.IsBlockedDTO isBlockedBy(String targetClositId) {
-
-        User targetUser = userRepository.findByClositId(targetClositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        userUtil.getUserByClositIdOrThrow(targetClositId);
 
         User currentUser = securityUtil.getCurrentUser();
 
         return UserResponseDTO.IsBlockedDTO.builder()
                 .isBlocked(userBlockRepository.existsByBlockerIdAndBlockedId(currentUser.getClositId(), targetClositId))
                 .build();
+
     }
 
     @Override

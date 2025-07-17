@@ -12,7 +12,6 @@ import UMC_7th.Closit.domain.user.entity.Block;
 import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
-import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
@@ -40,6 +39,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtil securityUtil;
     private final S3Service s3Service;
+    private final UserUtil userUtil;
 
     @Value("${cloud.aws.s3.default-profile-image}")
     private String defaultProfileImage;
@@ -108,15 +108,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public User registerProfileImage (String imageUrl) {
-
-        // 현재 로그인된 사용자 정보
         User currentUser = securityUtil.getCurrentUser();
 
         // 사용자가 프로필 이미지를 삭제하려는 경우
         if (imageUrl == null || imageUrl.isEmpty()) {
-            log.info("file is null or empty");
             s3Service.deleteFile(currentUser.getProfileImage());
-            currentUser.updateProfileImage(null);
+            currentUser.updateProfileImage(defaultProfileImage);
             return currentUser;
         }
 
@@ -138,24 +135,22 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public User updateUserInfo(UserRequestDTO.UpdateUserDTO updateUserDTO) {
-
         User currentUser = securityUtil.getCurrentUser();
-        Boolean isChanged = false;
+
+        if (!passwordEncoder.matches(updateUserDTO.getPassword(), currentUser.getPassword())) {
+            throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
+        }
+
+        boolean isChanged = false;
 
         if (updateUserDTO.getName() != null) {
             currentUser.setName(updateUserDTO.getName());
             isChanged = true;
         }
-
-        if (!passwordEncoder.matches(updateUserDTO.getCurrentPassword(), currentUser.getPassword())) {
-            throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
-        } else {
-            if (updateUserDTO.getPassword() != null) {
-                currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
-                isChanged = true;
-            }
+        if (updateUserDTO.getPassword() != null) {
+            currentUser.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+            isChanged = true;
         }
-
         if (updateUserDTO.getBirth() != null) {
             currentUser.setBirth(updateUserDTO.getBirth());
             isChanged = true;
@@ -173,24 +168,10 @@ public class UserCommandServiceImpl implements UserCommandService {
         String blockedClositId = blockUserDTO.getBlockedClositId();
 
         User blocker = securityUtil.getCurrentUser();
-        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
-                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User blocked = userUtil.getUserByClositIdOrThrow(blockedClositId);
 
-        // Throw if there already exist block record
-        if (blockRepository.existsByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())) {
-            throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
-        }
-
-        // 차단된 사용자가 차단한 사용자를 팔로우 했을 때 팔로우 관계 삭제
-        Follow followBlockedtoBlocker = followRepository.findBySenderAndReceiver(blocked, blocker);
-        if (followBlockedtoBlocker != null) {
-            followRepository.delete(followBlockedtoBlocker);
-        }
-
-        Follow followBlockertoBlocked = followRepository.findBySenderAndReceiver(blocker, blocked);
-        if (followBlockertoBlocked != null) {
-            followRepository.delete(followBlockertoBlocked);
-        }
+        validateBlockOperation(blocker, blocked);
+        removeFollowRelationships(blocked, blocker);
 
         Block userBlock = Block.builder()
                 .blockerId(blocker.getClositId())
@@ -201,29 +182,21 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    // Target이 requester(나)를 차단했는지 확인
     public boolean isBlockedBy(String targetClositId, String requesterClositId) {
-        User targetUser = userRepository.findByClositId(targetClositId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        User requesterUser = userRepository.findByClositId(requesterClositId).orElseThrow(
-                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        // targetClositId와 requesterClositId가 존재하는 지 확인
-        if (targetUser == null || requesterUser == null) {
+        if (!userRepository.existsByClositId(targetClositId) || !userRepository.existsByClositId(requesterClositId)) {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
         }
 
         return blockRepository.existsByBlockerIdAndBlockedId(targetClositId, requesterClositId);
     }
 
+
     @Override
     public void unblockUser (UserRequestDTO.BlockUserDTO blockUserDTO) {
         String blockedClositId = blockUserDTO.getBlockedClositId();
 
         User blocker = securityUtil.getCurrentUser();
-        User blocked = userRepository.findByClositId(blockedClositId).orElseThrow(
-                () -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User blocked = userUtil.getUserByClositIdOrThrow(blockedClositId);
 
         Block userBlock = blockRepository.findByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_BLOCKED));
@@ -234,9 +207,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public void cancelWithdrawal () {
         User currentUser = securityUtil.getCurrentUser();
-
-        User persistentUser = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User persistentUser = userUtil.getUserByClositIdOrThrow(currentUser.getClositId());
 
         if (persistentUser.getWithdrawalRequestedAt().plusDays(7).isBefore(java.time.LocalDateTime.now())) {
             throw new UserHandler(ErrorStatus.WITHDRAWAL_PERIOD_EXPIRED);
@@ -250,8 +221,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public void deactivateUser(UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
         User currentUser = securityUtil.getCurrentUser();
-        User user = userRepository.findByClositId(deactivateUserDTO.getClositId())
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        User user = userUtil.getUserByClositIdOrThrow(deactivateUserDTO.getClositId());
 
         // 관리자 계정만 비활성화 가능
         if (currentUser.getRole() != ADMIN) {
@@ -259,5 +229,25 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
         user.deactivate();
+    }
+
+    // Helper Methods
+
+    private void removeFollowRelationships(User blocked, User blocker) {
+        Follow followBlockedtoBlocker = followRepository.findBySenderAndReceiver(blocked, blocker);
+        if (followBlockedtoBlocker != null) {
+            followRepository.delete(followBlockedtoBlocker);
+        }
+
+        Follow followBlockertoBlocked = followRepository.findBySenderAndReceiver(blocker, blocked);
+        if (followBlockertoBlocked != null) {
+            followRepository.delete(followBlockertoBlocked);
+        }
+    }
+
+    private void validateBlockOperation(User blocker, User blocked) {
+        if (blockRepository.existsByBlockerIdAndBlockedId(blocker.getClositId(), blocked.getClositId())) {
+            throw new UserHandler(ErrorStatus.USER_ALREADY_BLOCKED);
+        }
     }
 }

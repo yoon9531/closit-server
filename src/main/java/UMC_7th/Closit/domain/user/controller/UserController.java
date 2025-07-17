@@ -1,7 +1,5 @@
 package UMC_7th.Closit.domain.user.controller;
 
-import UMC_7th.Closit.domain.highlight.entity.Highlight;
-import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.user.converter.UserConverter;
 import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
@@ -11,7 +9,6 @@ import UMC_7th.Closit.domain.user.service.UserQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.validation.annotation.CheckBlocked;
 import UMC_7th.Closit.global.s3.S3Service;
-import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class UserController {
 
-    private final SecurityUtil securityUtil;
     private final S3Service s3Service;
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
@@ -38,10 +34,16 @@ public class UserController {
     @Value("${cloud.aws.s3.path.profileImage}")
     private String profileImagePath;
 
-    @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
-    @PatchMapping()
-    public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
+    @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
+    @GetMapping("/{closit_id}")
+    @CheckBlocked(targetIdParam = "closit_id")
+    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable("closit_id") String closit_id) {
+        return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
+    }
 
+    @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
+    @PatchMapping("/me")
+    public ApiResponse<UserResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody UserRequestDTO.UpdateUserDTO updateUserDTO) {
         User userInfo = userCommandService.updateUserInfo(updateUserDTO);
 
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
@@ -60,8 +62,6 @@ public class UserController {
                     4. 성공 후, 사용자 프로필 이미지 등록 API에 Presigned Url의 쿼리 파라미터를 제외하고 업로드 요청
                     """)
     public ApiResponse<UserResponseDTO.CreatePresignedUrlDTO> getPresignedUrl(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
-        User user = securityUtil.getCurrentUser();
-
         String imageUrl = s3Service.getPresignedUrl(profileImagePath, request.getImageUrl());
 
         return ApiResponse.onSuccess(UserConverter.createPresignedUrlDTO(imageUrl));
@@ -71,114 +71,8 @@ public class UserController {
     @PatchMapping(value = "/profile-image")
     public ApiResponse<UserResponseDTO.UserInfoDTO> registerProfileImage(@RequestBody @Valid UserRequestDTO.UpdateProfileImageDTO request) {
         User userInfo = userCommandService.registerProfileImage(request.getImageUrl());
+
         return ApiResponse.onSuccess(UserConverter.toUserInfoDTO(userInfo));
-    }
-
-    @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
-    @GetMapping("/{closit_id}")
-    @CheckBlocked(targetIdParam = "closit_id")
-    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable("closit_id") String closit_id) {
-        return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
-    }
-
-    @Operation(summary = "사용자 차단", description = "특정 사용자를 차단합니다.")
-    @PostMapping("/block")
-    public ApiResponse<UserResponseDTO.UserBlockResponseDTO> blockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
-        UserResponseDTO.UserBlockResponseDTO userBlockResponseDTO = userCommandService.blockUser(blockUserDTO);
-        return ApiResponse.onSuccess(userBlockResponseDTO);
-    }
-
-    @Operation(summary = "사용자 차단 해제", description = "특정 사용자의 차단을 해제합니다.")
-    @DeleteMapping("/block")
-    public ApiResponse<String> unblockUser(@RequestBody UserRequestDTO.BlockUserDTO blockUserDTO) {
-        userCommandService.unblockUser(blockUserDTO);
-        return ApiResponse.onSuccess("User unblocked successfully");
-    }
-
-    @Operation(summary = "사용자 차단 목록 조회", description = "특정 사용자의 차단 목록을 조회합니다.")
-    @GetMapping("/blocks")
-    public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Slice<String> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
-        return ApiResponse.onSuccess(UserConverter.toUserBlockListDTO(blockedUserSlice));
-    }
-
-    @Operation(summary = "사용자 차단 여부 조회", description = "특정 사용자의 차단 여부를 합니다.")
-    @GetMapping("/block")
-    public ApiResponse<UserResponseDTO.IsBlockedDTO> isBlockedBy(@RequestParam("closit_id") String closit_id) {
-        return ApiResponse.onSuccess(userQueryService.isBlockedBy(closit_id));
-    }
-
-    @Operation(summary = "사용자의 팔로워 목록 조회",
-            description = """
-            ## 사용자의 팔로워 목록 조회
-            특정 사용자의 팔로워 목록을 페이징하여 조회합니다.
-
-            ### PathVariable
-            - closit_id: 팔로워 목록을 조회할 사용자의 Closit ID
-
-            ### Request Parameters
-            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
-            - size (기본값: 10): 페이지당 항목 수
-            """)
-    @CheckBlocked(targetIdParam = "closit_id")
-    @GetMapping("/{closit_id}/followers")
-    public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
-            @PathVariable("closit_id") String closit_id,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Slice<User> followerSlice = userQueryService.getFollowerList(closit_id, PageRequest.of(page, size));
-        return ApiResponse.onSuccess(UserConverter.toUserFollowerSliceDTO(followerSlice));
-    }
-
-    @Operation(summary = "사용자의 팔로잉 목록 조회",
-            description = """
-            ## 사용자의 팔로잉 목록 조회
-            특정 사용자가 팔로우한 유저 목록(팔로잉 목록)을 페이징하여 조회합니다.
-
-            ### PathVariable
-            - closit_id: 팔로잉 목록을 조회할 사용자의 Closit ID
-
-            ### Request Parameters
-            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
-            - size (기본값: 10): 페이지당 항목 수
-            """)
-    @CheckBlocked(targetIdParam = "closit_id")
-    @GetMapping("/{closit_id}/following")
-    public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
-            @PathVariable("closit_id") String closit_id,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Slice<User> followingSlice = userQueryService.getFollowingList(closit_id, PageRequest.of(page, size));
-        return ApiResponse.onSuccess(UserConverter.toUserFollowingSliceDTO(followingSlice));
-    }
-
-    @Operation(summary = "사용자의 하이라이트 목록 조회",
-            description = """
-            ## 사용자의 하이라이트 목록 조회
-            특정 사용자가 등록한 하이라이트 게시글 목록을 페이징하여 조회합니다.
-
-            ### PathVariable
-            - closit_id: 하이라이트 목록을 조회할 사용자의 Closit ID
-
-            ### Request Parameters
-            - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
-            - size (기본값: 10): 페이지당 항목 수
-            """)
-    @CheckBlocked(targetIdParam = "closit_id")
-    @GetMapping("/{closit_id}/highlights")
-    public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
-            @PathVariable("closit_id") String closit_id,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-
-        Slice<Highlight> highlightSlice = userQueryService.getHighlightList(closit_id, PageRequest.of(page, size));
-
-        return ApiResponse.onSuccess(UserConverter.toUserHighlightSliceDTO(highlightSlice));
     }
 
     @Operation(summary = "사용자의 데일리 미션 완료 여부 조회",
@@ -202,45 +96,6 @@ public class UserController {
     @GetMapping("/isunique/{closit_id}")
     public ApiResponse<Boolean> isUniqueClositId(@PathVariable("closit_id") String closit_id) {
         return ApiResponse.onSuccess(userCommandService.isClositIdUnique(closit_id));
-    }
-
-    @GetMapping("/{closit_id}/recent-post")
-    @CheckBlocked(targetIdParam = "closit_id")
-    @Operation(summary = "사용자의 최근 게시물 조회",
-            description = """
-            ## 특정 사용자의 최근 게시글 조회
-            ### PathVariable
-            closit_id [사용자의 closit ID]
-            ### Parameters
-            page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
-            """)
-    public ApiResponse<UserResponseDTO.UserRecentPostListDTO> getRecentPostList(@PathVariable("closit_id") String closit_id,
-                                                                                @RequestParam(name = "page") Integer page) {
-
-        Slice<Post> recentPostList = userQueryService.getRecentPostList(closit_id, page);
-
-        return ApiResponse.onSuccess(UserConverter.userRecentPostListDTO(recentPostList));
-    }
-
-    @Operation(summary = "사용자 탈퇴 취소", description = "탈퇴 유예 기간 내 탈퇴를 취소(계정 복구)합니다.")
-    @PostMapping("/withdrawal/cancel")
-    public ApiResponse<String> cancelWithdrawal() {
-        userCommandService.cancelWithdrawal();
-        return ApiResponse.onSuccess("탈퇴가 취소되어 계정이 복구되었습니다.");
-    }
-
-    @Operation(summary = "사용자 탈퇴 요청", description = "사용자가 탈퇴를 요청하면 7일 유예 상태로 변경됩니다.")
-    @PostMapping("/withdrawal")
-    public ApiResponse<String> requestWithdrawal() {
-        userCommandService.deleteUser();
-        return ApiResponse.onSuccess("탈퇴 요청이 정상적으로 처리되었습니다. 7일 이내에 취소하지 않으면 계정이 완전히 삭제됩니다.");
-    }
-
-    @Operation(summary = "사용자 비활성화", description = "특정 사용자를 비활성화합니다.")
-    @PatchMapping("/deactivate")
-    public ApiResponse<String> deactivateUser(@RequestBody @Valid UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
-        userCommandService.deactivateUser(deactivateUserDTO);
-        return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
     }
 
     @Operation(summary = "사용자 검색",
