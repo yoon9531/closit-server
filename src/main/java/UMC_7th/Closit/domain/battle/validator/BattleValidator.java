@@ -1,6 +1,7 @@
 package UMC_7th.Closit.domain.battle.validator;
 
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
@@ -50,9 +51,9 @@ public class BattleValidator {
         }
     }
 
-    public void validateVoteBattle(Battle battle, Long userId, BattleRequestDTO.VoteBattleDTO request) {
+    public void validateVoteBattle(Battle battle, Long userId, VoteBattleRequest request) {
         // 배틀이 아닌 게시글에 투표 불가능
-        if (isInvalidBattlePost(battle, request.getPostId())) {
+        if (isInvalidBattlePost(battle, request.postId())) {
             throw new GeneralException(BattleErrorStatus.POST_NOT_BATTLE);
         }
 

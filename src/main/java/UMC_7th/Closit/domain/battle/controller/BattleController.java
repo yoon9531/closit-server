@@ -1,8 +1,11 @@
 package UMC_7th.Closit.domain.battle.controller;
 
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.CreateBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.VoteBattleResponse;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
@@ -36,14 +39,14 @@ public class BattleController {
             post_id [게시글 ID] \n
             title [배틀 게시글 제목]
             """)
-    public ApiResponse<BattleResponseDTO.CreateBattleResultDTO> createBattle(@RequestBody @Valid BattleRequestDTO.CreateBattleDTO request) {
+    public ApiResponse<CreateBattleResponse> createBattle(@RequestBody @Valid CreateBattleRequest request) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Battle battle = battleCommandService.createBattle(userId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.createBattleResultDTO(battle));
+        return ApiResponse.onSuccess(CreateBattleResponse.from(battle));
     }
 
     @PostMapping("/{battleId}/voting")
@@ -55,15 +58,16 @@ public class BattleController {
             ### RequestBody
             post_id [게시글 ID]
             """)
-    public ApiResponse<BattleResponseDTO.VoteBattleResultDTO> voteBattle(@RequestBody @Valid BattleRequestDTO.VoteBattleDTO request,
-                                                                         @PathVariable("battleId") Long battleId) {
-
+    public ApiResponse<VoteBattleResponse> voteBattle(
+            @RequestBody @Valid VoteBattleRequest request,
+            @PathVariable("battleId") Long battleId
+    ) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Vote voteBattle = battleCommandService.voteBattle(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.voteBattleResultDTO(voteBattle));
+        return ApiResponse.onSuccess(VoteBattleResponse.from(voteBattle));
     }
 
     @GetMapping()
