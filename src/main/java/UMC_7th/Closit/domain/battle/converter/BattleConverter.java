@@ -1,7 +1,8 @@
 package UMC_7th.Closit.domain.battle.converter;
 
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
@@ -14,21 +15,12 @@ import java.util.stream.Collectors;
 
 public class BattleConverter {
 
-    public static Battle toBattle(Post post, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
+    public static Battle toBattle(Post post, CreateBattleRequest request) { // 배틀 생성
         return Battle.builder()
                 .post1(post)
-                .title(request.getTitle())
-                .description(request.getDescription())
+                .title(request.title())
+                .description(request.description())
                 .battleStatus(BattleStatus.INACTIVE)
-                .build();
-    }
-
-    public static BattleResponseDTO.CreateBattleResultDTO createBattleResultDTO(Battle battle) {
-        return BattleResponseDTO.CreateBattleResultDTO.builder()
-                .battleId(battle.getId())
-                .thumbnail(battle.getPost1().getFrontImage())
-                .battleStatus(battle.getBattleStatus())
-                .createdAt(battle.getCreatedAt())
                 .build();
     }
 
@@ -40,45 +32,10 @@ public class BattleConverter {
                 .build();
     }
 
-    public static BattleResponseDTO.ChallengeBattleResultDTO challengeBattleResultDTO(ChallengeBattle challengeBattle) {
-        return BattleResponseDTO.ChallengeBattleResultDTO.builder()
-                .challengeBattleId(challengeBattle.getId())
-                .firstClositId(challengeBattle.getBattle().getPost1().getUser().getClositId())
-                .firstPostId(challengeBattle.getBattle().getPost1().getId())
-                .firstPostFrontImage(challengeBattle.getBattle().getPost1().getFrontImage())
-                .firstPostBackImage(challengeBattle.getBattle().getPost1().getBackImage())
-                .secondClositId(challengeBattle.getPost().getUser().getClositId())
-                .secondPostId(challengeBattle.getPost().getId())
-                .secondPostFrontImage(challengeBattle.getPost().getFrontImage())
-                .secondPostBackImage(challengeBattle.getPost().getBackImage())
-                .challengeStatus(challengeBattle.getChallengeStatus())
-                .createdAt(challengeBattle.getCreatedAt())
-                .build();
-    }
-
-    public static BattleResponseDTO.ChallengeDecisionDTO challengeDecisionDTO(Battle battle) {
-        return BattleResponseDTO.ChallengeDecisionDTO.builder()
-                .battleStatus(battle.getBattleStatus())
-                .deadline(battle.getDeadline())
-                .updatedAt(battle.getUpdatedAt())
-                .build();
-    }
-
-    public static Vote toVote(User user, BattleRequestDTO.VoteBattleDTO request) { // 배틀 투표
+    public static Vote toVote(User user, VoteBattleRequest request) { // 배틀 투표
         return Vote.builder()
                 .user(user)
-                .votedPostId(request.getPostId())
-                .build();
-    }
-
-    public static BattleResponseDTO.VoteBattleResultDTO voteBattleResultDTO(Vote vote) {
-        return BattleResponseDTO.VoteBattleResultDTO.builder()
-                .battleId(vote.getBattle().getId())
-                .firstClositId(vote.getBattle().getPost1().getUser().getClositId())
-                .firstVotingCnt(vote.getBattle().getFirstVotingCnt())
-                .secondClositId(vote.getBattle().getPost2().getUser().getClositId())
-                .secondVotingCnt(vote.getBattle().getSecondVotingCnt())
-                .createdAt(vote.getBattle().getCreatedAt())
+                .votedPostId(request.postId())
                 .build();
     }
 

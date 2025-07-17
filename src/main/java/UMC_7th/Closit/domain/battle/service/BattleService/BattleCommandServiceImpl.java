@@ -1,7 +1,10 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
@@ -40,8 +43,8 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     private final BattleValidator battleValidator;
 
     @Override
-    public Battle createBattle (Long userId, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
-        Post post = postRepository.findById(request.getPostId())
+    public Battle createBattle (Long userId, CreateBattleRequest request) { // 배틀 생성
+        Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         Battle battle = BattleConverter.toBattle(post, request);
@@ -55,14 +58,14 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public ChallengeBattle challengeBattle (Long userId, Long battleId, BattleRequestDTO.ChallengeBattleDTO request) { // 배틀 신청
+    public ChallengeBattle challengeBattle (Long userId, Long battleId, ChallengeBattleRequest request) { // 배틀 신청
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        Post post = postRepository.findById(request.getPostId())
+        Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        battleValidator.validateChallengeBattle(battle, post, userId, request.getPostId());
+        battleValidator.validateChallengeBattle(battle, post, userId, request.postId());
 
         ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
 
@@ -72,11 +75,11 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle acceptChallenge (Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request) { // 배틀 수락
+    public Battle acceptChallenge (Long userId, Long battleId, DecideChallengeRequest request) { // 배틀 수락
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
+        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.challengeBattleId())
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
         challengeBattleRepository.updateChallengeStatus(battle, challengeBattle.getId());
@@ -89,11 +92,11 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle rejectChallenge (Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request) { // 배틀 거절
+    public Battle rejectChallenge (Long userId, Long battleId, DecideChallengeRequest request) { // 배틀 거절
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
+        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.challengeBattleId())
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
         battleValidator.validateChallengeBattleStatus(userId, battle);
@@ -104,14 +107,14 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Vote voteBattle (Long userId, Long battleId, BattleRequestDTO.VoteBattleDTO request) { // 배틀 투표
+    public Vote voteBattle (Long userId, Long battleId, VoteBattleRequest request) { // 배틀 투표
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        postRepository.findById(request.getPostId())
+        postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         battleValidator.validateVoteBattle(battle, userId, request);
@@ -128,7 +131,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         battle.updateVotingCnt(updatedBattle.getFirstVotingCnt(), updatedBattle.getSecondVotingCnt());
 
-        vote.voteBattle(user, battle, request.getPostId());
+        vote.voteBattle(user, battle, request.postId());
 
         return voteRepository.save(vote);
     }

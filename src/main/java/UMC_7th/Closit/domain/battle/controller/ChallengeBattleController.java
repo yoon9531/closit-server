@@ -1,8 +1,11 @@
 package UMC_7th.Closit.domain.battle.controller;
 
 import UMC_7th.Closit.domain.battle.converter.BattleConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.ChallengeBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.DecideChallengeResponse;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
@@ -36,15 +39,16 @@ public class ChallengeBattleController {
             ### RequestBody
             post_id [게시글 ID]
             """)
-    public ApiResponse<BattleResponseDTO.ChallengeBattleResultDTO> challengeBattle(@RequestBody @Valid BattleRequestDTO.ChallengeBattleDTO request,
-                                                                                   @PathVariable("battleId") Long battleId) {
-
+    public ApiResponse<ChallengeBattleResponse> challengeBattle(
+            @RequestBody @Valid ChallengeBattleRequest request,
+            @PathVariable("battleId") Long battleId
+    ) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         ChallengeBattle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
+        return ApiResponse.onSuccess(ChallengeBattleResponse.from(challengeBattle));
     }
 
     @GetMapping("/{battleId}/challenge/{challengeBattleId}")
@@ -65,14 +69,16 @@ public class ChallengeBattleController {
             ### RequestBody
             challengeBattleId [챌린지 배틀 ID]
             """)
-    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
-                                                                               @PathVariable("battleId") Long battleId) {
+    public ApiResponse<DecideChallengeResponse> acceptChallenge(
+            @RequestBody @Valid DecideChallengeRequest request,
+            @PathVariable("battleId") Long battleId
+    ) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
+        return ApiResponse.onSuccess(DecideChallengeResponse.from(battle));
     }
 
     @PatchMapping("/{battleId}/challenge/reject")
@@ -84,14 +90,16 @@ public class ChallengeBattleController {
             ### RequestBody
             challengeBattleId [챌린지 배틀 ID]
             """)
-    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> rejectChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
-                                                                               @PathVariable("battleId") Long battleId) {
+    public ApiResponse<DecideChallengeResponse> rejectChallenge(
+            @RequestBody @Valid DecideChallengeRequest request,
+            @PathVariable("battleId") Long battleId
+    ) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Battle battle = battleCommandService.rejectChallenge(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
+        return ApiResponse.onSuccess(DecideChallengeResponse.from(battle));
     }
 
     @GetMapping("/challenge")
