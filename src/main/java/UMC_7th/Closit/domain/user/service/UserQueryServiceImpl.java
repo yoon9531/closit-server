@@ -109,11 +109,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         User currentUser = securityUtil.getCurrentUser();
 
-        UserResponseDTO.IsBlockedDTO isblockedDTO = UserResponseDTO.IsBlockedDTO.builder()
-                .isBlocked(userBlockRepository.existsByBlockerIdAndBlockedId(targetClositId, currentUser.getClositId()))
+        return UserResponseDTO.IsBlockedDTO.builder()
+                .isBlocked(userBlockRepository.existsByBlockerIdAndBlockedId(currentUser.getClositId(), targetClositId))
                 .build();
-
-        return isblockedDTO;
     }
 
     @Override
