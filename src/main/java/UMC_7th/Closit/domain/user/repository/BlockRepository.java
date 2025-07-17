@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
-    boolean existsByBlockerIdAndBlockedId(String blocker, String blocked);
+    boolean existsByBlockerIdAndBlockedId(String blockerId, String blockedId);
 
     Optional<Block> findByBlockerIdAndBlockedId (String blockerId, String blockedId);
 
