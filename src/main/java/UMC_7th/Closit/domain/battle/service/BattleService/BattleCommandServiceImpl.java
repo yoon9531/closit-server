@@ -1,6 +1,6 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
-import UMC_7th.Closit.domain.battle.converter.BattleConverter;
+import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
@@ -47,7 +47,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
         Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        Battle battle = BattleConverter.toBattle(post, request);
+        Battle battle = BattleMapper.toBattle(post, request);
 
         // 본인의 게시글이 아닐 경우, 배틀 게시글로 업로드 불가능
         if (!post.getUser().getId().equals(userId)) {
@@ -67,7 +67,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         battleValidator.validateChallengeBattle(battle, post, userId, request.postId());
 
-        ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
+        ChallengeBattle challengeBattle = BattleMapper.toChallengeBattle(battle, post);
 
         notiCommandService.challengeBattleNotification(challengeBattle);
 
@@ -119,7 +119,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
 
         battleValidator.validateVoteBattle(battle, userId, request);
 
-        Vote vote = BattleConverter.toVote(user, request);
+        Vote vote = BattleMapper.toVote(user, request);
 
         if (battle.getPost1().getId().equals(vote.getVotedPostId())) { // 첫 번째 게시글에 투표
             battleRepository.incrementFirstVotingCnt(battleId);

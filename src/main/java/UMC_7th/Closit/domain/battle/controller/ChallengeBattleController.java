@@ -1,11 +1,12 @@
 package UMC_7th.Closit.domain.battle.controller;
 
-import UMC_7th.Closit.domain.battle.converter.BattleConverter;
+import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.ChallengeBattleResponse;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.DecideChallengeResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.GetChallengeBattleResponse;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
@@ -53,11 +54,11 @@ public class ChallengeBattleController {
 
     @GetMapping("/{battleId}/challenge/{challengeBattleId}")
     @Operation(summary = "챌린지 배틀 미리보기")
-    public ApiResponse<BattleResponseDTO.GetChallengeBattleDTO> getChallengeBattle(@PathVariable("battleId") Long battleId,
-                                                                                   @PathVariable("challengeBattleId") Long challengeBattleId) {
+    public ApiResponse<GetChallengeBattleResponse> getChallengeBattle(@PathVariable("battleId") Long battleId,
+                                                                      @PathVariable("challengeBattleId") Long challengeBattleId) {
         ChallengeBattle challengeBattle = battleQueryService.getChallengeBattle(battleId, challengeBattleId);
 
-        return ApiResponse.onSuccess(BattleConverter.getChallengeBattleDTO(challengeBattle));
+        return ApiResponse.onSuccess(GetChallengeBattleResponse.from(challengeBattle));
     }
 
     @PatchMapping("/{battleId}/challenge/accept")
@@ -113,6 +114,6 @@ public class ChallengeBattleController {
 
         Slice<Battle> challengeBattleList = battleQueryService.getChallengeBattleList(page);
 
-        return ApiResponse.onSuccess(BattleConverter.challengeBattlePreviewListDTO(challengeBattleList));
+        return ApiResponse.onSuccess(BattleMapper.challengeBattlePreviewListDTO(challengeBattleList));
     }
 }
