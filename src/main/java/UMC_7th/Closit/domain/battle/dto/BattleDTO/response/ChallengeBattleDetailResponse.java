@@ -5,7 +5,7 @@ import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
 import lombok.Builder;
 
 @Builder
-public record GetChallengeBattleResponse(
+public record ChallengeBattleDetailResponse(
         Long battleId,
         Long challengeBattleId,
         String title,
@@ -22,8 +22,8 @@ public record GetChallengeBattleResponse(
         String secondPostBackImage,
         ChallengeStatus challengeStatus
 ) {
-    public static GetChallengeBattleResponse from(ChallengeBattle challengeBattle) {
-        return GetChallengeBattleResponse.builder()
+    public static ChallengeBattleDetailResponse from(ChallengeBattle challengeBattle) {
+        return ChallengeBattleDetailResponse.builder()
                 .battleId(challengeBattle.getBattle().getId())
                 .challengeBattleId(challengeBattle.getId())
                 .title(challengeBattle.getBattle().getTitle())

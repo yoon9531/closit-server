@@ -2,11 +2,11 @@ package UMC_7th.Closit.domain.battle.controller;
 
 import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.CreateBattleResponse;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.GetBattleDetailResponse;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.VoteBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleCreateRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleVoteRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleCreateResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleDetailResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleVoteResponse;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
@@ -40,14 +40,14 @@ public class BattleController {
             post_id [게시글 ID] \n
             title [배틀 게시글 제목]
             """)
-    public ApiResponse<CreateBattleResponse> createBattle(@RequestBody @Valid CreateBattleRequest request) {
+    public ApiResponse<BattleCreateResponse> createBattle(@RequestBody @Valid BattleCreateRequest request) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Battle battle = battleCommandService.createBattle(userId, request);
 
-        return ApiResponse.onSuccess(CreateBattleResponse.from(battle));
+        return ApiResponse.onSuccess(BattleCreateResponse.from(battle));
     }
 
     @PostMapping("/{battleId}/voting")
@@ -59,8 +59,8 @@ public class BattleController {
             ### RequestBody
             post_id [게시글 ID]
             """)
-    public ApiResponse<VoteBattleResponse> voteBattle(
-            @RequestBody @Valid VoteBattleRequest request,
+    public ApiResponse<BattleVoteResponse> voteBattle(
+            @RequestBody @Valid BattleVoteRequest request,
             @PathVariable("battleId") Long battleId
     ) {
         User user = securityUtil.getCurrentUser();
@@ -68,7 +68,7 @@ public class BattleController {
 
         Vote voteBattle = battleCommandService.voteBattle(userId, battleId, request);
 
-        return ApiResponse.onSuccess(VoteBattleResponse.from(voteBattle));
+        return ApiResponse.onSuccess(BattleVoteResponse.from(voteBattle));
     }
 
     @GetMapping()
@@ -96,9 +96,9 @@ public class BattleController {
             ### PathVariable
             battleId - [조회할 배틀 ID]
             """)
-    public ApiResponse<GetBattleDetailResponse> getBattleDetail(@PathVariable("battleId") Long battleId) {
+    public ApiResponse<BattleDetailResponse> getBattleDetail(@PathVariable("battleId") Long battleId) {
         Battle battle = battleQueryService.getBattleDetail(battleId);
-        return ApiResponse.onSuccess(GetBattleDetailResponse.from(battle));
+        return ApiResponse.onSuccess(BattleDetailResponse.from(battle));
     }
 
     @GetMapping("/voted-posts")

@@ -7,13 +7,13 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record DecideChallengeResponse(
+public record ChallengeBattleDeicisionResponse(
         BattleStatus battleStatus,
         LocalDateTime deadline,
         LocalDateTime updatedAt
 ) {
-    public static DecideChallengeResponse from(Battle battle) {
-        return DecideChallengeResponse.builder()
+    public static ChallengeBattleDeicisionResponse from(Battle battle) {
+        return ChallengeBattleDeicisionResponse.builder()
                 .battleStatus(battle.getBattleStatus())
                 .deadline(battle.getDeadline())
                 .updatedAt(battle.getUpdatedAt())

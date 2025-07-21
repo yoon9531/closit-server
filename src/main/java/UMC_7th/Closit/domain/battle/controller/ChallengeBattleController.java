@@ -3,10 +3,10 @@ package UMC_7th.Closit.domain.battle.controller;
 import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleDecisionRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.ChallengeBattleResponse;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.DecideChallengeResponse;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.GetChallengeBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.ChallengeBattleDeicisionResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.ChallengeBattleDetailResponse;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
@@ -54,11 +54,11 @@ public class ChallengeBattleController {
 
     @GetMapping("/{battleId}/challenge/{challengeBattleId}")
     @Operation(summary = "챌린지 배틀 미리보기")
-    public ApiResponse<GetChallengeBattleResponse> getChallengeBattle(@PathVariable("battleId") Long battleId,
-                                                                      @PathVariable("challengeBattleId") Long challengeBattleId) {
+    public ApiResponse<ChallengeBattleDetailResponse> getChallengeBattle(@PathVariable("battleId") Long battleId,
+                                                                         @PathVariable("challengeBattleId") Long challengeBattleId) {
         ChallengeBattle challengeBattle = battleQueryService.getChallengeBattle(battleId, challengeBattleId);
 
-        return ApiResponse.onSuccess(GetChallengeBattleResponse.from(challengeBattle));
+        return ApiResponse.onSuccess(ChallengeBattleDetailResponse.from(challengeBattle));
     }
 
     @PatchMapping("/{battleId}/challenge/accept")
@@ -70,8 +70,8 @@ public class ChallengeBattleController {
             ### RequestBody
             challengeBattleId [챌린지 배틀 ID]
             """)
-    public ApiResponse<DecideChallengeResponse> acceptChallenge(
-            @RequestBody @Valid DecideChallengeRequest request,
+    public ApiResponse<ChallengeBattleDeicisionResponse> acceptChallenge(
+            @RequestBody @Valid ChallengeBattleDecisionRequest request,
             @PathVariable("battleId") Long battleId
     ) {
         User user = securityUtil.getCurrentUser();
@@ -79,7 +79,7 @@ public class ChallengeBattleController {
 
         Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
 
-        return ApiResponse.onSuccess(DecideChallengeResponse.from(battle));
+        return ApiResponse.onSuccess(ChallengeBattleDeicisionResponse.from(battle));
     }
 
     @PatchMapping("/{battleId}/challenge/reject")
@@ -91,8 +91,8 @@ public class ChallengeBattleController {
             ### RequestBody
             challengeBattleId [챌린지 배틀 ID]
             """)
-    public ApiResponse<DecideChallengeResponse> rejectChallenge(
-            @RequestBody @Valid DecideChallengeRequest request,
+    public ApiResponse<ChallengeBattleDeicisionResponse> rejectChallenge(
+            @RequestBody @Valid ChallengeBattleDecisionRequest request,
             @PathVariable("battleId") Long battleId
     ) {
         User user = securityUtil.getCurrentUser();
@@ -100,7 +100,7 @@ public class ChallengeBattleController {
 
         Battle battle = battleCommandService.rejectChallenge(userId, battleId, request);
 
-        return ApiResponse.onSuccess(DecideChallengeResponse.from(battle));
+        return ApiResponse.onSuccess(ChallengeBattleDeicisionResponse.from(battle));
     }
 
     @GetMapping("/challenge")

@@ -1,9 +1,8 @@
 package UMC_7th.Closit.domain.battle.converter;
 
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.GetChallengeBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleCreateRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleVoteRequest;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class BattleMapper {
 
-    public static Battle toBattle(Post post, CreateBattleRequest request) { // 배틀 생성
+    public static Battle toBattle(Post post, BattleCreateRequest request) { // 배틀 생성
         return Battle.builder()
                 .post1(post)
                 .title(request.title())
@@ -33,7 +32,7 @@ public class BattleMapper {
                 .build();
     }
 
-    public static Vote toVote(User user, VoteBattleRequest request) { // 배틀 투표
+    public static Vote toVote(User user, BattleVoteRequest request) { // 배틀 투표
         return Vote.builder()
                 .user(user)
                 .votedPostId(request.postId())

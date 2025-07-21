@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record VoteBattleRequest(
+public record ChallengeBattleDecisionRequest(
         @NotNull
-        Long postId
+        Long challengeBattleId
 ) {
 }

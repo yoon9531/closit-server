@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record CreateBattleRequest(
+public record BattleCreateRequest(
         @NotNull
         Long postId,
 
