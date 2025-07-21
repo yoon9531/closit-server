@@ -8,15 +8,15 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record CreateBattleResponse(
+public record BattleCreateResponse(
         Long battleId,
         String thumbnail,
         BattleStatus battleStatus,
         @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
         LocalDateTime createdAt
 ) {
-    public static CreateBattleResponse from(Battle battle) {
-        return CreateBattleResponse.builder()
+    public static BattleCreateResponse from(Battle battle) {
+        return BattleCreateResponse.builder()
                 .battleId(battle.getId())
                 .thumbnail(battle.getPost1().getFrontImage())
                 .battleStatus(battle.getBattleStatus())

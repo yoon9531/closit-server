@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record GetBattleDetailResponse(
+public record BattleDetailResponse(
         Long battleId,
         String title,
         String description,
@@ -26,8 +26,8 @@ public record GetBattleDetailResponse(
         String secondPostBackImage,
         int secondVotingCnt
 ) {
-    public static GetBattleDetailResponse from(Battle battle) {
-        return GetBattleDetailResponse.builder()
+    public static BattleDetailResponse from(Battle battle) {
+        return BattleDetailResponse.builder()
                 .battleId(battle.getId())
                 .title(battle.getTitle())
                 .description(battle.getDescription())

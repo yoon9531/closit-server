@@ -2,9 +2,9 @@ package UMC_7th.Closit.domain.battle.service.BattleService;
 
 import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.DecideChallengeRequest;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleCreateRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleDecisionRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleVoteRequest;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
@@ -43,7 +43,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     private final BattleValidator battleValidator;
 
     @Override
-    public Battle createBattle (Long userId, CreateBattleRequest request) { // 배틀 생성
+    public Battle createBattle (Long userId, BattleCreateRequest request) { // 배틀 생성
         Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
@@ -75,7 +75,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle acceptChallenge (Long userId, Long battleId, DecideChallengeRequest request) { // 배틀 수락
+    public Battle acceptChallenge (Long userId, Long battleId, ChallengeBattleDecisionRequest request) { // 배틀 수락
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
@@ -92,7 +92,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle rejectChallenge (Long userId, Long battleId, DecideChallengeRequest request) { // 배틀 거절
+    public Battle rejectChallenge (Long userId, Long battleId, ChallengeBattleDecisionRequest request) { // 배틀 거절
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Vote voteBattle (Long userId, Long battleId, VoteBattleRequest request) { // 배틀 투표
+    public Vote voteBattle (Long userId, Long battleId, BattleVoteRequest request) { // 배틀 투표
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 

@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record VoteBattleResponse(
+public record BattleVoteResponse(
         Long battleId,
         String firstClositId,
         int firstVotingCnt,
@@ -14,8 +14,8 @@ public record VoteBattleResponse(
         int secondVotingCnt,
         LocalDateTime createdAt
 ) {
-    public static VoteBattleResponse from(Vote vote) {
-        return VoteBattleResponse.builder()
+    public static BattleVoteResponse from(Vote vote) {
+        return BattleVoteResponse.builder()
                 .battleId(vote.getBattle().getId())
                 .firstClositId(vote.getBattle().getPost1().getUser().getClositId())
                 .firstVotingCnt(vote.getBattle().getFirstVotingCnt())
