@@ -1,10 +1,11 @@
 package UMC_7th.Closit.domain.battle.controller;
 
-import UMC_7th.Closit.domain.battle.converter.BattleConverter;
+import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.CreateBattleRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.VoteBattleRequest;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.CreateBattleResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.GetBattleDetailResponse;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.VoteBattleResponse;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
@@ -85,7 +86,7 @@ public class BattleController {
 
         Slice<Battle> battleList = battleQueryService.getBattleList(page, sorting, status);
 
-        return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(battleList));
+        return ApiResponse.onSuccess(BattleMapper.battlePreviewListDTO(battleList));
     }
 
     @GetMapping("/{battleId}")
@@ -95,10 +96,9 @@ public class BattleController {
             ### PathVariable
             battleId - [조회할 배틀 ID]
             """)
-    public ApiResponse<BattleResponseDTO.GetBattleDetailDTO> getBattleDetail(@PathVariable("battleId") Long battleId) {
+    public ApiResponse<GetBattleDetailResponse> getBattleDetail(@PathVariable("battleId") Long battleId) {
         Battle battle = battleQueryService.getBattleDetail(battleId);
-
-        return ApiResponse.onSuccess(BattleConverter.getBattleDetail(battle));
+        return ApiResponse.onSuccess(GetBattleDetailResponse.from(battle));
     }
 
     @GetMapping("/voted-posts")
@@ -112,7 +112,7 @@ public class BattleController {
 
         Slice<Battle> votedBattleList = battleQueryService.getMyVotedBattleList(page);
 
-        return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(votedBattleList));
+        return ApiResponse.onSuccess(BattleMapper.battlePreviewListDTO(votedBattleList));
     }
 
     @DeleteMapping("/{battleId}")
