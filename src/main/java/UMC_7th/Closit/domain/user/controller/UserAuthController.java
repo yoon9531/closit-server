@@ -52,8 +52,32 @@ public class UserAuthController {
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
-    @Operation(summary = "소셜 로그인", description = "소셜 로그인 API")
-    @PostMapping("/oauth/{provider}/login")
+    @Operation(
+            summary = "소셜 로그인",
+            description = """
+                    소셜 로그인 API - 모바일 앱에서 소셜 SDK로 받은 토큰을 검증하여 로그인/회원가입을 처리.
+                    
+                    **지원 플랫폼:**
+                    - GOOGLE: ID Token, Access Token 모두 지원
+                    - KAKAO: Access Token만 지원
+                    - NAVER: Access Token만 지원
+                    
+                    **요청 예시:**
+                    ```json
+                    {
+                      "tokenType": "ACCESS_TOKEN",
+                      "token": "ya29.a0ARrdaM..."
+                    }
+                    ```
+                    
+                    **처리 과정:**
+                    1. 토큰을 해당 소셜 플랫폼 API로 검증
+                    2. 사용자 정보 추출 (이메일, 이름 등)
+                    3. 기존 회원이면 로그인, 신규면 자동 회원가입
+                    4. 서버 JWT 토큰 발급하여 반환
+                    """
+    )
+    @PostMapping("/oauth/login/{provider}")
     public ApiResponse<JwtResponse> socialLogin(
             @PathVariable("provider") SocialLoginType provider,
             @RequestBody @Valid OAuthLoginRequestDTO dto) {
