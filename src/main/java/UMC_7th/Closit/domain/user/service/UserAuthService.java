@@ -19,7 +19,7 @@ public interface UserAuthService {
 
     void resetPassword(String email, String newPassword);
   
-    JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO);
+    JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauth2LoginRequestDTO);
 
     void logout (String accessToken);
 }
