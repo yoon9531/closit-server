@@ -1,7 +1,7 @@
-package UMC_7th.Closit.domain.battle.service.BattleCmtService;
+package UMC_7th.Closit.domain.battle.service;
 
 import UMC_7th.Closit.domain.battle.converter.BattleCommentConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleCommentRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.repository.BattleCommentRepository;

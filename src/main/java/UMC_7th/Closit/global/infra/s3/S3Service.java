@@ -1,4 +1,4 @@
-package UMC_7th.Closit.global.s3;
+package UMC_7th.Closit.global.infra.s3;
 
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;

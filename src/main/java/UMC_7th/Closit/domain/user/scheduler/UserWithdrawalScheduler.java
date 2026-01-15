@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.user.service;
+package UMC_7th.Closit.domain.user.scheduler;
 
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;

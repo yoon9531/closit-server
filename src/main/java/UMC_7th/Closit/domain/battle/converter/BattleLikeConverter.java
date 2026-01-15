@@ -1,6 +1,6 @@
 package UMC_7th.Closit.domain.battle.converter;
 
-import UMC_7th.Closit.domain.battle.dto.BattleLikeDTO.BattleLikeResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleLikeResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.user.entity.User;

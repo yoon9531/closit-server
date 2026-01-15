@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.service.BattleCmtService;
+package UMC_7th.Closit.domain.battle.service;
 
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.repository.BattleCommentRepository;

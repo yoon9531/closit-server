@@ -1,7 +1,7 @@
 package UMC_7th.Closit.domain.post.init;
 
 import UMC_7th.Closit.domain.post.entity.Post;
-import UMC_7th.Closit.domain.post.entity.Visibility;
+import UMC_7th.Closit.domain.post.entity.enums.Visibility;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;

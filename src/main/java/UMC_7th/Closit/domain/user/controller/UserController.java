@@ -8,7 +8,7 @@ import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.domain.user.service.UserQueryService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.global.validation.annotation.CheckBlocked;
-import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.global.infra.s3.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;

@@ -1,5 +1,6 @@
 package UMC_7th.Closit.domain.post.entity;
 
+import UMC_7th.Closit.domain.post.entity.enums.Visibility;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.todaycloset.entity.TodayCloset;
 import UMC_7th.Closit.domain.user.entity.User;

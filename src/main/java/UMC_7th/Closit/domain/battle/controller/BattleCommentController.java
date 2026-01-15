@@ -1,11 +1,11 @@
 package UMC_7th.Closit.domain.battle.controller;
 
 import UMC_7th.Closit.domain.battle.converter.BattleCommentConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentRequestDTO;
-import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleCommentRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleCommentResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
-import UMC_7th.Closit.domain.battle.service.BattleCmtService.BattleCmtCommandService;
-import UMC_7th.Closit.domain.battle.service.BattleCmtService.BattleCmtQueryService;
+import UMC_7th.Closit.domain.battle.service.BattleCmtCommandService;
+import UMC_7th.Closit.domain.battle.service.BattleCmtQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.security.SecurityUtil;

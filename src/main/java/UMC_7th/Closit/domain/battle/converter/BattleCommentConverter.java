@@ -1,7 +1,7 @@
 package UMC_7th.Closit.domain.battle.converter;
 
-import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentRequestDTO;
-import UMC_7th.Closit.domain.battle.dto.BattleCmtDTO.BattleCommentResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleCommentRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleCommentResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.user.entity.User;

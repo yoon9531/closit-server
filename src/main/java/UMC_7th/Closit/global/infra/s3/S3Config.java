@@ -1,4 +1,4 @@
-package UMC_7th.Closit.global.config;
+package UMC_7th.Closit.global.infra.s3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;

@@ -1,6 +1,6 @@
 package UMC_7th.Closit.domain.battle.scheduler;
 
-import UMC_7th.Closit.domain.battle.service.BattleService.BattleCommandService;
+import UMC_7th.Closit.domain.battle.service.BattleCommandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

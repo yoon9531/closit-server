@@ -13,7 +13,7 @@ import UMC_7th.Closit.domain.user.repository.BlockRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
-import UMC_7th.Closit.global.s3.S3Service;
+import UMC_7th.Closit.global.infra.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

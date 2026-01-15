@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.dto.BattleDTO;
+package UMC_7th.Closit.domain.battle.dto;
 
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
 import UMC_7th.Closit.domain.battle.entity.enums.ChallengeStatus;

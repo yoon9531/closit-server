@@ -1,6 +1,6 @@
-package UMC_7th.Closit.domain.battle.service.BattleService;
+package UMC_7th.Closit.domain.battle.service;
 
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleRequestDTO;
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
 import UMC_7th.Closit.domain.battle.entity.Vote;

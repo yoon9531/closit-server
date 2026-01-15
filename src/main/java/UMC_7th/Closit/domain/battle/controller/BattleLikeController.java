@@ -1,10 +1,10 @@
 package UMC_7th.Closit.domain.battle.controller;
 
 import UMC_7th.Closit.domain.battle.converter.BattleLikeConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleLikeDTO.BattleLikeResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleLikeResponseDTO;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
-import UMC_7th.Closit.domain.battle.service.BattleLikeService.BattleLikeCommandService;
-import UMC_7th.Closit.domain.battle.service.BattleLikeService.BattleLikeQueryService;
+import UMC_7th.Closit.domain.battle.service.BattleLikeCommandService;
+import UMC_7th.Closit.domain.battle.service.BattleLikeQueryService;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import UMC_7th.Closit.security.SecurityUtil;

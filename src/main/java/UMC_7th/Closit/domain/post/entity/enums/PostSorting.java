@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.post.entity;
+package UMC_7th.Closit.domain.post.entity.enums;
 
 import lombok.Getter;
 import org.springframework.data.domain.Sort;

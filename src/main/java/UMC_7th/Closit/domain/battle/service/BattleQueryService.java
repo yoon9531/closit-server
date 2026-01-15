@@ -1,4 +1,4 @@
-package UMC_7th.Closit.domain.battle.service.BattleService;
+package UMC_7th.Closit.domain.battle.service;
 
 import UMC_7th.Closit.domain.battle.entity.Battle;
 import UMC_7th.Closit.domain.battle.entity.ChallengeBattle;
