@@ -28,7 +28,6 @@ public class UserConverter {
     public static UserResponseDTO.UserInfoDTO toUserInfoDTO(User user) {
 
         return UserResponseDTO.UserInfoDTO.builder()
-//                .id(user.getId())
                 .role(user.getRole())
                 .clositId(user.getClositId())
                 .name(user.getName())
@@ -41,7 +40,6 @@ public class UserConverter {
     public static UserResponseDTO.UpdateUserInfoDTO toUpdateUserInfoDTO(User user, long followerCount, long followingCount) {
 
         return UserResponseDTO.UpdateUserInfoDTO.builder()
-//                .id(user.getId())
                 .role(user.getRole())
                 .clositId(user.getClositId())
                 .name(user.getName())
