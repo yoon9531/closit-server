@@ -9,6 +9,8 @@ import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.*;
 import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
+import UMC_7th.Closit.domain.user.service.social.SocialLoginFactory;
+import UMC_7th.Closit.domain.user.service.social.SocialLoginService;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.global.apiPayload.exception.handler.JwtHandler;
@@ -34,8 +36,9 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailTokenService emailTokenService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final GoogleOAuthService googleOAuthService;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlackListRepository tokenBlackListRepository;
+    private final SocialLoginFactory socialLoginFactory;
     private final UserUtil userUtil;
 
     @Value("${cloud.aws.s3.default-profile-image}")
@@ -112,15 +115,21 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public JwtResponse socialLogin (SocialLoginType socialLoginType, OAuthLoginRequestDTO oauthLoginRequestDTO) {
-        String idToken = oauthLoginRequestDTO.getIdToken();
+        // 적절한 소셜 로그인 서비스 선택
+        SocialLoginService socialLoginService = socialLoginFactory.getService(socialLoginType);
+
+        // 토큰 타입에 따른 사용자 정보 조회
         OAuthUserInfo userInfo;
 
-        if (socialLoginType == SocialLoginType.GOOGLE) { // GOOGLE
-            userInfo = googleOAuthService.getUserInfo(idToken);
+        if (oauthLoginRequestDTO.getTokenType() == OAuthLoginRequestDTO.TokenType.ID_TOKEN) {
+            userInfo = socialLoginService.getUserInfoFromIdToken(oauthLoginRequestDTO.getToken());
+        } else if (oauthLoginRequestDTO.getTokenType() == OAuthLoginRequestDTO.TokenType.ACCESS_TOKEN) {
+            userInfo = socialLoginService.getUserInfoFromAccessToken(oauthLoginRequestDTO.getToken());
         } else {
-            throw new GeneralException(ErrorStatus.NOT_SUPPORTED_SOCIAL_LOGIN);
+            throw new GeneralException(ErrorStatus.INVALID_TOKEN);
         }
 
+        // 기존 회원 조회 또는 신규 회원 등록
         User user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> registerNewUser(userInfo));
 
@@ -149,7 +158,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         tokenBlackListService.blacklistToken(accessToken, email);
     }
 
-    private User registerNewUser(OAuthUserInfo userInfo) {
+    User registerNewUser (OAuthUserInfo userInfo) {
         String email = userInfo.getEmail();
         String name = userInfo.getName();
 
