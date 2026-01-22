@@ -2,11 +2,13 @@ package UMC_7th.Closit.domain.battle.dto.BattleDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 
 public class BattleRequestDTO {
 
     @Getter
+    @Builder
     public static class CreateBattleDTO { // 배틀 생성
         @NotNull
         private Long postId;
