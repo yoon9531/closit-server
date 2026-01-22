@@ -37,6 +37,8 @@ public class BattleQueryServiceImpl implements BattleQueryService {
         Battle battle = battleRepository.findByIdAndPost2IsNotNull(battleId)
                 .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
+        battleRepository.incrementViewCount(battle.getId());
+
         updateVotingCntByUser(battle, user.getId());
 
         return battle;
