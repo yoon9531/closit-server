@@ -7,7 +7,6 @@ import UMC_7th.Closit.domain.user.dto.LoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.OAuthLoginRequestDTO;
 import UMC_7th.Closit.domain.user.dto.UserResponseDTO;
 import UMC_7th.Closit.domain.user.entity.*;
-import UMC_7th.Closit.domain.user.repository.RefreshTokenRepository;
 import UMC_7th.Closit.domain.user.repository.TokenBlackListRepository;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.domain.user.service.social.SocialLoginFactory;
@@ -155,8 +154,8 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .clositId(refreshToken.getUsername())
                 .build();
 
-        tokenBlackListRepository.save(blackedToken);
-        refreshTokenRepository.delete(refreshToken);
+        // 블랙리스트에 access token 저장
+        tokenBlackListService.blacklistToken(accessToken, email);
     }
 
     User registerNewUser (OAuthUserInfo userInfo) {

@@ -25,6 +25,9 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
+    @Column
+    private String title;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -37,6 +40,10 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private NotificationType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private NotificationChannel channel;
 
     public void markAsRead() { // 알림 단건 조회 - 읽음 처리
         isRead = true;
