@@ -1,6 +1,7 @@
 package UMC_7th.Closit.domain.battle.service.BattleCmtService;
 
 import UMC_7th.Closit.domain.battle.entity.BattleComment;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleCommentRepository;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -22,7 +23,7 @@ public class BattleCmtQueryServiceImpl implements BattleCmtQueryService {
     @Override
     public Slice<BattleComment> getBattleCommentList (Long battleId, Integer page) { // 배틀 댓글 조회
         battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         return battleCommentRepository.findByBattleIdAndParentBattleCommentIsNullOrderByCreatedAtAsc(battleId, PageRequest.of(page, 10));
     }

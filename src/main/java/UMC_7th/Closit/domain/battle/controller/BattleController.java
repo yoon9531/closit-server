@@ -1,8 +1,12 @@
 package UMC_7th.Closit.domain.battle.controller;
 
-import UMC_7th.Closit.domain.battle.converter.BattleConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
+import UMC_7th.Closit.domain.battle.converter.BattleMapper;
 import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleResponseDTO;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleCreateRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleVoteRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleCreateResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleDetailResponse;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.response.BattleVoteResponse;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleSorting;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
@@ -36,81 +40,14 @@ public class BattleController {
             post_id [게시글 ID] \n
             title [배틀 게시글 제목]
             """)
-    public ApiResponse<BattleResponseDTO.CreateBattleResultDTO> createBattle(@RequestBody @Valid BattleRequestDTO.CreateBattleDTO request) {
+    public ApiResponse<BattleCreateResponse> createBattle(@RequestBody @Valid BattleCreateRequest request) {
 
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Battle battle = battleCommandService.createBattle(userId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.createBattleResultDTO(battle));
-    }
-
-    @PostMapping("/{battleId}/challenge/upload")
-    @Operation(summary = "배틀 신청",
-            description = """
-            ## 배틀 챌린지 게시글에 배틀 도전
-            ### PathVariable
-            battleId [배틀 ID]
-            ### RequestBody
-            post_id [게시글 ID]
-            """)
-    public ApiResponse<BattleResponseDTO.ChallengeBattleResultDTO> challengeBattle(@RequestBody @Valid BattleRequestDTO.ChallengeBattleDTO request,
-                                                                                   @PathVariable("battleId") Long battleId) {
-
-        User user = securityUtil.getCurrentUser();
-        Long userId = user.getId();
-
-        ChallengeBattle challengeBattle = battleCommandService.challengeBattle(userId, battleId, request);
-
-        return ApiResponse.onSuccess(BattleConverter.challengeBattleResultDTO(challengeBattle));
-    }
-
-    @GetMapping("/{battleId}/challenge/{challengeBattleId}")
-    @Operation(summary = "챌린지 배틀 미리보기")
-    public ApiResponse<BattleResponseDTO.GetChallengeBattleDTO> getChallengeBattle(@PathVariable("battleId") Long battleId,
-                                                                                      @PathVariable("challengeBattleId") Long challengeBattleId) {
-        ChallengeBattle challengeBattle = battleQueryService.getChallengeBattle(battleId, challengeBattleId);
-
-        return ApiResponse.onSuccess(BattleConverter.getChallengeBattleDTO(challengeBattle));
-    }
-
-    @PatchMapping("/{battleId}/challenge/accept")
-    @Operation(summary = "배틀 신청 수락",
-            description = """
-            ## 배틀 신청 수락
-            ### PathVariable
-            battleId [배틀 ID]
-            ### RequestBody
-            challengeBattleId [챌린지 배틀 ID]
-            """)
-    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> acceptChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
-                                                                               @PathVariable("battleId") Long battleId) {
-        User user = securityUtil.getCurrentUser();
-        Long userId = user.getId();
-
-        Battle battle = battleCommandService.acceptChallenge(userId, battleId, request);
-
-        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
-    }
-
-    @PatchMapping("/{battleId}/challenge/reject")
-    @Operation(summary = "배틀 신청 거절",
-            description = """
-            ## 배틀 신청 거절
-            ### PathVariable
-            battleId [배틀 ID[
-            ### RequestBody
-            challengeBattleId [챌린지 배틀 ID]
-            """)
-    public ApiResponse<BattleResponseDTO.ChallengeDecisionDTO> rejectChallenge(@RequestBody @Valid BattleRequestDTO.ChallengeDecisionDTO request,
-                                                                               @PathVariable("battleId") Long battleId) {
-        User user = securityUtil.getCurrentUser();
-        Long userId = user.getId();
-
-        Battle battle = battleCommandService.rejectChallenge(userId, battleId, request);
-
-        return ApiResponse.onSuccess(BattleConverter.challengeDecisionDTO(battle));
+        return ApiResponse.onSuccess(BattleCreateResponse.from(battle));
     }
 
     @PostMapping("/{battleId}/voting")
@@ -122,15 +59,16 @@ public class BattleController {
             ### RequestBody
             post_id [게시글 ID]
             """)
-    public ApiResponse<BattleResponseDTO.VoteBattleResultDTO> voteBattle(@RequestBody @Valid BattleRequestDTO.VoteBattleDTO request,
-                                                                         @PathVariable("battleId") Long battleId) {
-
+    public ApiResponse<BattleVoteResponse> voteBattle(
+            @RequestBody @Valid BattleVoteRequest request,
+            @PathVariable("battleId") Long battleId
+    ) {
         User user = securityUtil.getCurrentUser();
         Long userId = user.getId();
 
         Vote voteBattle = battleCommandService.voteBattle(userId, battleId, request);
 
-        return ApiResponse.onSuccess(BattleConverter.voteBattleResultDTO(voteBattle));
+        return ApiResponse.onSuccess(BattleVoteResponse.from(voteBattle));
     }
 
     @GetMapping()
@@ -148,7 +86,7 @@ public class BattleController {
 
         Slice<Battle> battleList = battleQueryService.getBattleList(page, sorting, status);
 
-        return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(battleList));
+        return ApiResponse.onSuccess(BattleMapper.battlePreviewListDTO(battleList));
     }
 
     @GetMapping("/{battleId}")
@@ -158,24 +96,9 @@ public class BattleController {
             ### PathVariable
             battleId - [조회할 배틀 ID]
             """)
-    public ApiResponse<BattleResponseDTO.GetBattleDetailDTO> getBattleDetail(@PathVariable("battleId") Long battleId) {
+    public ApiResponse<BattleDetailResponse> getBattleDetail(@PathVariable("battleId") Long battleId) {
         Battle battle = battleQueryService.getBattleDetail(battleId);
-
-        return ApiResponse.onSuccess(BattleConverter.getBattleDetail(battle));
-    }
-
-    @GetMapping("/challenge")
-    @Operation(summary = "배틀 챌린지 게시글 목록 조회",
-            description = """
-            ## 배틀 챌린지 게시글 목록 조회 - 첫 번째 게시글만 존재할 경우
-            ### Parameters
-            page [조회할 페이지 번호] - 0부터 시작, 10개씩 보여줌
-            """)
-    public ApiResponse<BattleResponseDTO.ChallengeBattlePreviewListDTO> getChallengeBattleList(@RequestParam(name = "page") Integer page) {
-
-        Slice<Battle> challengeBattleList = battleQueryService.getChallengeBattleList(page);
-
-        return ApiResponse.onSuccess(BattleConverter.challengeBattlePreviewListDTO(challengeBattleList));
+        return ApiResponse.onSuccess(BattleDetailResponse.from(battle));
     }
 
     @GetMapping("/voted-posts")
@@ -189,7 +112,7 @@ public class BattleController {
 
         Slice<Battle> votedBattleList = battleQueryService.getMyVotedBattleList(page);
 
-        return ApiResponse.onSuccess(BattleConverter.battlePreviewListDTO(votedBattleList));
+        return ApiResponse.onSuccess(BattleMapper.battlePreviewListDTO(votedBattleList));
     }
 
     @DeleteMapping("/{battleId}")

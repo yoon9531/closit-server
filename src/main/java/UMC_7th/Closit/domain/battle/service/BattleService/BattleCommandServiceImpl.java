@@ -1,12 +1,17 @@
 package UMC_7th.Closit.domain.battle.service.BattleService;
 
-import UMC_7th.Closit.domain.battle.converter.BattleConverter;
-import UMC_7th.Closit.domain.battle.dto.BattleDTO.BattleRequestDTO;
+import UMC_7th.Closit.domain.battle.converter.BattleMapper;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleCreateRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.ChallengeBattleDecisionRequest;
+import UMC_7th.Closit.domain.battle.dto.BattleDTO.request.BattleVoteRequest;
 import UMC_7th.Closit.domain.battle.entity.*;
 import UMC_7th.Closit.domain.battle.entity.enums.BattleStatus;
+import UMC_7th.Closit.domain.battle.exception.BattleErrorStatus;
 import UMC_7th.Closit.domain.battle.repository.BattleRepository;
 import UMC_7th.Closit.domain.battle.repository.ChallengeBattleRepository;
 import UMC_7th.Closit.domain.battle.repository.VoteRepository;
+import UMC_7th.Closit.domain.battle.validator.BattleValidator;
 import UMC_7th.Closit.domain.notification.service.NotiCommandService;
 import UMC_7th.Closit.domain.post.entity.Post;
 import UMC_7th.Closit.domain.post.repository.PostRepository;
@@ -35,33 +40,34 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
     private final NotiCommandService notiCommandService;
+    private final BattleValidator battleValidator;
 
     @Override
-    public Battle createBattle (Long userId, BattleRequestDTO.CreateBattleDTO request) { // 배틀 생성
-        Post post = postRepository.findById(request.getPostId())
+    public Battle createBattle (Long userId, BattleCreateRequest request) { // 배틀 생성
+        Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        Battle battle = BattleConverter.toBattle(post, request);
+        Battle battle = BattleMapper.toBattle(post, request);
 
         // 본인의 게시글이 아닐 경우, 배틀 게시글로 업로드 불가능
         if (!post.getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
+            throw new GeneralException(BattleErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
 
         return battleRepository.save(battle);
     }
 
     @Override
-    public ChallengeBattle challengeBattle (Long userId, Long battleId, BattleRequestDTO.ChallengeBattleDTO request) { // 배틀 신청
+    public ChallengeBattle challengeBattle (Long userId, Long battleId, ChallengeBattleRequest request) { // 배틀 신청
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        Post post = postRepository.findById(request.getPostId())
+        Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        validateChallengeBattle(battle, post, userId, request.getPostId());
+        battleValidator.validateChallengeBattle(battle, post, userId, request.postId());
 
-        ChallengeBattle challengeBattle = BattleConverter.toChallengeBattle(battle, post);
+        ChallengeBattle challengeBattle = BattleMapper.toChallengeBattle(battle, post);
 
         notiCommandService.challengeBattleNotification(challengeBattle);
 
@@ -69,55 +75,51 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     }
 
     @Override
-    public Battle acceptChallenge (Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request) { // 배틀 수락
+    public Battle acceptChallenge (Long userId, Long battleId, ChallengeBattleDecisionRequest request) { // 배틀 수락
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
+        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.challengeBattleId())
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
         challengeBattleRepository.updateChallengeStatus(battle, challengeBattle.getId());
 
-        // Post1 게시글 작성자만 수락 가능
-        if (!battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
-        }
+        battleValidator.validateChallengeBattleStatus(userId, battle);
+
         battle.acceptChallenge(challengeBattle.getPost(), LocalDateTime.now().plusHours(72));
 
         return battleRepository.save(battle);
     }
 
     @Override
-    public Battle rejectChallenge (Long userId, Long battleId, BattleRequestDTO.ChallengeDecisionDTO request) { // 배틀 거절
+    public Battle rejectChallenge (Long userId, Long battleId, ChallengeBattleDecisionRequest request) { // 배틀 거절
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.getChallengeBattleId())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
+        ChallengeBattle challengeBattle = challengeBattleRepository.findById(request.challengeBattleId())
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.CHALLENGE_BATTLE_NOT_FOUND));
 
-        // Post1 게시글 작성자만 거절 가능
-        if (!battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.BATTLE_UNAUTHORIZED_ACCESS);
-        }
+        battleValidator.validateChallengeBattleStatus(userId, battle);
+
         challengeBattle.rejectBattle();
 
         return battle;
     }
 
     @Override
-    public Vote voteBattle (Long userId, Long battleId, BattleRequestDTO.VoteBattleDTO request) { // 배틀 투표
+    public Vote voteBattle (Long userId, Long battleId, BattleVoteRequest request) { // 배틀 투표
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
-        postRepository.findById(request.getPostId())
+        postRepository.findById(request.postId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        validateVoteBattle(battle, userId, request);
+        battleValidator.validateVoteBattle(battle, userId, request);
 
-        Vote vote = BattleConverter.toVote(user, request);
+        Vote vote = BattleMapper.toVote(user, request);
 
         if (battle.getPost1().getId().equals(vote.getVotedPostId())) { // 첫 번째 게시글에 투표
             battleRepository.incrementFirstVotingCnt(battleId);
@@ -125,11 +127,11 @@ public class BattleCommandServiceImpl implements BattleCommandService {
             battleRepository.incrementSecondVotingCnt(battleId);
         }
         Battle updatedBattle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         battle.updateVotingCnt(updatedBattle.getFirstVotingCnt(), updatedBattle.getSecondVotingCnt());
 
-        vote.voteBattle(user, battle, request.getPostId());
+        vote.voteBattle(user, battle, request.postId());
 
         return voteRepository.save(vote);
     }
@@ -157,67 +159,13 @@ public class BattleCommandServiceImpl implements BattleCommandService {
     @Override
     public void deleteBattle (Long userId, Long battleId) {
         Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BattleErrorStatus.BATTLE_NOT_FOUND));
 
         // 배틀 게시글을 생성한 이가 아닐 경우, 삭제 불가능
         if (!battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
+            throw new GeneralException(BattleErrorStatus.POST_UNAUTHORIZED_ACCESS);
         }
 
         battleRepository.delete(battle);
-    }
-
-    private void validateChallengeBattle(Battle battle, Post post, Long userId, Long request) {
-        // 동일한 게시글로 배틀 불가능
-        if (request.equals(battle.getPost1().getId())) {
-            throw new GeneralException(ErrorStatus.BATTLE_NOT_CHALLENGE);
-        }
-
-        // 배틀 형성 완료 -> 신청 불가능
-        if (battle.getPost2() != null) {
-            throw new GeneralException(ErrorStatus.BATTLE_ALREADY_EXIST);
-        }
-
-        // 내 게시글에 배틀 신청 불가능
-        if (battle.getPost1().getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_NOT_APPLY);
-        }
-
-        // 본인의 게시글일 경우, 배틀 신청 불가능
-        if (!post.getUser().getId().equals(userId)) {
-            throw new GeneralException(ErrorStatus.POST_UNAUTHORIZED_ACCESS);
-        }
-
-        // Status = INACTIVE일 경우에만 배틀 신청 가능
-        if (battle.getBattleStatus().equals(BattleStatus.INACTIVE)) {
-            battle.challengeBattle();
-        }
-    }
-
-    private void validateVoteBattle(Battle battle, Long userId, BattleRequestDTO.VoteBattleDTO request) {
-        // 배틀이 아닌 게시글에 투표 불가능
-        if (isInvalidBattlePost(battle, request.getPostId())) {
-            throw new GeneralException(ErrorStatus.POST_NOT_BATTLE);
-        }
-
-        // 이미 투표한 곳에 중복 투표 방지
-        boolean alreadyVoted = voteRepository.existsByBattleIdAndUserId(battle.getId(), userId);
-        if (alreadyVoted) {
-            throw new GeneralException(ErrorStatus.VOTE_ALREADY_EXIST);
-        }
-
-        // 마감 기한 후 투표 방지
-        if (battle.availableVote()) {
-            throw new GeneralException(ErrorStatus.VOTE_EXPIRED);
-        }
-
-        // 챌린지 게시글 투표 방지
-        if (battle.getPost2() == null) {
-            throw new GeneralException(ErrorStatus.POST_IS_CHALLENGE);
-        }
-    }
-
-    private boolean isInvalidBattlePost(Battle battle, Long postId) {
-        return !battle.getPost1().getId().equals(postId) && !battle.getPost2().getId().equals(postId);
     }
 }
