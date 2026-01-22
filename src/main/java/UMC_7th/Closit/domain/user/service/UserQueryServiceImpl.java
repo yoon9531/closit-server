@@ -71,6 +71,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public boolean isMissionDone() {
+        // 현재 로그인된 사용자 정보 가져오기
         User user = securityUtil.getCurrentUser();
 
         LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
@@ -83,6 +84,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public Slice<Post> getRecentPostList(String clositId, Integer page) { // 특정 사용자의 최근 게시글 조회
         Pageable pageable = PageRequest.of(page, 10);
+
         LocalDateTime week = LocalDateTime.now().minusWeeks(1);
 
         Slice<Post> recentPostList = postRepository.findRecentPostList(clositId, week, pageable);
@@ -101,12 +103,12 @@ public class UserQueryServiceImpl implements UserQueryService {
     public UserResponseDTO.IsBlockedDTO isBlockedBy(String targetClositId) {
         userUtil.getUserByClositIdOrThrow(targetClositId);
 
-        String currentClositId = securityUtil.getCurrentUser().getClositId();
-        boolean isBlocked = userBlockRepository.existsByBlockerIdAndBlockedId(targetClositId, currentClositId);
+        User currentUser = securityUtil.getCurrentUser();
 
         return UserResponseDTO.IsBlockedDTO.builder()
-                .isBlocked(isBlocked)
+                .isBlocked(userBlockRepository.existsByBlockerIdAndBlockedId(currentUser.getClositId(), targetClositId))
                 .build();
+
     }
 
     @Override
