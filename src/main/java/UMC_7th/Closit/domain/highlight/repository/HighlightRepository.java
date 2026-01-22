@@ -1,0 +1,29 @@
+package UMC_7th.Closit.domain.highlight.repository;
+
+import UMC_7th.Closit.domain.highlight.entity.Highlight;
+import UMC_7th.Closit.domain.post.entity.Post;
+import UMC_7th.Closit.domain.user.entity.User;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+public interface HighlightRepository extends JpaRepository<Highlight, Long> {
+
+    Boolean existsByPost(Post post);
+
+    Optional<Highlight> findByPostId(Long postId);
+
+    @Query("SELECT h FROM Highlight h LEFT JOIN FETCH h.post WHERE h.id = :highlightId")
+    Optional<Highlight> findByIdWithPost(Long highlightId);
+
+    @Query("SELECT h FROM Highlight h " +
+            "JOIN h.post p " +
+            "WHERE p.user = :user")
+    Slice<Highlight> findAllByUser(@Param("user") User user, Pageable pageable);
+
+    int countByPost_User_Id(Long userId);
+}
