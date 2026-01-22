@@ -125,7 +125,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 아이템 태그 관련 관련 에러
     ITEM_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEMTAG4041", "아이템 태그가 존재하지 않습니다."),
 
-    // 알림 관련 에러
+    // SSE 알림 관련 에러
     SSE_CONNECT_FAILED (HttpStatus.INTERNAL_SERVER_ERROR, "SSE5001", "SSE 연결에 실패했습니다"),
     NOTIFICATION_PUSH_FAILED (HttpStatus.BAD_REQUEST, "NOTIFICATION4001", "알림 전송에 실패했습니다."),
     NOTIFICATION_NOT_FOUND (HttpStatus.NOT_FOUND, "NOTIFICATION4041", "알림을 찾을 수 없습니다."),
@@ -135,7 +135,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     INVALID_S3_FILE_URL(HttpStatus.BAD_REQUEST, "S34001", "유효하지 않은 S3 파일 URL입니다."),
-    IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다.");
+    IMAGE_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "S35001", "파일 삭제에 실패했습니다."),
+
+    // FCM 알림 관련 에러
+    FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "FCM4004", "FCM 토큰을 찾을 수 없습니다.")
+    ;
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

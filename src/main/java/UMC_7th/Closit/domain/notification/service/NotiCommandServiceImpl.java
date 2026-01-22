@@ -6,6 +6,8 @@ import UMC_7th.Closit.domain.notification.converter.NotificationConverter;
 import UMC_7th.Closit.domain.notification.dto.NotificationRequestDTO;
 import UMC_7th.Closit.domain.notification.entity.Notification;
 import UMC_7th.Closit.domain.notification.entity.NotificationType;
+import UMC_7th.Closit.domain.notification.firebase.domain.FcmToken;
+import UMC_7th.Closit.domain.notification.firebase.repository.FcmTokenRepository;
 import UMC_7th.Closit.domain.notification.repository.NotificationRepository;
 import UMC_7th.Closit.domain.notification.repository.EmitterRepository;
 import UMC_7th.Closit.domain.post.entity.Comment;
@@ -17,7 +19,11 @@ import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
 import UMC_7th.Closit.security.SecurityUtil;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -42,7 +49,9 @@ public class NotiCommandServiceImpl implements NotiCommandService {
     private final PostRepository postRepository;
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
+    private final FcmTokenRepository fcmTokenRepository;
     private final SecurityUtil securityUtil;
+    private final FirebaseMessaging firebaseMessaging;
 
     @Value("${notification.url}")
     private String URL;
@@ -104,12 +113,20 @@ public class NotiCommandServiceImpl implements NotiCommandService {
         // SSE 통한 알림 전송
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterByUserId(request.getReceiverId().toString());
 
-        emitters.forEach(
-                (key, emitter) -> {
-                    // 데이터 전송
-                    sendToClient(emitter, key, NotificationConverter.sendNotiResponse(notification));
-                }
-        );
+        if (emitters.isEmpty()) { // FCM 전송
+            try {
+                sendFcmNotification(notification);
+            } catch (FirebaseMessagingException e) {
+                log.error("FCM 전송 실패: {}", e.getMessage());
+            }
+        } else { // SSE 전송
+            emitters.forEach(
+                    (key, emitter) -> {
+                        // 데이터 전송
+                        sendToClient(emitter, key, NotificationConverter.sendNotiResponse(notification));
+                    }
+            );
+        }
         return notification;
     }
 
@@ -192,5 +209,31 @@ public class NotiCommandServiceImpl implements NotiCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOTIFICATION_NOT_FOUND));
 
         notificationRepository.deleteById(notificationId);
+    }
+
+    private void sendFcmNotification(Notification notification) throws FirebaseMessagingException {
+        User user = securityUtil.getCurrentUser();
+
+        if (!userRepository.existsById(user.getId())) {
+            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
+        }
+
+        List<FcmToken> fcmTokenList = fcmTokenRepository.findByUser(user);
+
+        if (fcmTokenList.isEmpty()) {
+            throw new GeneralException(ErrorStatus.FCM_TOKEN_NOT_FOUND);
+        }
+
+        for (FcmToken token : fcmTokenList) {
+            Message message = Message.builder()
+                    .setToken(token.getToken())
+                    .setNotification(com.google.firebase.messaging.Notification.builder()
+                            .setTitle(notification.getTitle())
+                            .setBody(notification.getContent())
+                            .build())
+                    .build();
+
+            firebaseMessaging.send(message);
+        }
     }
 }
