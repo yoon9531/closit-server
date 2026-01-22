@@ -4,7 +4,6 @@ import UMC_7th.Closit.domain.battle.entity.BattleComment;
 import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.follow.entity.Follow;
-import UMC_7th.Closit.domain.highlight.entity.Highlight;
 import UMC_7th.Closit.domain.notification.entity.Notification;
 import UMC_7th.Closit.domain.notification.firebase.domain.FcmToken;
 import UMC_7th.Closit.domain.post.entity.Bookmark;
@@ -71,6 +70,7 @@ public class User extends BaseEntity {
     private Boolean isWithdrawn = false;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isActive = true; // true : 활성화, false : 비활성화
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

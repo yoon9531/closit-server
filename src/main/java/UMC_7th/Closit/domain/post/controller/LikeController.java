@@ -5,6 +5,8 @@ import UMC_7th.Closit.domain.post.service.LikeService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,5 +25,16 @@ public class LikeController {
     @DeleteMapping
     public ApiResponse<LikeResponseDTO.LikeStatusDTO> unlikePost(@PathVariable("post_id") Long postId){
         return ApiResponse.onSuccess(likeService.unlikePost(postId));
+    }
+
+    @Operation(summary = "게시글 좋아요한 유저 목록 조회")
+    @GetMapping("/list")
+    public ApiResponse<LikeResponseDTO.LikedUserListDTO> getLikedUsers(
+            @PathVariable("post_id") Long postId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.onSuccess(likeService.getLikedUsers(postId, pageable));
     }
 }

@@ -34,6 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PROFILE_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "USER4010", "프로필 이미지가 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "USER4011", "이메일 인증이 완료되지 않았습니다."),
     WITHDRAWAL_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "USER4012", "탈퇴 유예 기간이 만료되었습니다."), // 탈퇴 유예 기간 만료
+
     // 토큰 관련 에러
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4002", "유효하지 않은 토큰입니다."),
@@ -70,7 +71,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 댓글 관련 에러
     COMMENT_NOT_FOUND (HttpStatus.NOT_FOUND, "COMMENT4041", "댓글이 존재하지 않습니다."),
-    COMMENT_NOT_MINE (HttpStatus.BAD_REQUEST, "COMMENT4002", "해당 댓글은 다른 사용자의 댓글입니다"),
+    COMMENT_NOT_MINE (HttpStatus.BAD_REQUEST, "COMMENT4001", "해당 댓글은 다른 사용자의 댓글입니다"),
+    REPLY_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "COMMENT4002", "대댓글은 한 단계까지만 허용됩니다."),
+    PARENT_COMMENT_NOT_MATCHED(HttpStatus.BAD_REQUEST, "COMMENT4003", "부모 댓글이 해당 게시글의 댓글이 아닙니다."),
 
     // 배틀 관련 에러
     BATTLE_NOT_CHALLENGE (HttpStatus.BAD_REQUEST, "BATTLE4001", "동일한 게시글로 배틀을 신청할 수 없습니다."),

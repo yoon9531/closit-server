@@ -96,7 +96,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
-    public Slice<User> getBlockedUserList(Pageable pageable) {
+    public Slice<String> getBlockedUserList(Pageable pageable) {
         User currentUser = securityUtil.getCurrentUser();
         return userBlockRepository.findBlockedUsersByBlocker(currentUser.getClositId(), pageable);
     }
@@ -114,5 +114,13 @@ public class UserQueryServiceImpl implements UserQueryService {
                 .build();
 
         return isblockedDTO;
+    }
+
+    @Override
+    public Slice<User> searchUsersByClositId(String query, Pageable pageable) {
+        if (query == null || query.trim().isEmpty()) {
+            return userRepository.findAll(pageable);
+        }
+        return userRepository.searchByClositId(query, pageable);
     }
 }

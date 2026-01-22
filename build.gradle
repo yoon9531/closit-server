@@ -62,12 +62,20 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// caffeine
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs = ['-parameters']
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 	systemProperty 'file.encoding', 'UTF-8'
 }
+
 
 jar {
 	enabled = false

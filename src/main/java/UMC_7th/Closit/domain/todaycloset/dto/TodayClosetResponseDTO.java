@@ -22,8 +22,10 @@ public class TodayClosetResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class TodayClosetPreviewDTO {
+        private String clositId;
         private Long todayClosetId;
         private Long postId;
+        private int likes;
         private String frontImage;
         private String backImage;
         private Integer viewCount;

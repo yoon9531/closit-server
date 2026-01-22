@@ -14,6 +14,7 @@ import UMC_7th.Closit.domain.post.repository.*;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
 import UMC_7th.Closit.global.apiPayload.exception.GeneralException;
+import UMC_7th.Closit.global.infra.cache.ViewBlockCacheService;
 import UMC_7th.Closit.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostQueryServiceImpl implements PostQueryService {
 
+    private final ViewBlockCacheService viewBlockCacheService;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
@@ -43,13 +45,16 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Transactional // ← readOnly 제거 또는 false 설정
     public PostResponseDTO.PostPreviewDTO getPostById(Long postId) {
         User currentUser = securityUtil.getCurrentUser();
+        Long userId = currentUser.getId();
 
         // 게시글 조회
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._NOT_FOUND));
 
         // 조회수 증가
-        post.increaseView();
+        if (viewBlockCacheService.shouldIncreaseView(userId, postId)) {
+            post.increaseView();
+        }
 
         // 좋아요 여부 확인
         Boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);

@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/notifications")
+@RequestMapping("/api/v1/notifications")
 public class NotificationController {
 
     private final NotiCommandService notiCommandService;

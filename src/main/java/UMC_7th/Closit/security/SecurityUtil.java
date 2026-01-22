@@ -29,9 +29,4 @@ public class SecurityUtil {
                 () -> new UserHandler(ErrorStatus.USER_NOT_FOUND)
         );
     }
-
-    public boolean isAuthenticated(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
-    }
 }

@@ -6,6 +6,7 @@ import UMC_7th.Closit.global.apiPayload.exception.handler.JwtHandler;
 import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,10 +39,6 @@ public class JwtTokenProvider {
         Date issuedAt = Date.from(now);
         Date expiration = Date.from(now.plusMillis(validity));
 
-        log.info("🔑 Creating JWT Token...");
-        log.info("🕒 Issued At: {}", issuedAt);
-        log.info("⏳ Expiration: {}", expiration);
-
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
@@ -67,18 +64,12 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.info("-------------------- JwtTokenProvider.getClaims ---------------------");
-            log.info("⏳ Expired Token: {}", token);
-            log.info("⏳ Expired At: {}", e.getClaims().getExpiration());
-            log.info("⏳ Current Time: {}", new Date(System.currentTimeMillis()));
             return e.getClaims();
         }
     }
 
     public boolean validateToken(String token) {
         try {
-            Claims claims = getClaims(token);
-
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     // .setAllowedClockSkewSeconds(60) // Clock Skew 적용 (1분 오차 허용)
@@ -87,20 +78,23 @@ public class JwtTokenProvider {
 
             return true;
         } catch (ExpiredJwtException e) {
-            log.info("⏳ Expired Token: {}", token);
-            log.info("⏳ Expired At: {}", e.getClaims().getExpiration());
-            log.info("⏳ Current Time: {}", new Date(System.currentTimeMillis()));
             throw new UserHandler(ErrorStatus.EXPIRED_TOKEN);
         } catch (MalformedJwtException e) {
-            log.info("🚨 Malformed Token: {}", token);
             throw new JwtHandler(ErrorStatus.INVALID_TOKEN);
         } catch (UnsupportedJwtException e) {
-            log.info("🚨 Unsupported Token: {}", token);
             throw new JwtHandler(ErrorStatus.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
-            log.info("🚨 Empty Token: {}", token);
             throw new JwtHandler(ErrorStatus.EMPTY_TOKEN);
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+
     }
 
 }

@@ -1,6 +1,8 @@
 package UMC_7th.Closit.domain.user.repository;
 
 import UMC_7th.Closit.domain.user.entity.User;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void incrementReportCount(@Param("id") Long id);
 
     List<User> findByIsWithdrawnTrueAndWithdrawalRequestedAtBefore(LocalDateTime dateTime);
+
+    @Query("SELECT u FROM User u WHERE LOWER(u.clositId) LIKE LOWER(CONCAT('%', :query, '%'))")
+    Slice<User> searchByClositId(@Param("query") String query, Pageable pageable);
 }
