@@ -5,6 +5,7 @@ import UMC_7th.Closit.domain.battle.entity.BattleLike;
 import UMC_7th.Closit.domain.battle.entity.Vote;
 import UMC_7th.Closit.domain.follow.entity.Follow;
 import UMC_7th.Closit.domain.notification.entity.Notification;
+import UMC_7th.Closit.domain.notification.firebase.domain.FcmToken;
 import UMC_7th.Closit.domain.post.entity.Bookmark;
 import UMC_7th.Closit.domain.post.entity.Comment;
 import UMC_7th.Closit.domain.post.entity.Likes;
@@ -112,9 +113,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<Notification> notificationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Notification> sentNotificationList = new ArrayList<>();
+    private List<FcmToken> fcmTokenList = new ArrayList<>();
 
     public User updateRole(Role newRole) {
         this.role = newRole;
@@ -133,7 +134,6 @@ public class User extends BaseEntity {
     public void setClositId(@Size(min = 2, max = 20, message = "clositId는 2~20자 사이여야 합니다.") String clositId) {
         this.clositId = clositId;
     }
-
 
     public void incrementCountReport() {
         this.countReport++;
