@@ -109,13 +109,11 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<User> blockedUserSlice) {
+    public static UserResponseDTO.UserBlockListDTO toUserBlockListDTO(Slice<String> blockedUserSlice) {
         List<UserResponseDTO.UserBlockDTO> blockedUserList =
                 blockedUserSlice.getContent().stream()
-                        .map(user -> UserResponseDTO.UserBlockDTO.builder()
-                                .clositId(user.getClositId())
-                                .name(user.getName())
-                                .profileImage(user.getProfileImage())
+                        .map(clositId -> UserResponseDTO.UserBlockDTO.builder()
+                                .clositId(clositId)
                                 .build())
                         .collect(Collectors.toList());
 
@@ -127,4 +125,20 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.UserSearchListDTO toUserSearchListDTO(Slice<User> userSlice) {
+        List<UserResponseDTO.UserSearchDTO> userSearchDTOs = userSlice.getContent().stream()
+                .map(user -> UserResponseDTO.UserSearchDTO.builder()
+                        .clositId(user.getClositId())
+                        .name(user.getName())
+                        .profileImage(user.getProfileImage())
+                        .build())
+                .collect(Collectors.toList());
+
+        return UserResponseDTO.UserSearchListDTO.builder()
+                .searchedUsers(userSearchDTOs)
+                .hasNext(userSlice.hasNext())
+                .pageNumber(userSlice.getNumber())
+                .size(userSlice.getSize())
+                .build();
+    }
 }

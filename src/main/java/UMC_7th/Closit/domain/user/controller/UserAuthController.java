@@ -6,8 +6,12 @@ import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.service.UserAuthService;
 import UMC_7th.Closit.domain.user.service.UserCommandService;
 import UMC_7th.Closit.global.apiPayload.ApiResponse;
+import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
+import UMC_7th.Closit.global.apiPayload.exception.handler.UserHandler;
 import UMC_7th.Closit.global.common.SocialLoginType;
+import UMC_7th.Closit.security.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +26,7 @@ public class UserAuthController {
 
     private final UserCommandService userCommandService;
     private final UserAuthService userAuthService;
-    private final EmailTokenService emailTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
     public ApiResponse<RegisterResponseDTO> register (@RequestBody @Valid UserRequestDTO.CreateUserDTO userRequestDto){
@@ -36,6 +40,17 @@ public class UserAuthController {
         JwtResponse jwtResponse = userAuthService.login(loginRequestDto);
 
         return ApiResponse.onSuccess(jwtResponse);
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        if (accessToken == null) {
+            throw new UserHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        userAuthService.logout(accessToken);
+        return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 API")
@@ -78,4 +93,6 @@ public class UserAuthController {
 
         return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+
 }

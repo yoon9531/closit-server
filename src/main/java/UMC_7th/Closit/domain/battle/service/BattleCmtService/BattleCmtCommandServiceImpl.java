@@ -37,8 +37,12 @@ public class BattleCmtCommandServiceImpl implements BattleCmtCommandService {
         if (request.getParentCommentId() != null) {
             parentBattleComment = battleCommentRepository.findById(request.getParentCommentId())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.BATTLE_COMMENT_NOT_FOUND));
-        }
 
+            // 대댓글의 대댓글을 달려고 할 경우
+            if (parentBattleComment.getParentBattleComment() != null) {
+                throw new GeneralException(ErrorStatus.BATTLE_COMMENT_DEPTH_EXCEEDED);
+            }
+        }
         BattleComment battleComment = BattleCommentConverter.toBattleComment(user, battle, parentBattleComment, request);
 
         return battleCommentRepository.save(battleComment);

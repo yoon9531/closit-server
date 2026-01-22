@@ -14,17 +14,20 @@ import UMC_7th.Closit.global.s3.S3Service;
 import UMC_7th.Closit.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/users")
+@RequestMapping("/api/v1/users")
 @Slf4j
+@Validated
 public class UserController {
 
     private final SecurityUtil securityUtil;
@@ -74,7 +77,7 @@ public class UserController {
     @Operation(summary = "사용자 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
     @GetMapping("/{closit_id}")
     @CheckBlocked(targetIdParam = "closit_id")
-    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable String closit_id) {
+    public ApiResponse<UserResponseDTO.UpdateUserInfoDTO> getUserInfo (@PathVariable("closit_id") String closit_id) {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(closit_id));
     }
 
@@ -95,10 +98,10 @@ public class UserController {
     @Operation(summary = "사용자 차단 목록 조회", description = "특정 사용자의 차단 목록을 조회합니다.")
     @GetMapping("/blocks")
     public ApiResponse<UserResponseDTO.UserBlockListDTO> getBlockedUserList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Slice<User> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
+        Slice<String> blockedUserSlice = userQueryService.getBlockedUserList(PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserBlockListDTO(blockedUserSlice));
     }
 
@@ -123,9 +126,9 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/followers")
     public ApiResponse<UserResponseDTO.UserFollowerSliceDTO> getUserFollowers (
-            @PathVariable String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("closit_id") String closit_id,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<User> followerSlice = userQueryService.getFollowerList(closit_id, PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserFollowerSliceDTO(followerSlice));
@@ -146,9 +149,9 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/following")
     public ApiResponse<UserResponseDTO.UserFollowingSliceDTO> getUserFollowing(
-            @PathVariable String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("closit_id") String closit_id,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<User> followingSlice = userQueryService.getFollowingList(closit_id, PageRequest.of(page, size));
         return ApiResponse.onSuccess(UserConverter.toUserFollowingSliceDTO(followingSlice));
@@ -169,9 +172,9 @@ public class UserController {
     @CheckBlocked(targetIdParam = "closit_id")
     @GetMapping("/{closit_id}/highlights")
     public ApiResponse<UserResponseDTO.UserHighlightSliceDTO> getUserHighlights(
-            @PathVariable String closit_id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("closit_id") String closit_id,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Slice<Highlight> highlightSlice = userQueryService.getHighlightList(closit_id, PageRequest.of(page, size));
 
@@ -197,7 +200,7 @@ public class UserController {
             - closit_id: 중복 여부를 확인할 Closit ID
             """)
     @GetMapping("/isunique/{closit_id}")
-    public ApiResponse<Boolean> isUniqueClositId(@PathVariable String closit_id) {
+    public ApiResponse<Boolean> isUniqueClositId(@PathVariable("closit_id") String closit_id) {
         return ApiResponse.onSuccess(userCommandService.isClositIdUnique(closit_id));
     }
 
@@ -233,4 +236,30 @@ public class UserController {
         return ApiResponse.onSuccess("탈퇴 요청이 정상적으로 처리되었습니다. 7일 이내에 취소하지 않으면 계정이 완전히 삭제됩니다.");
     }
 
+    @Operation(summary = "사용자 비활성화", description = "특정 사용자를 비활성화합니다.")
+    @PatchMapping("/deactivate")
+    public ApiResponse<String> deactivateUser(@RequestBody @Valid UserRequestDTO.DeactivateUserDTO deactivateUserDTO) {
+        userCommandService.deactivateUser(deactivateUserDTO);
+        return ApiResponse.onSuccess("사용자가 비활성화되었습니다.");
+    }
+
+    @Operation(summary = "사용자 검색",
+            description = """
+        ## 사용자 Closit ID 검색
+        사용자의 Closit ID를 기준으로 부분 일치하는 계정을 페이징하여 조회합니다.
+        
+        ### Request Parameters
+        - keyword (string): 검색할 사용자 Closit ID 문자열 (부분 일치)
+        - page (기본값: 0): 조회할 페이지 번호 (0부터 시작)
+        - size (기본값: 10): 페이지당 항목 수
+        """)
+    @GetMapping("/search")
+    public ApiResponse<UserResponseDTO.UserSearchListDTO> searchUsers(
+            @RequestParam(name = "keyword") @Size(min = 1, max = 50, message = "검색어는 1자 이상 50자 이하여야 합니다") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        Slice<User> userSlice = userQueryService.searchUsersByClositId(keyword, PageRequest.of(page, size));
+        return ApiResponse.onSuccess(UserConverter.toUserSearchListDTO(userSlice));
+    }
 }

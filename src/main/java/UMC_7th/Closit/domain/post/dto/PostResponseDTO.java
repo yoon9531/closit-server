@@ -43,7 +43,7 @@ public class PostResponseDTO {
     public static class PostPreviewDTO { // 게시글 목록 조회
         private Long postId;
         private String clositId;
-        private String userName;
+        private int likeCount;
         private String profileImage;
         private String frontImage;
         private String backImage;

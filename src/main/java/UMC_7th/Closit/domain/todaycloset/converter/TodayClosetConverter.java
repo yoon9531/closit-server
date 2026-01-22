@@ -24,8 +24,10 @@ public class TodayClosetConverter {
 
     public static TodayClosetResponseDTO.TodayClosetPreviewDTO toPreviewDTO(TodayCloset todayCloset) {
         return TodayClosetResponseDTO.TodayClosetPreviewDTO.builder()
+                .clositId(todayCloset.getPost().getUser().getClositId())
                 .todayClosetId(todayCloset.getId())
                 .postId(todayCloset.getPost().getId())
+                .likes(todayCloset.getPost().getLikes())
                 .frontImage(todayCloset.getPost().getFrontImage())
                 .backImage(todayCloset.getPost().getBackImage())
                 .viewCount(todayCloset.getPost().getView())

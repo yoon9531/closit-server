@@ -65,7 +65,12 @@ public class User extends BaseEntity {
     private LocalDateTime withdrawalRequestedAt;
 
     @Column(name = "is_withdrawn", nullable = false)
+    @Builder.Default
     private Boolean isWithdrawn = false;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isActive = true; // true : 활성화, false : 비활성화
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
@@ -107,6 +112,10 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<Notification> notificationList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Notification> sentNotificationList = new ArrayList<>();
+
     public User updateRole(Role newRole) {
         this.role = newRole;
         return this;
@@ -130,12 +139,20 @@ public class User extends BaseEntity {
         this.countReport++;
     }
 
+
     public void updatePassword(String encode) {
         this.password = encode;
     }
 
     public void setBirth(@PastOrPresent(message = "생년월일은 과거나 현재 날짜여야 합니다.") LocalDate birth) {
         this.birth = birth;
+    }
+
+    public void deactivate() {
+        this.isActive = false;
+    }
+    public void activate() {
+        this.isActive = true;
     }
 
     public void setWithdrawalRequestedAt(LocalDateTime withdrawalRequestedAt) {

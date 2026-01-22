@@ -39,6 +39,9 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private boolean isMission;
 
+    @Column
+    private int likes = 0;
+
     @Builder.Default
     @Column(nullable = false)
     private int view = 0;

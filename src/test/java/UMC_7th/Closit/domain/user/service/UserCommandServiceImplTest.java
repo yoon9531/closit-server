@@ -1,5 +1,7 @@
 package UMC_7th.Closit.domain.user.service;
 
+import UMC_7th.Closit.domain.user.dto.UserRequestDTO;
+import UMC_7th.Closit.domain.user.entity.Role;
 import UMC_7th.Closit.domain.user.entity.User;
 import UMC_7th.Closit.domain.user.repository.UserRepository;
 import UMC_7th.Closit.global.apiPayload.code.status.ErrorStatus;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserCommandServiceImplTest {
@@ -33,6 +36,14 @@ class UserCommandServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    @DisplayName("비활성화 API 동작 -> isActive가 false")
+    void deactivateUser_success() {
+        // given
+        String clositId = "testuser";
+
         user = User.builder()
                 .id(1L)
                 .clositId("testuser")
@@ -41,6 +52,15 @@ class UserCommandServiceImplTest {
                 .password("pw")
                 .isWithdrawn(false)
                 .build();
+
+        when(userRepository.findByClositId(anyString())).thenReturn(Optional.of(user));
+        UserRequestDTO.DeactivateUserDTO dto = new UserRequestDTO.DeactivateUserDTO(clositId);
+
+        // when
+        userCommandService.deactivateUser(dto);
+
+        // then
+        assertThat(user.getIsActive()).isFalse();
     }
 
     @Test
@@ -64,7 +84,16 @@ class UserCommandServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
         userCommandService.cancelWithdrawal();
+    }
+    @DisplayName("존재하지 않는 사용자를 비활성화하면 예외가 발생한다")
+    void deactivateUser_userNotFound() {
+        // given
+        when(userRepository.findByClositId(anyString())).thenReturn(Optional.empty());
+        UserRequestDTO.DeactivateUserDTO dto = new UserRequestDTO.DeactivateUserDTO("notfound");
 
+        // when & then
+        assertThatThrownBy(() -> userCommandService.deactivateUser(dto))
+                .isInstanceOf(UserHandler.class);
         assertThat(user.getIsWithdrawn()).isFalse();
         assertThat(user.getWithdrawalRequestedAt()).isNull();
     }

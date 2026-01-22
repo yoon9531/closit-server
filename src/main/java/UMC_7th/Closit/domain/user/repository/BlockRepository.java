@@ -16,6 +16,6 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     Optional<Block> findByBlockerIdAndBlockedId (String blockerId, String blockedId);
 
     @Query("SELECT b.blockedId FROM Block b WHERE b.blockerId = :blockerId")
-    Slice<User> findBlockedUsersByBlocker(@Param("blockerId") String blockerId, Pageable pageable);
+    Slice<String> findBlockedUsersByBlocker(@Param("blockerId") String blockerId, Pageable pageable);
 
 }

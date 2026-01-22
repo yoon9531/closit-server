@@ -6,6 +6,7 @@ import UMC_7th.Closit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -24,10 +25,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE p.user IN :users AND pht.hashtag.id = :hashtagId ORDER BY p.createdAt DESC")
     Slice<Post> findByUsersAndHashtagId(List<User> users, Long hashtagId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE pht.hashtag.id = :hashtagId ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p JOIN p.postHashtagList pht WHERE pht.hashtag.id = :hashtagId")
     Slice<Post> findByHashtagId(Long hashtagId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.postItemTagList pit WHERE pit.itemTag.id = :itemTagId ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Post p JOIN p.postItemTagList pit WHERE pit.itemTag.id = :itemTagId")
     Slice<Post> findByItemTagId(@Param("itemTagId") Long itemTagId, Pageable pageable);
 
     Slice<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
@@ -53,4 +54,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.visibility = :visibility AND p.user = :user")
     Slice<Post> findByVisibilityAndUser(@Param("visibility") Visibility visibility, @Param("user") User user, Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Post p SET p.likes = p.likes + 1 WHERE p.id = :id")
+    void incrementLikeCount(@Param("id") Long id);
 }
